@@ -605,3 +605,18 @@ footer a {
 footer a:hover {
   color: var(--primary);
 }
+
+/* AdSense Responsive Slot Placeholder */
+.ad-slot-header {
+  min-height: 90px;
+  margin-bottom: 15px;
+  background: rgba(255,255,255,0.02);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  border: 1px dashed var(--bg-card-border);
+  border-radius: 6px;
+  text-align: center;
+}
