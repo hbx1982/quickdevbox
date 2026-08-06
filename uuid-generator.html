@@ -88,7 +88,7 @@
         <div class="tool-controls" style="align-items:center; background:rgba(255,255,255,0.03); padding:1rem 1.25rem; border-radius:var(--radius-md); border:1px solid var(--bg-card-border);">
           <label style="color:var(--text-muted); font-size:0.9rem; font-weight:600;">Quantity (1-100):</label>
           <input type="number" id="uuidCount" value="5" min="1" max="100" style="width:90px; padding:0.5rem; font-weight:bold; color:var(--primary); background:#040711;">
-          <button class="btn" onclick="generateUUIDs()">🎲 Generate UUIDs</button>
+          <button data-ux="action-primary" class="btn" onclick="generateUUIDs()">🎲 Generate UUIDs</button>
           <button class="btn btn-secondary" onclick="copyResult()">📋 Copy List</button>
         </div>
 
@@ -229,5 +229,6 @@
     });
 </script>
 
+  <script src="ux-enhancements.js?v=1.0"></script>
 </body>
 </html>

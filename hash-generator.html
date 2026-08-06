@@ -88,7 +88,7 @@
         <div>
           <div class="editor-header"><span class="editor-counter" id="editor-counter" style="float:right; font-size:0.8rem; margin-right:10px;">0 chars | 0 lines</span><span style="font-size:0.75rem; color:var(--text-muted); float:right; margin-top:4px;">(Ctrl+Enter)</span> <button class="btn btn-secondary" onclick="if(document.querySelector('textarea')){document.querySelector('textarea').value='QuickDevBox Test Payload';}if(typeof updateCounter==='function')updateCounter();" style="font-size:0.8rem; padding:0.4rem 0.8rem;">💡 Fill Sample Data</button>
         <button class="btn btn-secondary" onclick="document.querySelectorAll('textarea, input[type=text], input[type=number]').forEach(el => el.value=''); if(typeof updateCounter==='function')updateCounter();" style="color:var(--danger); font-size:0.8rem; padding:0.4rem 0.8rem; margin-left:0.5rem;">🗑️ Clear</button> Input Text String</div>
-          <textarea id="hashInput" rows="4" oninput="computeHashes()" placeholder="Type string to compute cryptographic hash... e.g. Hello World"></textarea>
+          <textarea data-ux="input" id="hashInput" rows="4" oninput="computeHashes()" placeholder="Type string to compute cryptographic hash... e.g. Hello World"></textarea>
         </div>
 
         <div style="background:rgba(255,255,255,0.03); padding:1.25rem; border-radius:var(--radius-md); border:1px solid var(--bg-card-border);">
@@ -233,5 +233,6 @@
     });
 </script>
 
+  <script src="ux-enhancements.js?v=1.0"></script>
 </body>
 </html>

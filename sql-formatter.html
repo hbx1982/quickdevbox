@@ -84,15 +84,15 @@
       </div>
       <div class="tool-controls">
         <button class="btn btn-secondary" onclick="var ta=document.querySelector('textarea'); if(ta){ta.value='SELECT id, name FROM users WHERE active = 1 ORDER BY name;';} if(typeof updateCounter==='function')updateCounter();" style="font-size:0.8rem; padding:0.4rem 0.8rem; margin-left:0.5rem;">💡 Fill Sample Data</button>
-        <button class="btn" onclick="formatSQL()">✨ Beautify SQL</button>
+        <button data-ux="action-primary" class="btn" onclick="formatSQL()">✨ Beautify SQL</button>
         <button class="btn btn-secondary" onclick="copyResult()">📋 Copy Result</button>
-        <button class="btn btn-secondary" onclick="clearAll()" style="color:var(--danger);">🗑️ Clear</button>
+        <button data-ux="action-clear" class="btn btn-secondary" onclick="clearAll()" style="color:var(--danger);">🗑️ Clear</button>
       </div>
 
       <div class="editor-wrapper">
         <div>
           <div class="editor-header"><span class="editor-counter" id="editor-counter" style="float:right; font-size:0.8rem; margin-right:10px;">0 chars | 0 lines</span><span style="font-size:0.75rem; color:var(--text-muted); float:right; margin-top:4px;">(Ctrl+Enter)</span> Unformatted SQL String</div>
-          <textarea id="sqlInput" rows="12" placeholder="select id, name, email from users where status = 'active' and created_at > '2026-01-01' order by id desc"></textarea>
+          <textarea data-ux="input" id="sqlInput" rows="12" placeholder="select id, name, email from users where status = 'active' and created_at > '2026-01-01' order by id desc"></textarea>
         </div>
         <div>
           <div class="editor-header"><span class="editor-counter" id="editor-counter-2" style="float:right; font-size:0.8rem; margin-right:10px;">0 chars | 0 lines</span><span style="font-size:0.75rem; color:var(--text-muted); float:right; margin-top:4px;">(Ctrl+Enter)</span> Formatted SQL Query</div>
@@ -242,5 +242,6 @@
     });
 </script>
 
+  <script src="ux-enhancements.js?v=1.0"></script>
 </body>
 </html>

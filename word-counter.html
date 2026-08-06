@@ -104,7 +104,7 @@
 
       <div>
         <div class="editor-header"><span class="editor-counter" id="editor-counter" style="float:right; font-size:0.8rem; margin-right:10px;">0 chars | 0 lines</span><span style="font-size:0.75rem; color:var(--text-muted); float:right; margin-top:4px;">(Ctrl+Enter)</span> <button class="btn btn-secondary" onclick="if(document.querySelector('textarea')){document.querySelector('textarea').value='QuickDevBox Test Payload';}if(typeof updateCounter==='function')updateCounter();" style="font-size:0.8rem; padding:0.4rem 0.8rem;">💡 Fill Sample Data</button> Type or Paste Your Article Content Below</div>
-        <textarea id="wordInput" rows="14" oninput="analyzeText()" placeholder="Start typing or paste text to see real-time statistics..."></textarea>
+        <textarea data-ux="input" id="wordInput" rows="14" oninput="analyzeText()" placeholder="Start typing or paste text to see real-time statistics..."></textarea>
       </div>
 
       <div class="tool-controls" style="margin-top:1rem;">
@@ -246,5 +246,6 @@ function countCodePoints(str) {
     });
 </script>
 
+  <script src="ux-enhancements.js?v=1.0"></script>
 </body>
 </html>

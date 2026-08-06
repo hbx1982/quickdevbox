@@ -98,7 +98,7 @@
         <div>
           <div class="editor-header"><span class="editor-counter" id="editor-counter" style="float:right; font-size:0.8rem; margin-right:10px;">0 chars | 0 lines</span><span style="font-size:0.75rem; color:var(--text-muted); float:right; margin-top:4px;">(Ctrl+Enter)</span> <button class="btn btn-secondary" onclick="if(document.querySelector('textarea')){document.querySelector('textarea').value='QuickDevBox Test Payload';}if(typeof updateCounter==='function')updateCounter();" style="font-size:0.8rem; padding:0.4rem 0.8rem;">💡 Fill Sample Data</button>
         <button class="btn btn-secondary" onclick="document.querySelectorAll('textarea, input[type=text], input[type=number]').forEach(el => el.value=''); if(typeof updateCounter==='function')updateCounter();" style="color:var(--danger); font-size:0.8rem; padding:0.4rem 0.8rem; margin-left:0.5rem;">🗑️ Clear</button> Message Payload Data</div>
-          <textarea id="hmacMessage" rows="5" oninput="computeHmac()" placeholder="Paste message string to sign... e.g. timestamp=1775130000&user=101"></textarea>
+          <textarea data-ux="input" id="hmacMessage" rows="5" oninput="computeHmac()" placeholder="Paste message string to sign... e.g. timestamp=1775130000&user=101"></textarea>
         </div>
 
         <div>
@@ -224,5 +224,6 @@
     });
 </script>
 
+  <script src="ux-enhancements.js?v=1.0"></script>
 </body>
 </html>

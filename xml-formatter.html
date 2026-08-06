@@ -84,15 +84,16 @@
       </div>
       <div class="tool-controls">
         <button class="btn btn-secondary" onclick="var ta=document.querySelector('textarea'); if(ta){ta.value='<root><user><name>Alice</name></user></root>';} if(typeof updateCounter==='function')updateCounter();" style="font-size:0.8rem; padding:0.4rem 0.8rem; margin-left:0.5rem;">💡 Fill Sample Data</button>
-        <button class="btn" onclick="formatXML()">✨ Format XML</button>
+        <button data-ux="action-primary" class="btn" onclick="formatXML()">✨ Format XML</button>
         <button class="btn btn-secondary" onclick="copyResult()">📋 Copy Result</button>
-        <button class="btn btn-secondary" onclick="clearAll()" style="color:var(--danger);">🗑️ Clear</button>
+        <button data-ux="action-clear" class="btn btn-secondary" onclick="clearAll()" style="color:var(--danger);">🗑️ Clear</button>
       </div>
 
       <div class="editor-wrapper">
         <div>
           <div class="editor-header"><span class="editor-counter" id="editor-counter" style="float:right; font-size:0.8rem; margin-right:10px;">0 chars | 0 lines</span><span style="font-size:0.75rem; color:var(--text-muted); float:right; margin-top:4px;">(Ctrl+Enter)</span> Raw XML String</div>
-          <textarea id="xmlInput" rows="14" placeholder='<note><to>User</to><from>Admin</from><heading>Reminder</heading><body>Don&apos;t forget</body></note>'></textarea>
+          <textarea data-ux="input" id="xmlInput" rows="14" placeholder='<note><to>User</to><from>Admin</from><heading>Reminder</heading><body>Don&apos;t forget  <script src="ux-enhancements.js?v=1.0"></script>
+</body></note>'></textarea>
         </div>
         <div>
           <div class="editor-header"><span class="editor-counter" id="editor-counter-2" style="float:right; font-size:0.8rem; margin-right:10px;">0 chars | 0 lines</span><span style="font-size:0.75rem; color:var(--text-muted); float:right; margin-top:4px;">(Ctrl+Enter)</span> Formatted XML Result</div>
@@ -265,5 +266,6 @@
     });
 </script>
 
+  <script src="ux-enhancements.js?v=1.0"></script>
 </body>
 </html>

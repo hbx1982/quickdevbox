@@ -85,18 +85,18 @@
       <div class="tool-controls">
         <button class="btn btn-secondary" onclick="var ta=document.querySelector('textarea'); if(ta){ta.value='Original Text Line 1
 Original Text Line 2';} if(typeof updateCounter==='function')updateCounter();" style="font-size:0.8rem; padding:0.4rem 0.8rem; margin-left:0.5rem;">💡 Fill Sample Data</button>
-        <button class="btn" onclick="compareDiff()">🔍 Compare Text Diff</button>
-        <button class="btn btn-secondary" onclick="clearAll()" style="color:var(--danger);">🗑️ Clear</button>
+        <button data-ux="action-primary" class="btn" onclick="compareDiff()">🔍 Compare Text Diff</button>
+        <button data-ux="action-clear" class="btn btn-secondary" onclick="clearAll()" style="color:var(--danger);">🗑️ Clear</button>
       </div>
 
       <div class="editor-wrapper" style="margin-bottom:1.5rem;">
         <div>
           <div class="editor-header"><span class="editor-counter" id="editor-counter" style="float:right; font-size:0.8rem; margin-right:10px;">0 chars | 0 lines</span><span style="font-size:0.75rem; color:var(--text-muted); float:right; margin-top:4px;">(Ctrl+Enter)</span> Original Text (Old)</div>
-          <textarea id="diffOriginal" rows="10" placeholder="Paste original text here..."></textarea>
+          <textarea data-ux="input" id="diffOriginal" rows="10" placeholder="Paste original text here..."></textarea>
         </div>
         <div>
           <div class="editor-header"><span class="editor-counter" id="editor-counter-2" style="float:right; font-size:0.8rem; margin-right:10px;">0 chars | 0 lines</span><span style="font-size:0.75rem; color:var(--text-muted); float:right; margin-top:4px;">(Ctrl+Enter)</span> Modified Text (New)</div>
-          <textarea id="diffModified" rows="10" placeholder="Paste modified text here..."></textarea>
+          <textarea data-ux="input" id="diffModified" rows="10" placeholder="Paste modified text here..."></textarea>
         </div>
       </div>
 
@@ -247,5 +247,6 @@ Original Text Line 2';} if(typeof updateCounter==='function')updateCounter();" s
     });
 </script>
 
+  <script src="ux-enhancements.js?v=1.0"></script>
 </body>
 </html>

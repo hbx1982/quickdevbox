@@ -97,12 +97,12 @@
       </div>
 
       <div class="tool-controls">
-        <button class="btn" onclick="formatJSON(2)">✨ Prettify (2 Spaces)</button>
-        <button class="btn" onclick="formatJSON(4)">✨ Prettify (4 Spaces)</button>
+        <button data-ux="action-primary" class="btn" onclick="formatJSON(2)">✨ Prettify (2 Spaces)</button>
+        <button data-ux="action-primary" class="btn" onclick="formatJSON(4)">✨ Prettify (4 Spaces)</button>
         <button class="btn btn-secondary" onclick="minifyJSON()">⚡ Compact / Minify</button>
         <button class="btn btn-sample" onclick="loadSampleData()">💡 Fill Sample Data</button>
         <button class="btn btn-secondary" onclick="copyResult()">📋 Copy Output</button>
-        <button class="btn btn-secondary" onclick="clearAll()" style="color:var(--danger);">🗑️ Clear</button>
+        <button data-ux="action-clear" class="btn btn-secondary" onclick="clearAll()" style="color:var(--danger);">🗑️ Clear</button>
       </div>
 
       <div class="editor-wrapper">
@@ -111,7 +111,7 @@
             <span>Raw Input JSON <small style="color:var(--primary); font-size:0.75rem;">(Ctrl+Enter to Run)</small></span>
             <span class="editor-counter" id="inputCounter">0 chars</span>
           </div>
-          <textarea id="jsonInput" rows="12" oninput="updateCounter()" placeholder='Paste your raw JSON string here... e.g. {"name":"QuickDevBox","status":"active"}'></textarea>
+          <textarea data-ux="input" id="jsonInput" rows="12" oninput="updateCounter()" placeholder='Paste your raw JSON string here... e.g. {"name":"QuickDevBox","status":"active"}'></textarea>
         </div>
         <div>
           <div class="editor-header">
@@ -289,5 +289,6 @@
     });
   </script>
 
+  <script src="ux-enhancements.js?v=1.0"></script>
 </body>
 </html>

@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QuickDevBox Tools - Free Online Developer & Security Utilities</title>
-  <meta name="description" content="Fast, 100% private, web-based utilities for developers, security engineers, and DevOps. 45+ free developer tools including AES, RSA, SHA-512, JSON formatter, Base64, JWT, Cron, SQL, cURL, Bcrypt, and Subnet calculator.">
+  <title>QuickDevBox Tools - Free Online Developer, Security & Formatting Utilities</title>
+  <meta name="description" content="Fast, 100% private, web-based utilities for developers, security engineers, and DevOps. 70+ free tools including AES, RSA, SHA-512, JSON/CSS/HTML formatters, Minifiers, Struct converters, Base64, JWT, Cron, SQL, cURL, Bcrypt, and Subnet calculator.">
   <link rel="canonical" href="https://quickdevbox.com/">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="stylesheet" href="styles.css?v=2.2">
 
   <meta property="og:title" content="QuickDevBox Tools - Free Online Developer & Security Utilities">
-  <meta property="og:description" content="100% Private, client-side web tools. Process your AES, RSA, Hashes, JSON, Base64, JWT, Cron, and Subnets fast without server tracking.">
+  <meta property="og:description" content="100% Private, client-side web tools. Process your AES, RSA, Hashes, Code Formatters, Struct Generators, JSON, Base64, JWT, Cron, and Subnets fast without server tracking.">
   <meta property="og:url" content="https://quickdevbox.com/">
   <meta property="og:type" content="website">
 
@@ -23,26 +23,12 @@
     "description": "Free client-side online developer, security, and productivity tools."
   }
   </script>
-
-  <!-- Complete OpenGraph & Social Preview Tags -->
-  <meta property="og:title" content="QuickDevBox Tools - Free Online Developer & Security Utilities">
-  <meta property="og:description" content="Fast, 100% private, web-based utilities for developers, security engineers, and DevOps. 45+ free developer tools including AES, RSA, SHA-512, JSON formatter, Base64, JWT, Cron, SQL, cURL, Bcrypt, and Subnet calculator.">
-  <meta property="og:url" content="https://quickdevbox.com/">
-  <meta property="og:type" content="website">
-  <meta property="og:image" content="https://quickdevbox.com/og-image.png">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="QuickDevBox Tools - Free Online Developer & Security Utilities">
-  <meta name="twitter:description" content="Fast, 100% private, web-based utilities for developers, security engineers, and DevOps. 45+ free developer tools including AES, RSA, SHA-512, JSON formatter, Base64, JWT, Cron, SQL, cURL, Bcrypt, and Subnet calculator.">
-  <meta name="twitter:image" content="https://quickdevbox.com/og-image.png">
-  <!-- Search Robots Directive -->
-  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-E0LZHPD7SL');
 </script>
 </head>
@@ -51,52 +37,46 @@
   <header>
     <div class="nav-container">
       <a href="index.html" class="logo">
-        <img src="favicon.svg" alt="QuickDevBox Logo">
+        <img src="favicon.svg" alt="QuickDevBox Logo" width="28" height="28">
         QuickDevBox<span>.com</span>
       </a>
       <nav class="nav-links">
-        <a href="index.html" class="active">Home</a>
-        <a href="json-formatter.html">JSON Tools</a>
-        <a href="aes-encryption-decryption.html">AES Cipher</a>
-        <a href="jwt-decoder.html">JWT Decoder</a>
+        <a href="index.html" class="active">All Tools</a>
+        <a href="json-formatter.html">JSON Formatter</a>
         <a href="base64-encoder-decoder.html">Base64</a>
+        <a href="jwt-decoder.html">JWT Decoder</a>
       </nav>
     </div>
   </header>
 
   <main>
-    <!-- Ultra-Compact Above-the-Fold Hero Section -->
     <section class="hero">
-      <h1>Ultra-Fast Developer Tools. Zero Data Tracking.</h1>
-      <p>Free, 100% client-side web utilities. Your payloads never leave your browser.</p>
-
-      <!-- Native Western Trust Signals Bar -->
+      <h1>Developer Utilities & Security Suite</h1>
+      <p>Fast, client-side, privacy-first web tools for software engineers, DevOps, and security specialists.</p>
+      
       <div class="trust-badges">
-        <span class="badge-item">🔒 Local Browser Engine</span>
-        <span class="badge-item">⚡ Sub-Millisecond Speed</span>
-        <span class="badge-item">🚫 Zero Server Retention</span>
+        <span class="badge-item">🔒 100% Client-Side In-Memory Processing</span>
+        <span class="badge-item">🚀 Zero Server Telemetry & Tracking</span>
+        <span class="badge-item">⚡ Instant WebCrypto & WASM Engines</span>
       </div>
 
-      <!-- Instant Search Filter Bar -->
       <div class="search-wrapper">
         <span class="search-icon">🔍</span>
-        <input type="text" class="search-input" id="toolSearchInput" oninput="filterTools()" placeholder="Search 45+ tools... (e.g. AES, RSA, SHA512, JSON, cURL, Bcrypt, Subnet, UUID, SQL)">
+        <input type="text" id="searchInput" class="search-input" placeholder="Search 70+ tools (e.g. minifier, struct, json, aes, cron, subnet, base64)..." autocomplete="off" spellcheck="false">
       </div>
 
-      <!-- Category Filter Pills Component -->
       <div class="category-pills">
-        <button class="pill-btn active" onclick="selectCategory('all', this)">All Tools (45)</button>
-        <button class="pill-btn" onclick="selectCategory('crypto', this)">⚡ Security & Crypto (21)</button>
-        <button class="pill-btn" onclick="selectCategory('dev', this)">🛠️ Dev Essentials (12)</button>
-        <button class="pill-btn" onclick="selectCategory('data', "this)">📊 Data & Text (6)</button>
-        <button class="pill-btn" onclick="selectCategory('devops', this)">⚙️ DevOps & Cloud (4)</button>
-        <button class="pill-btn" onclick="selectCategory('design', this)">🎨 Design & UI (4)</button>
+        <button class="pill-btn active" data-filter="all">All Tools (70)</button>
+        <button class="pill-btn" data-filter="formatters">Formatters & Converters (39)</button>
+        <button class="pill-btn" data-filter="crypto">Security & Crypto (17)</button>
+        <button class="pill-btn" data-filter="dev">Dev Essentials (4)</button>
+        <button class="pill-btn" data-filter="data">Data & Text (6)</button>
+        <button class="pill-btn" data-filter="devops">DevOps & Cloud (4)</button>
       </div>
     </section>
 
-    <!-- High-Density Categorized Tool Grid -->
-    <section class="tool-grid" id="mainToolGrid">
-      <a href="json-formatter.html" class="tool-card" data-category="dev" data-keywords="json formatter beautifier validator prettify text repair">
+    <section class="tool-grid" id="toolGrid">
+      <a href="json-formatter.html" class="tool-card" data-category="formatters" data-keywords="json formatter beautifier validator prettify text repair">
         <div class="tool-icon">🛠️</div>
         <div class="tool-title">JSON Formatter & Validator</div>
         <div class="tool-desc">Format, prettify, repair, and validate JSON data instantly with syntax highlighting.</div>
@@ -156,31 +136,31 @@
         <div class="tool-desc">Compare two text or code snippets side-by-side to highlight additions, deletions, and diffs.</div>
         <span class="tool-badge">Code Review</span>
       </a>
-      <a href="sql-formatter.html" class="tool-card" data-category="data" data-keywords="sql query format beautify postgres mysql sqlite oracle indent">
+      <a href="sql-formatter.html" class="tool-card" data-category="formatters" data-keywords="sql query format beautify postgres mysql sqlite oracle indent">
         <div class="tool-icon">🗄️</div>
         <div class="tool-title">SQL Query Formatter</div>
         <div class="tool-desc">Beautify, indent, and format raw SQL queries for MySQL, PostgreSQL, Oracle, and SQLite.</div>
         <span class="tool-badge">Database Tools</span>
       </a>
-      <a href="css-minifier.html" class="tool-card" data-category="design" data-keywords="css minifier compress minify beautify stylesheet performance">
+      <a href="css-minifier.html" class="tool-card" data-category="formatters" data-keywords="css minifier compress minify beautify stylesheet performance">
         <div class="tool-icon">⚡</div>
         <div class="tool-title">CSS Minifier & Formatter</div>
         <div class="tool-desc">Compress raw CSS styles to boost website load performance or un-minify stylesheet code.</div>
         <span class="tool-badge">Web Performance</span>
       </a>
-      <a href="px-to-rem-converter.html" class="tool-card" data-category="design" data-keywords="px rem em pixel converter css responsive font typography">
+      <a href="px-to-rem-converter.html" class="tool-card" data-category="formatters" data-keywords="px rem em pixel converter css responsive font typography">
         <div class="tool-icon">📐</div>
         <div class="tool-title">PX to REM / EM Converter</div>
         <div class="tool-desc">Convert pixel font sizes to CSS REM and EM units based on customizable base root sizes.</div>
         <span class="tool-badge">Responsive Design</span>
       </a>
-      <a href="rgb-to-hex-converter.html" class="tool-card" data-category="design" data-keywords="rgb hex rgba color converter picker hsl css web safe">
+      <a href="rgb-to-hex-converter.html" class="tool-card" data-category="formatters" data-keywords="rgb hex rgba color converter picker hsl css web safe">
         <div class="tool-icon">🎨</div>
         <div class="tool-title">RGB to HEX Color Converter</div>
         <div class="tool-desc">Convert RGB / RGBA color values to Hexadecimal hex codes with interactive visual picker.</div>
         <span class="tool-badge">Color Palette</span>
       </a>
-      <a href="curl-to-code-converter.html" class="tool-card" data-category="devops" data-keywords="curl convert fetch python node requests golang api code">
+      <a href="curl-to-code-converter.html" class="tool-card" data-category="formatters" data-keywords="curl convert fetch python node requests golang api code">
         <div class="tool-icon">🌐</div>
         <div class="tool-title">cURL to Code Converter</div>
         <div class="tool-desc">Transform cURL terminal commands into JavaScript fetch, Python requests, Node, or Go code.</div>
@@ -216,37 +196,37 @@
         <div class="tool-desc">Generate Apache and Nginx basic auth password hashes using Bcrypt or APR1 MD5 algorithms.</div>
         <span class="tool-badge">Server Security</span>
       </a>
-      <a href="json-to-csv-converter.html" class="tool-card" data-category="data" data-keywords="json csv convert spreadsheet excel table export dataset">
+      <a href="json-to-csv-converter.html" class="tool-card" data-category="formatters" data-keywords="json csv convert spreadsheet excel table export dataset">
         <div class="tool-icon">📊</div>
         <div class="tool-title">JSON to CSV Converter</div>
         <div class="tool-desc">Transform JSON arrays and nested object datasets into downloadable CSV spreadsheets.</div>
         <span class="tool-badge">Data Export</span>
       </a>
-      <a href="yaml-to-json-converter.html" class="tool-card" data-category="devops" data-keywords="yaml json convert kubernetes docker config parse validate">
+      <a href="yaml-to-json-converter.html" class="tool-card" data-category="formatters" data-keywords="yaml json convert kubernetes docker config parse validate">
         <div class="tool-icon">📄</div>
         <div class="tool-title">YAML to JSON Converter</div>
         <div class="tool-desc">Convert YAML configuration files to formatted JSON code and validate syntax trees.</div>
         <span class="tool-badge">DevOps & K8s</span>
       </a>
-      <a href="html-entity-encoder.html" class="tool-card" data-category="dev" data-keywords="html entity encode decode xss sanitize escape chars">
+      <a href="html-entity-encoder.html" class="tool-card" data-category="formatters" data-keywords="html entity encode decode xss sanitize escape chars">
         <div class="tool-icon">🔤</div>
         <div class="tool-title">HTML Entity Encoder / Decoder</div>
         <div class="tool-desc">Safely encode special HTML characters into named or numeric entities to prevent XSS.</div>
         <span class="tool-badge">Web Security</span>
       </a>
-      <a href="xml-formatter.html" class="tool-card" data-category="data" data-keywords="xml format indent validate soap rss sitemap beautify">
+      <a href="xml-formatter.html" class="tool-card" data-category="formatters" data-keywords="xml format indent validate soap rss sitemap beautify">
         <div class="tool-icon">📑</div>
         <div class="tool-title">XML Formatter & Validator</div>
         <div class="tool-desc">Format, indent, and validate XML documents with configurable indentation spaces.</div>
         <span class="tool-badge">Data Structures</span>
       </a>
-      <a href="lorem-ipsum-generator.html" class="tool-card" data-category="design" data-keywords="lorem ipsum text generator dummy filler paragraphs UI design">
+      <a href="lorem-ipsum-generator.html" class="tool-card" data-category="data" data-keywords="lorem ipsum text generator dummy filler paragraphs UI design">
         <div class="tool-icon">📄</div>
         <div class="tool-title">Lorem Ipsum Dummy Text Tool</div>
         <div class="tool-desc">Generate custom dummy placeholder text paragraphs, sentences, or word lists for UI design.</div>
         <span class="tool-badge">Mockup Utility</span>
       </a>
-      <a href="case-converter.html" class="tool-card" data-category="data" data-keywords="case converter camelCase snake_case kebab-case UPPERCASE lower">
+      <a href="case-converter.html" class="tool-card" data-category="formatters" data-keywords="case converter camelCase snake_case kebab-case UPPERCASE lower">
         <div class="tool-icon">🔤</div>
         <div class="tool-title">String Case Converter</div>
         <div class="tool-desc">Convert text to camelCase, PascalCase, snake_case, kebab-case, CONSTANT_CASE, or Title Case.</div>
@@ -270,7 +250,7 @@
         <div class="tool-desc">Encode and decode RFC 4648 Base32 strings commonly used in TOTP 2FA secret keys.</div>
         <span class="tool-badge">2FA Authentication</span>
       </a>
-      <a href="css-glassmorphism-generator.html" class="tool-card" data-category="design" data-keywords="glassmorphism frosted glass backdrop-filter css generator UI">
+      <a href="css-glassmorphism-generator.html" class="tool-card" data-category="data" data-keywords="glassmorphism frosted glass backdrop-filter css generator UI">
         <div class="tool-icon">✨</div>
         <div class="tool-title">CSS Glassmorphism Generator</div>
         <div class="tool-desc">Design modern frosted glass UI cards with live backdrop-filter CSS output controls.</div>
@@ -336,19 +316,19 @@
         <div class="tool-desc">Generate secure passwords and compute Shannon Entropy (bits) & cracking estimates.</div>
         <span class="tool-badge">Entropy Security</span>
       </a>
-      <a href="html-unescape.html" class="tool-card" data-category="dev" data-keywords="html unescape entity decoder xss sanitization DOMParser">
+      <a href="html-unescape.html" class="tool-card" data-category="formatters" data-keywords="html unescape entity decoder xss sanitization DOMParser">
         <div class="tool-icon">🧹</div>
         <div class="tool-title">HTML Entity Unescaper & Sanitizer</div>
         <div class="tool-desc">Convert escaped HTML entities (&lt;, &gt;, &amp;) back into literal HTML characters.</div>
         <span class="tool-badge">DOM Sanitization</span>
       </a>
-      <a href="unicode-escape.html" class="tool-card" data-category="dev" data-keywords="unicode escape unescape uXXXX utf-16 surrogate pairs string">
+      <a href="unicode-escape.html" class="tool-card" data-category="formatters" data-keywords="unicode escape unescape uXXXX utf-16 surrogate pairs string">
         <div class="tool-icon">🌐</div>
         <div class="tool-title">Unicode Escape & Unescape (\uXXXX)</div>
         <div class="tool-desc">Convert text to JavaScript/Java \uXXXX notation and unescape UTF-16 sequences.</div>
         <span class="tool-badge">Character Escaping</span>
       </a>
-      <a href="hex-ascii-converter.html" class="tool-card" data-category="dev" data-keywords="hex ascii converter base16 byte array dump binary hex">
+      <a href="hex-ascii-converter.html" class="tool-card" data-category="formatters" data-keywords="hex ascii converter base16 byte array dump binary hex">
         <div class="tool-icon">🔢</div>
         <div class="tool-title">Hexadecimal to ASCII & String</div>
         <div class="tool-desc">Convert raw Hex byte strings to ASCII text and encode text into Hex format.</div>
@@ -366,59 +346,210 @@
         <div class="tool-desc">Compute 32-bit Cyclic Redundancy Check polynomials for network and file integrity.</div>
         <span class="tool-badge">Packet Integrity</span>
       </a>
-    </section>
-
-    <!-- Global Privacy & Security Commitment Footer Banner -->
-    <section class="privacy-guarantee" style="margin: 3rem 0; padding: 1.8rem; background: rgba(255,255,255,0.02); border: 1px solid var(--bg-card-border); border-radius: var(--radius-lg); text-align: center;">
-      <h3 style="font-size: 1.2rem; color: var(--primary); margin-bottom: 0.5rem;">🛡️ Privacy & Zero-Data Storage Guarantee</h3>
-      <p style="font-size: 0.9rem; color: var(--text-muted); max-width: 800px; margin: 0 auto; line-height: 1.6;">
-        QuickDevBox tools process all string payloads, cryptographic ciphers, and key pairs strictly inside your local browser runtime via WebCrypto APIs and client-side JavaScript. We do not transmit, log, or store any user input on external servers.
-      </p>
+      <a href="html-formatter-beautifier.html" class="tool-card" data-category="formatters" data-keywords="html formatter beautifier indenter dom clean prettify">
+        <div class="tool-icon">🌐</div>
+        <div class="tool-title">HTML Formatter & Code Beautifier</div>
+        <div class="tool-desc">Indent, format, and structure raw HTML code 100% client-side.</div>
+        <span class="tool-badge">HTML Prettifier</span>
+      </a>
+      <a href="css-formatter-beautifier.html" class="tool-card" data-category="formatters" data-keywords="css formatter beautifier indenter stylesheet clean prettify">
+        <div class="tool-icon">🎨</div>
+        <div class="tool-title">CSS Formatter & Beautifier</div>
+        <div class="tool-desc">Beautify, indent, and organize CSS stylesheets with uniform formatting.</div>
+        <span class="tool-badge">CSS Prettifier</span>
+      </a>
+      <a href="javascript-formatter-beautifier.html" class="tool-card" data-category="formatters" data-keywords="javascript js beautifier formatter indenter clean prettify">
+        <div class="tool-icon">⚡</div>
+        <div class="tool-title">JavaScript Code Beautifier</div>
+        <div class="tool-desc">Beautify, format, and indent unformatted JavaScript script code.</div>
+        <span class="tool-badge">JS Prettifier</span>
+      </a>
+      <a href="html-minifier.html" class="tool-card" data-category="formatters" data-keywords="html minifier compressor stripper space collapse payload">
+        <div class="tool-icon">📦</div>
+        <div class="tool-title">HTML Code Minifier & Compressor</div>
+        <div class="tool-desc">Compress HTML markup and remove comments & whitespace client-side.</div>
+        <span class="tool-badge">HTML Compressor</span>
+      </a>
+      <a href="css-minifier.html" class="tool-card" data-category="formatters" data-keywords="css minifier compressor shrinker hex zero unit">
+        <div class="tool-icon">🗜️</div>
+        <div class="tool-title">CSS Minifier & Compressor</div>
+        <div class="tool-desc">Shrink CSS stylesheets by removing non-essential spaces and comments.</div>
+        <span class="tool-badge">CSS Compressor</span>
+      </a>
+      <a href="javascript-minifier.html" class="tool-card" data-category="formatters" data-keywords="javascript js minifier compressor shrinker production bundle">
+        <div class="tool-icon">🚀</div>
+        <div class="tool-title">JavaScript Minifier & Compressor</div>
+        <div class="tool-desc">Compact JavaScript source code and remove comments for production.</div>
+        <span class="tool-badge">JS Compressor</span>
+      </a>
+      <a href="json-minifier.html" class="tool-card" data-category="formatters" data-keywords="json minifier compact compressor rfc8259 rest api">
+        <div class="tool-icon">📄</div>
+        <div class="tool-title">JSON Minifier & Compact Tool</div>
+        <div class="tool-desc">Compress JSON documents into a single line with zero extra spaces.</div>
+        <span class="tool-badge">JSON Compact</span>
+      </a>
+      <a href="xml-to-json-converter.html" class="tool-card" data-category="formatters" data-keywords="xml to json converter soap dom parsing data exchange">
+        <div class="tool-icon">🔄</div>
+        <div class="tool-title">XML to JSON Converter</div>
+        <div class="tool-desc">Transform XML documents and SOAP payloads into clean JSON objects.</div>
+        <span class="tool-badge">XML Serialization</span>
+      </a>
+      <a href="csv-to-json-converter.html" class="tool-card" data-category="formatters" data-keywords="csv to json converter rfc4180 spreadsheet data array">
+        <div class="tool-icon">📊</div>
+        <div class="tool-title">CSV to JSON Converter</div>
+        <div class="tool-desc">Convert CSV spreadsheet files into formatted JSON array objects.</div>
+        <span class="tool-badge">CSV Import</span>
+      </a>
+      <a href="csv-to-sql-converter.html" class="tool-card" data-category="formatters" data-keywords="csv to sql insert statement generator mysql postgres database">
+        <div class="tool-icon">🗄️</div>
+        <div class="tool-title">CSV to SQL INSERT Statement Generator</div>
+        <div class="tool-desc">Convert CSV spreadsheet rows into SQL INSERT commands for databases.</div>
+        <span class="tool-badge">SQL Generator</span>
+      </a>
+      <a href="json-to-yaml-converter.html" class="tool-card" data-category="formatters" data-keywords="json to yaml converter kubernetes docker config serializing">
+        <div class="tool-icon">⚙️</div>
+        <div class="tool-title">JSON to YAML Converter</div>
+        <div class="tool-desc">Convert JSON documents to human-readable YAML for Docker & K8s.</div>
+        <span class="tool-badge">YAML Serializer</span>
+      </a>
+      <a href="yaml-formatter.html" class="tool-card" data-category="formatters" data-keywords="yaml formatter prettifier validator ansible docker compose">
+        <div class="tool-icon">📝</div>
+        <div class="tool-title">YAML Formatter & Syntax Prettifier</div>
+        <div class="tool-desc">Beautify, validate, and fix 2-space indentation in YAML files.</div>
+        <span class="tool-badge">YAML Prettifier</span>
+      </a>
+      <a href="graphql-formatter.html" class="tool-card" data-category="formatters" data-keywords="graphql query formatter prettifier indenter api schema">
+        <div class="tool-icon">🔮</div>
+        <div class="tool-title">GraphQL Query Formatter</div>
+        <div class="tool-desc">Prettify, indent, and format GraphQL queries, mutations, and schemas.</div>
+        <span class="tool-badge">GraphQL Prettifier</span>
+      </a>
+      <a href="json-to-typescript-interface.html" class="tool-card" data-category="formatters" data-keywords="json to typescript interface generator type inference ts frontend">
+        <div class="tool-icon">🔷</div>
+        <div class="tool-title">JSON to TypeScript Interface Generator</div>
+        <div class="tool-desc">Convert raw JSON objects into strongly typed TS interface definitions.</div>
+        <span class="tool-badge">TS Type Inference</span>
+      </a>
+      <a href="json-to-go-struct-converter.html" class="tool-card" data-category="formatters" data-keywords="json to go golang struct generator tags unmarshal backend">
+        <div class="tool-icon">🐹</div>
+        <div class="tool-title">JSON to Go Struct Generator</div>
+        <div class="tool-desc">Convert JSON payloads to Go struct definitions with json tags.</div>
+        <span class="tool-badge">Golang Struct</span>
+      </a>
+      <a href="json-to-rust-struct-converter.html" class="tool-card" data-category="formatters" data-keywords="json to rust struct generator serde derive type safety">
+        <div class="tool-icon">🦀</div>
+        <div class="tool-title">JSON to Rust Struct Generator (Serde)</div>
+        <div class="tool-desc">Convert JSON payloads into strongly typed Rust structs with Serde.</div>
+        <span class="tool-badge">Rust Serde</span>
+      </a>
+      <a href="json-to-python-dataclass-converter.html" class="tool-card" data-category="formatters" data-keywords="json to python dataclass pydantic model type hints fastapi">
+        <div class="tool-icon">🐍</div>
+        <div class="tool-title">JSON to Python Dataclass Generator</div>
+        <div class="tool-desc">Convert JSON objects to Python @dataclass and Pydantic models.</div>
+        <span class="tool-badge">Python Dataclass</span>
+      </a>
+      <a href="typescript-to-javascript-converter.html" class="tool-card" data-category="formatters" data-keywords="typescript to javascript ts js transpiler compiler type erasure">
+        <div class="tool-icon">📜</div>
+        <div class="tool-title">TypeScript to JavaScript Transpiler</div>
+        <div class="tool-desc">Strip type annotations, interfaces, and generics into plain ES6 JS.</div>
+        <span class="tool-badge">TS Type Erasure</span>
+      </a>
+      <a href="toml-to-json-converter.html" class="tool-card" data-category="formatters" data-keywords="toml to json converter cargo pyproject configuration parsing">
+        <div class="tool-icon">📦</div>
+        <div class="tool-title">TOML to JSON Converter</div>
+        <div class="tool-desc">Convert TOML configuration files (Cargo, pyproject) to JSON.</div>
+        <span class="tool-badge">TOML Serializer</span>
+      </a>
+      <a href="url-query-string-to-json.html" class="tool-card" data-category="formatters" data-keywords="url query string to json searchparams percent encoding get">
+        <div class="tool-icon">🔗</div>
+        <div class="tool-title">URL Query String to JSON Converter</div>
+        <div class="tool-desc">Parse URL search parameters and query strings into JSON objects.</div>
+        <span class="tool-badge">URL Query Parser</span>
+      </a>
+      <a href="string-escape-unescape-java.html" class="tool-card" data-category="formatters" data-keywords="java c# string escaper unescaper escape quotes control char">
+        <div class="tool-icon">🔤</div>
+        <div class="tool-title">Java & C# String Escaper / Unescaper</div>
+        <div class="tool-desc">Convert raw strings to escaped literals (\n, \", \t) for C-family code.</div>
+        <span class="tool-badge">String Escaper</span>
+      </a>
+      <a href="php-serialize-unserialize.html" class="tool-card" data-category="formatters" data-keywords="php serialize unserialize json converter legacy data parser">
+        <div class="tool-icon">🐘</div>
+        <div class="tool-title">PHP Serialize to JSON Converter</div>
+        <div class="tool-desc">Parse PHP serialize() payload strings into readable JSON objects.</div>
+        <span class="tool-badge">PHP Unserialize</span>
+      </a>
+      <a href="bson-json-converter.html" class="tool-card" data-category="formatters" data-keywords="bson extended json mongodb oid date parser nosql">
+        <div class="tool-icon">🍃</div>
+        <div class="tool-title">MongoDB BSON / Extended JSON Converter</div>
+        <div class="tool-desc">Parse MongoDB $oid, $date, and Extended JSON into standard JSON.</div>
+        <span class="tool-badge">MongoDB BSON</span>
+      </a>
+      <a href="babel-js-compiler.html" class="tool-card" data-category="formatters" data-keywords="javascript compiler es6 es5 babel transpiler legacy polyfill">
+        <div class="tool-icon">⚡</div>
+        <div class="tool-title">JavaScript Compiler (ES6+ to ES5)</div>
+        <div class="tool-desc">Transpile modern ES6+ arrow functions and syntax to legacy ES5 JS.</div>
+        <span class="tool-badge">ES6 Transpiler</span>
+      </a>
+      <a href="protobuf-to-json-converter.html" class="tool-card" data-category="formatters" data-keywords="protobuf proto3 to json schema converter grpc message parser">
+        <div class="tool-icon">📡</div>
+        <div class="tool-title">Protobuf (Proto3) to JSON Schema</div>
+        <div class="tool-desc">Convert proto3 message definitions to JSON Schema and payloads.</div>
+        <span class="tool-badge">Proto3 Schema</span>
+      </a>
     </section>
   </main>
 
   <footer>
-    <div class="footer-container">
-      <p>&copy; 2026 QuickDevBox.com - Free Online Developer Tools. 100% Client-Side Processing.</p>
-      <div class="footer-links">
-        <a href="index.html">Home</a>
-        <a href="privacy-policy.html">Privacy Policy</a>
-        <a href="terms.html">Terms of Service</a>
-        <a href="about.html">About</a>
-      </div>
+    <div class="footer-container" style="max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem; text-align: center; color: var(--text-muted); font-size: 0.85rem; border-top: 1px solid var(--bg-card-border);">
+      <p>&copy; 2026 QuickDevBox.com — Free, Open Source & Privacy-First Developer Tools</p>
+      <p style="margin-top: 0.5rem;">
+        <a href="privacy-policy.html" style="color: var(--text-muted); text-decoration: none; margin: 0 0.5rem;">Privacy Policy</a> |
+        <a href="terms.html" style="color: var(--text-muted); text-decoration: none; margin: 0 0.5rem;">Terms of Service</a> |
+        <a href="about.html" style="color: var(--text-muted); text-decoration: none; margin: 0 0.5rem;">About</a>
+      </p>
     </div>
   </footer>
 
   <script>
-    let activeCategory = 'all';
+    document.addEventListener('DOMContentLoaded', () => {
+      const searchInput = document.getElementById('searchInput');
+      const toolGrid = document.getElementById('toolGrid');
+      const cards = toolGrid.querySelectorAll('.tool-card');
+      const pillBtns = document.querySelectorAll('.pill-btn');
 
-    function selectCategory(cat, btn) {
-      activeCategory = cat;
-      document.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      filterTools();
-    }
+      let currentCategory = 'all';
 
-    function filterTools() {
-      const query = document.getElementById('toolSearchInput').value.toLowerCase().trim();
-      const cards = document.querySelectorAll('.tool-card');
+      function filterTools() {
+        const query = searchInput.value.toLowerCase().trim();
 
-      cards.forEach(card => {
-        const title = card.querySelector('.tool-title').textContent.toLowerCase();
-        const desc = card.querySelector('.tool-desc').textContent.toLowerCase();
-        const kw = card.getAttribute('data-keywords') || '';
-        const cat = card.getAttribute('data-category');
+        cards.forEach(card => {
+          const category = card.getAttribute('data-category');
+          const keywords = card.getAttribute('data-keywords').toLowerCase();
+          const title = card.querySelector('.tool-title').textContent.toLowerCase();
+          const desc = card.querySelector('.tool-desc').textContent.toLowerCase();
 
-        const matchesCategory = (activeCategory === 'all') || (cat === activeCategory);
-        const matchesSearch = query === '' || title.includes(query) || desc.includes(query) || kw.includes(query);
+          const matchesCategory = (currentCategory === 'all') || (category === currentCategory);
+          const matchesQuery = !query || title.includes(query) || desc.includes(query) || keywords.includes(query);
 
-        if (matchesCategory && matchesSearch) {
-          card.style.display = 'flex';
-        } else {
-          card.style.display = 'none';
-        }
+          if (matchesCategory && matchesQuery) {
+            card.style.display = 'flex';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      }
+
+      searchInput.addEventListener('input', filterTools);
+
+      pillBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          pillBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentCategory = btn.getAttribute('data-filter');
+          filterTools();
+        });
       });
-    }
+    });
   </script>
 </body>
 </html>

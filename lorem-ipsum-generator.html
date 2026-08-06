@@ -85,7 +85,7 @@
       <div class="tool-controls" style="align-items:center;">
         <label style="color:var(--text-muted); font-size:0.9rem;">Paragraphs:</label>
         <input type="number" id="loremCount" value="3" min="1" max="20" style="width:70px; padding:0.4rem;">
-        <button class="btn" onclick="generateLorem()">🎲 Generate Lorem Ipsum</button>
+        <button data-ux="action-primary" class="btn" onclick="generateLorem()">🎲 Generate Lorem Ipsum</button>
         <button class="btn btn-secondary" onclick="copyResult()">📋 Copy Text</button>
       </div>
 
@@ -236,5 +236,6 @@
     });
 </script>
 
+  <script src="ux-enhancements.js?v=1.0"></script>
 </body>
 </html>

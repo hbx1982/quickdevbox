@@ -84,10 +84,10 @@
       </div>
 
       <div class="tool-controls">
-        <button class="btn" onclick="convertJsonToCsv()">📊 Convert to CSV</button>
+        <button data-ux="action-primary" class="btn" onclick="convertJsonToCsv()">📊 Convert to CSV</button>
         <button class="btn btn-sample" onclick="loadSample()">💡 Fill Sample Data</button>
         <button class="btn btn-secondary" onclick="copyCsv()">📋 Copy CSV</button>
-        <button class="btn btn-secondary" onclick="clearAll()" style="color:var(--danger);">🗑️ Clear</button>
+        <button data-ux="action-clear" class="btn btn-secondary" onclick="clearAll()" style="color:var(--danger);">🗑️ Clear</button>
       </div>
 
       <div class="editor-wrapper">
@@ -96,7 +96,7 @@
             <span>Input JSON Array</span>
             <span class="editor-counter" id="inputCounter">0 chars</span>
           </div>
-          <textarea id="jsonInput" rows="12" oninput="updateCounter()" placeholder='[{"name":"John","age":30,"city":"NY"},{"name":"Alice","age":25,"city":"London"}]'></textarea>
+          <textarea data-ux="input" id="jsonInput" rows="12" oninput="updateCounter()" placeholder='[{"name":"John","age":30,"city":"NY"},{"name":"Alice","age":25,"city":"London"}]'></textarea>
         </div>
         <div>
           <div class="editor-header"><span style="font-size:0.75rem; color:var(--text-muted); float:right; margin-top:4px;">(Ctrl+Enter)</span> 
@@ -269,5 +269,6 @@
     });
 </script>
 
+  <script src="ux-enhancements.js?v=1.0"></script>
 </body>
 </html>
