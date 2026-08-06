@@ -89,11 +89,11 @@
         <div style="display:grid; grid-template-columns: 2fr 1fr; gap:1rem; background:rgba(255,255,255,0.03); padding:1.25rem; border-radius:var(--radius-md); border:1px solid var(--bg-card-border);">
           <div>
             <label style="display:block; color:var(--text-muted); font-size:0.85rem; font-weight:600; margin-bottom:0.3rem;">IPv4 Address:</label>
-            <input type="text" id="ipAddress" value="192.168.1.1" oninput="calculateSubnet()" style="font-weight:600; color:var(--primary); background:#040711;">
+            <input data-ux="input" type="text" id="ipAddress" value="192.168.1.1" oninput="calculateSubnet()" style="font-weight:600; color:var(--primary); background:#040711;">
           </div>
           <div>
             <label style="display:block; color:var(--text-muted); font-size:0.85rem; font-weight:600; margin-bottom:0.3rem;">CIDR Prefix (/24):</label>
-            <input type="number" id="cidrPrefix" value="24" min="1" max="32" oninput="calculateSubnet()" style="font-weight:600; color:var(--primary); background:#040711;">
+            <input data-ux="input" type="number" id="cidrPrefix" value="24" min="1" max="32" oninput="calculateSubnet()" style="font-weight:600; color:var(--primary); background:#040711;">
           </div>
         </div>
 

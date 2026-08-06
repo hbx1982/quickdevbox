@@ -85,11 +85,11 @@
       <div style="display:grid; grid-template-columns: 2fr 1fr; gap:1rem; margin-bottom:1.5rem;">
         <div>
           <label style="display:block; color:var(--text-muted); font-size:0.85rem; margin-bottom:0.3rem;">Regular Expression Pattern:</label>
-          <input type="text" id="regexPattern" value="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}" oninput="testRegex()" style="font-weight:600; color:var(--primary);">
+          <input data-ux="input" type="text" id="regexPattern" value="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}" oninput="testRegex()" style="font-weight:600; color:var(--primary);">
         </div>
         <div>
           <label style="display:block; color:var(--text-muted); font-size:0.85rem; margin-bottom:0.3rem;">Flags (e.g. g, i, m):</label>
-          <input type="text" id="regexFlags" value="g" oninput="testRegex()" style="font-weight:600;">
+          <input data-ux="input" type="text" id="regexFlags" value="g" oninput="testRegex()" style="font-weight:600;">
         </div>
       </div>
       
