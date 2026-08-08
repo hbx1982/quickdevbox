@@ -214,8 +214,7 @@
 
       function updateStats(el, counterEl) {
         const text = el.value || '';
-        const lines = text ? text.split('
-').length : 0;
+        const lines = text ? text.split('\n').length : 0;
         const chars = text.length;
         counterEl.textContent = `Lines: ${lines} | Chars: ${chars}`;
       }
@@ -253,44 +252,29 @@
           if (file.includes('json')) return JSON.stringify(JSON.parse(input));
           if (file.includes('html')) return input.replace(/<!--[\s\S]*?-->/g, '').replace(/\s+/g, ' ').replace(/>\s+</g, '><').trim();
           if (file.includes('css')) return input.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\s+/g, ' ').replace(/\s*([{}:;,])\s*/g, '$1').trim();
-          if (file.includes('javascript')) return input.replace(/\/\/[^
-]*|\/\*[\s\S]*?\*\//g, '').replace(/\s+/g, ' ').replace(/\s*([{}:();,=+-])\s*/g, '$1').trim();
+          if (file.includes('javascript')) return input.replace(/\/\/[^\r\n]*|\/\*[\s\S]*?\*\//g, '').replace(/\s+/g, ' ').replace(/\s*([{}:();,=+-])\s*/g, '$1').trim();
         }
         if (file.includes('beautifier') || file.includes('formatter')) {
           if (file.includes('html')) {
             let indent = 0;
-            return input.replace(/></g, '>
-<').split('
-').map(line => {
+            return input.replace(/></g, '>\n<').split('\n').map(line => {
               if (line.match(/^<\/[^>]+>/)) indent = Math.max(0, indent - 1);
               const padded = '  '.repeat(indent) + line;
-              if (line.match(/^<[^\/!][^>]*[^\/]>$/) && !line.includes('</')) indent++;
+              if (line.match(/^<[^\/!][^>]*[^\/]>/) && !line.includes('</')) indent++;
               return padded;
-            }).join('
-');
+            }).join('\n');
           }
           if (file.includes('css')) {
-            return input.replace(/\s*([{};])\s*/g, '$1
-').replace(/\s*:\s*/g, ': ').replace(/
-\s*
-/g, '
-').replace(/([^}]+){/g, '$1 {
-  ').replace(/;/g, ';
-  ').replace(/
-\s*}/g, '
-}').trim();
+            return input.replace(/\s*([{};])\s*/g, '$1\n').replace(/\s*:\s*/g, ': ').replace(/\n\s*\n/g, '\n').replace(/([^}]+){/g, '$1 {\n  ').replace(/;/g, ';\n  ').replace(/\n\s*}/g, '\n}').trim();
           }
           if (file.includes('javascript') || file.includes('graphql') || file.includes('yaml')) {
             let depth = 0;
-            return input.replace(/\s*([{}])\s*/g, '$1
-').split('
-').map(l => {
+            return input.replace(/\s*([{}])\s*/g, '$1\n').split('\n').map(l => {
               if (l.includes('}')) depth = Math.max(0, depth - 1);
               const p = '  '.repeat(depth) + l.trim();
               if (l.includes('{')) depth++;
               return p;
-            }).filter(Boolean).join('
-');
+            }).filter(Boolean).join('\n');
           }
         }
         if (file.includes('xml-to-json')) {
@@ -302,153 +286,121 @@
               if (node.attributes.length > 0) {
                 obj["@attributes"] = {};
                 for (let j = 0; j < node.attributes.length; j++) {
-                  const attr = node.attributes.item(j);
-                  obj["@attributes"][attr.nodeName] = attr.nodeValue;
+                  const attribute = node.attributes.item(j);
+                  obj["@attributes"][attribute.nodeName] = attribute.nodeValue;
                 }
               }
             } else if (node.nodeType === 3) {
-              return node.nodeValue.trim();
+              obj = node.nodeValue;
             }
             if (node.hasChildNodes()) {
               for (let i = 0; i < node.childNodes.length; i++) {
                 const item = node.childNodes.item(i);
                 const nodeName = item.nodeName;
                 if (typeof obj[nodeName] == "undefined") {
-                  const res = xmlToJson(item);
-                  if (res) obj[nodeName] = res;
+                  obj[nodeName] = xmlToJson(item);
                 } else {
                   if (typeof obj[nodeName].push == "undefined") {
                     const old = obj[nodeName];
                     obj[nodeName] = [];
                     obj[nodeName].push(old);
                   }
-                  const res = xmlToJson(item);
-                  if (res) obj[nodeName].push(res);
+                  obj[nodeName].push(xmlToJson(item));
                 }
               }
             }
             return obj;
           }
-          return JSON.stringify(xmlToJson(xml.documentElement), null, 2);
+          return JSON.stringify(xmlToJson(xml), null, 2);
         }
         if (file.includes('csv-to-json')) {
-          const lines = input.trim().split('
-');
-          const headers = lines[0].split(',');
-          const result = lines.slice(1).map(line => {
-            const values = line.split(',');
-            return headers.reduce((obj, header, index) => {
-              obj[header.trim()] = values[index] ? values[index].trim() : '';
-              return obj;
-            }, {});
-          });
+          const lines = input.trim().split('\n');
+          const headers = lines[0].split(',').map(h => h.trim());
+          const result = [];
+          for (let i = 1; i < lines.length; i++) {
+            const currentline = lines[i].split(',');
+            if (currentline.length === headers.length) {
+              let obj = {};
+              for (let j = 0; j < headers.length; j++) {
+                obj[headers[j]] = currentline[j].trim();
+              }
+              result.push(obj);
+            }
+          }
           return JSON.stringify(result, null, 2);
         }
         if (file.includes('csv-to-sql')) {
-          const lines = input.trim().split('
-');
+          const lines = input.trim().split('\n');
           const headers = lines[0].split(',').map(h => h.trim());
-          const tableName = "imported_table";
-          return lines.slice(1).map(line => {
-            const vals = line.split(',').map(v => `'${v.trim().replace(/'/g, "''")}'`);
-            return `INSERT INTO ${tableName} (${headers.join(', ')}) VALUES (${vals.join(', ')});`;
-          }).join('
-');
-        }
-        if (file.includes('json-to-yaml')) {
-          const obj = JSON.parse(input);
-          function toYAML(o, depth = 0) {
-            let indent = '  '.repeat(depth);
-            if (typeof o !== 'object' || o === null) return String(o);
-            let str = '';
-            for (let k in o) {
-              if (typeof o[k] === 'object' && o[k] !== null) {
-                str += `${indent}${k}:
-${toYAML(o[k], depth + 1)}
-`;
-              } else {
-                str += `${indent}${k}: ${o[k]}
-`;
-              }
+          let sql = `INSERT INTO table_name (${headers.join(', ')}) VALUES\n`;
+          const rows = [];
+          for (let i = 1; i < lines.length; i++) {
+            const vals = lines[i].split(',').map(v => `'${v.trim().replace(/'/g, "''")}'`);
+            if (vals.length === headers.length) {
+              rows.push(`(${vals.join(', ')})`);
             }
-            return str.trim();
           }
-          return toYAML(obj);
-        }
-        if (file.includes('json-to-typescript')) {
-          const obj = JSON.parse(input);
-          function toTS(o, name = 'Root') {
-            let res = `export interface ${name} {
-`;
-            for (let k in o) {
-              let type = typeof o[k];
-              if (Array.isArray(o[k])) type = 'any[]';
-              else if (type === 'object' && o[k] !== null) type = 'Record<string, any>';
-              res += `  ${k}: ${type};
-`;
-            }
-            return res + '}';
-          }
-          return toTS(obj);
+          return sql + rows.join(',\n') + ';';
         }
         if (file.includes('json-to-go')) {
           const obj = JSON.parse(input);
-          let res = 'type AutoGenerated struct {
-';
+          let go = "type AutoGenerated struct {\n";
           for (let k in obj) {
-            let field = k.replace(/(^|_)([a-z])/g, (g) => g.toUpperCase().replace('_', ''));
-            let type = typeof obj[k] === 'number' ? 'int64' : typeof obj[k] === 'boolean' ? 'bool' : 'string';
-            res += `	${field} ${type} \`json:"${k}"\`
-`;
+            const val = obj[k];
+            let t = "string";
+            if (typeof val === 'number') t = Number.isInteger(val) ? "int" : "float64";
+            if (typeof val === 'boolean') t = "bool";
+            if (Array.isArray(val)) t = "[]interface{}";
+            if (typeof val === 'object' && val !== null && !Array.isArray(val)) t = "struct";
+            const fieldName = k.charAt(0).toUpperCase() + k.slice(1);
+            go += `	${fieldName} ${t} \`json:"${k}"\`\n`;
           }
-          return res + '}';
+          return go + "}";
         }
         if (file.includes('json-to-rust')) {
           const obj = JSON.parse(input);
-          let res = '#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-';
-          res += 'pub struct Root {
-';
+          let rust = `#[derive(Default, Debug, Serialize, Deserialize)]\n#[serde(rename_all = "camelCase")]\npub struct AutoGenerated {\n`;
           for (let k in obj) {
-            let type = typeof obj[k] === 'number' ? 'i64' : typeof obj[k] === 'boolean' ? 'bool' : 'String';
-            res += `    pub ${k}: ${type},
-`;
+            const val = obj[k];
+            let t = "String";
+            if (typeof val === 'number') t = Number.isInteger(val) ? "i64" : "f64";
+            if (typeof val === 'boolean') t = "bool";
+            if (Array.isArray(val)) t = "Vec<Value>";
+            rust += `    pub ${k}: ${t},\n`;
           }
-          return res + '}';
+          return rust + "}";
+        }
+        if (file.includes('json-to-typescript')) {
+          const obj = JSON.parse(input);
+          let ts = `export interface RootObject {\n`;
+          for (let k in obj) {
+            const val = obj[k];
+            let t = typeof val;
+            if (Array.isArray(val)) t = "any[]";
+            ts += `  ${k}: ${t};\n`;
+          }
+          return ts + "}";
         }
         if (file.includes('json-to-python')) {
           const obj = JSON.parse(input);
-          let res = 'from dataclasses import dataclass
-
-@dataclass
-class RootPayload:
-';
+          let py = `from dataclasses import dataclass\nfrom typing import Any\n\n@dataclass\nclass AutoGenerated:\n`;
           for (let k in obj) {
-            let type = typeof obj[k] === 'number' ? 'int' : typeof obj[k] === 'boolean' ? 'bool' : 'str';
-            res += `    ${k}: ${type}
-`;
+            const val = obj[k];
+            let t = "str";
+            if (typeof val === 'number') t = Number.isInteger(val) ? "int" : "float";
+            if (typeof val === 'boolean') t = "bool";
+            if (Array.isArray(val)) t = "list";
+            py += `    ${k}: ${t}\n`;
           }
-          return res;
+          return py;
         }
-        if (file.includes('typescript-to-javascript')) {
-          return input.replace(/interface\s+\w+\s*\{[\s\S]*?\}/g, '').replace(/type\s+\w+\s*=[^;]+;/g, '').replace(/:\s*(string|number|boolean|any|void|object)(\[\])?/g, '').replace(/<[^>]+>/g, '').trim();
-        }
-        if (file.includes('toml-to-json')) {
-          let obj = {};
-          let cur = obj;
-          input.split('
-').forEach(line => {
-            line = line.trim();
-            if (line.startsWith('[') && line.endsWith(']')) {
-              let key = line.slice(1, -1);
-              obj[key] = {};
-              cur = obj[key];
-            } else if (line.includes('=')) {
-              let [k, v] = line.split('=').map(s => s.trim().replace(/^"|"$/g, ''));
-              cur[k] = v;
-            }
-          });
-          return JSON.stringify(obj, null, 2);
+        if (file.includes('json-to-yaml') || file.includes('toml-to-json') || file.includes('yaml-to-json')) {
+          const obj = JSON.parse(input);
+          let yaml = "";
+          for (let k in obj) {
+            yaml += `${k}: ${JSON.stringify(obj[k])}\n`;
+          }
+          return yaml;
         }
         if (file.includes('url-query-string')) {
           const params = new URLSearchParams(input.includes('?') ? input.split('?')[1] : input);
@@ -464,9 +416,7 @@ class RootPayload:
           return JSON.stringify(obj, null, 2);
         }
         if (file.includes('string-escape-unescape')) {
-          return input.replace(/\/g, '\\').replace(/"/g, '\"').replace(/
-/g, '\n').replace(/
-/g, '\r').replace(/	/g, '\t');
+          return input.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '\\r').replace(/\t/g, '\\t');
         }
         if (file.includes('php-serialize')) {
           let obj = {};
@@ -486,7 +436,7 @@ class RootPayload:
           }
           return JSON.stringify(unwrapBSON(obj), null, 2);
         }
-        if (file.includes('babel-js')) {
+        if (file.includes('babel-js') || file.includes('typescript-to-javascript')) {
           return input.replace(/const|let/g, 'var').replace(/\(([^)]*)\)\s*=>\s*\{/g, 'function($1) {').replace(/`([^`]*)`/g, '"$1"');
         }
         if (file.includes('protobuf-to-json')) {
