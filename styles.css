@@ -125,6 +125,24 @@ header {
   border: 1px solid rgba(56, 189, 248, 0.2);
 }
 
+/* Distinct Support/Utility Capsule Button */
+.nav-links a.nav-support,
+.nav-links a[href^="mailto:"] {
+  margin-left: 0.6rem;
+  color: var(--accent);
+  background: rgba(129, 140, 248, 0.12);
+  border: 1px solid rgba(129, 140, 248, 0.3);
+  font-weight: 600;
+}
+
+.nav-links a.nav-support:hover,
+.nav-links a[href^="mailto:"]:hover {
+  background: rgba(129, 140, 248, 0.25);
+  color: #ffffff;
+  border-color: var(--accent);
+  box-shadow: 0 0 10px rgba(129, 140, 248, 0.25);
+}
+
 /* Main Content Area */
 main {
   flex: 1;
