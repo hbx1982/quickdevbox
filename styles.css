@@ -638,3 +638,28 @@ footer a:hover {
   border-radius: 6px;
   text-align: center;
 }
+
+/* Fill Sample Data Button Soft Pulse Glow Animation */
+.btn-sample, button[onclick*="loadSampleData"], button[id="btnSample"] {
+  animation: samplePulse 3.2s infinite ease-in-out;
+  border: 1px solid rgba(251, 191, 36, 0.4) !important;
+  color: #fbbf24 !important;
+  background: rgba(251, 191, 36, 0.08) !important;
+}
+
+.btn-sample:hover, button[onclick*="loadSampleData"]:hover, button[id="btnSample"]:hover {
+  background: rgba(251, 191, 36, 0.2) !important;
+  box-shadow: 0 0 16px rgba(251, 191, 36, 0.4) !important;
+}
+
+@keyframes samplePulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 14px 3px rgba(251, 191, 36, 0.25);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.35);
+  }
+}
