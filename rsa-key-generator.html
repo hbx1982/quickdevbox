@@ -7,6 +7,9 @@
   <meta name="description" content="Free online RSA Key Generator. Generate secure 2048-bit and 4096-bit RSA public and private key pairs in PKCS#8 / SPKI PEM format using WebCrypto API.">
   <link rel="canonical" href="https://quickdevbox.com/rsa-key-generator.html">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css?v=2.0">
 
   <!-- Complete OpenGraph & Social Preview Tags -->
@@ -97,7 +100,7 @@
         </div>
         <div style="background:rgba(255,255,255,0.03); padding:1.25rem; border-radius:var(--radius-md); border:1px solid var(--bg-card-border);">
           <label style="display:block; color:var(--text-muted); font-size:0.85rem; font-weight:600; margin-bottom:0.3rem;">Input String / Payload:</label>
-          <textarea data-ux="input" id="toolInput" rows="5" oninput="updateCounter();" style="width:100%; font-family:monospace; background:#040711; color:#00f2fe; border:1px solid var(--bg-card-border); border-radius:6px; padding:0.8rem;">2048-bit RSA PKCS#8</textarea>
+          <textarea data-ux="input-nopersist" id="toolInput" rows="5" oninput="updateCounter();" style="width:100%; font-family:monospace; background:#040711; color:#00f2fe; border:1px solid var(--bg-card-border); border-radius:6px; padding:0.8rem;">2048-bit RSA PKCS#8</textarea>
         </div>
 
         <div class="tool-controls" style="margin-top:0.8rem;">
@@ -155,15 +158,15 @@
     </section>
   </main>
 
-  <footer>
-    <p>&copy; 2026 QuickDevBox.com - <a href="mailto:support@quickdevbox.com?subject=QuickDevBox%20Support">✉️ Contact Support</a> | </p><div class="footer-container">
-      <p>&copy; 2026 QuickDevBox.com - Free Online Developer Tools. 100% Client-Side Processing.</p>
-      <div class="footer-links">
-        <a href="index.html">Home</a>
-        <a href="privacy-policy.html">Privacy Policy</a>
-        <a href="terms.html">Terms of Service</a>
-        <a href="about.html">About</a>
-      </div>
+    <footer>
+    <div class="footer-container" style="max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem; text-align: center; color: var(--text-muted); font-size: 0.85rem; border-top: 1px solid var(--bg-card-border);">
+      <p>&copy; 2026 QuickDevBox.com — Free, Open Source &amp; Privacy-First Developer Tools</p>
+      <p style="margin-top: 0.5rem;">
+        <a href="privacy-policy.html" style="color: var(--text-muted); text-decoration: none; margin: 0 0.5rem;">Privacy Policy</a> |
+        <a href="terms.html" style="color: var(--text-muted); text-decoration: none; margin: 0 0.5rem;">Terms of Service</a> |
+        <a href="about.html" style="color: var(--text-muted); text-decoration: none; margin: 0 0.5rem;">About</a> |
+        <a href="mailto:support@quickdevbox.com?subject=QuickDevBox%20Feedback" style="color: var(--text-muted); text-decoration: none; margin: 0 0.5rem;">✉️ Contact Support</a>
+      </p>
     </div>
   </footer>
 

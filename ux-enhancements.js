@@ -1,38 +1,58 @@
 /**
  * QuickDevBox UX Enhancements (Data-Attribute Driven)
  * Automatically loaded on all tool pages.
+ * Supports: LocalStorage Persistence, Drag & Drop, Auto-Trigger, Incognito Safeguards, Sensitive Data Non-Persistence.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Safe LocalStorage Wrapper (Prevents Incognito Mode & Restricted Permission Exception Throws)
+    const SafeStorage = {
+        getItem: (key) => {
+            try { return localStorage.getItem(key); } catch (e) { return null; }
+        },
+        setItem: (key, val) => {
+            try { localStorage.setItem(key, val); } catch (e) {}
+        },
+        removeItem: (key) => {
+            try { localStorage.removeItem(key); } catch (e) {}
+        }
+    };
+
     // Locate elements marked with specific data-attributes
-    const inputAreas = document.querySelectorAll('textarea[data-ux="input"]');
+    const inputAreas = document.querySelectorAll('textarea[data-ux="input"], textarea[data-ux="input-nopersist"]');
     const primaryBtns = document.querySelectorAll('button[data-ux="action-primary"]');
     const clearBtns = document.querySelectorAll('button[data-ux="action-clear"]');
     const pageId = window.location.pathname.split('/').pop().replace('.html', '') || 'index';
 
     // 1. Hook Input Areas (Persistence, Drag & Drop, Auto-Trigger)
     inputAreas.forEach((ta, index) => {
+        const isNoPersist = ta.getAttribute('data-ux') === 'input-nopersist' || ta.hasAttribute('data-no-persist');
         const storageKey = `qdb_${pageId}_input_${index}`;
 
-        // Restore from LocalStorage
-        const saved = localStorage.getItem(storageKey);
-        if (saved !== null && saved !== "") {
-            ta.value = saved;
-            // Trigger native UI updates if defined globally
-            if (typeof updateCounter === 'function') setTimeout(updateCounter, 50);
+        // Restore from LocalStorage if allowed
+        if (!isNoPersist) {
+            const saved = SafeStorage.getItem(storageKey);
+            if (saved !== null && saved !== "") {
+                ta.value = saved;
+                if (typeof updateCounter === 'function') setTimeout(updateCounter, 50);
+            }
         }
 
-        // Save on input
+        // Save on input (if allowed)
         ta.addEventListener('input', () => {
-            localStorage.setItem(storageKey, ta.value);
+            if (!isNoPersist) {
+                SafeStorage.setItem(storageKey, ta.value);
+            }
         });
 
         // Auto-Trigger on Paste
         ta.addEventListener('paste', () => {
             setTimeout(() => {
-                localStorage.setItem(storageKey, ta.value);
+                if (!isNoPersist) {
+                    SafeStorage.setItem(storageKey, ta.value);
+                }
                 triggerPrimary();
-            }, 50); // wait for paste to render
+            }, 50);
         });
 
         // Drag & Drop
@@ -67,10 +87,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 const reader = new FileReader();
                 reader.onload = (event) => {
                     ta.value = event.target.result;
-                    localStorage.setItem(storageKey, ta.value);
+                    if (!isNoPersist) {
+                        SafeStorage.setItem(storageKey, ta.value);
+                    }
                     if (typeof updateCounter === 'function') updateCounter();
                     
-                    // Auto-Trigger after file read
                     triggerPrimary();
                 };
                 reader.readAsText(file);
@@ -82,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
     clearBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             inputAreas.forEach((ta, index) => {
-                localStorage.removeItem(`qdb_${pageId}_input_${index}`);
+                SafeStorage.removeItem(`qdb_${pageId}_input_${index}`);
             });
         });
     });

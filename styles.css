@@ -4,8 +4,6 @@
    Style Concept: Modern Dark / High-Tech Glassmorphism / Vibrant Accents
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
-
 :root {
   --bg-dark: #090d16;
   --bg-card: rgba(15, 23, 42, 0.75);

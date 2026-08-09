@@ -7,6 +7,9 @@
   <meta name="description" content="Free online Text & Code Diff Checker. Compare two text files side-by-side to highlight additions, deletions, and line differences client-side.">
   <link rel="canonical" href="https://quickdevbox.com/diff-checker.html">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 
   <!-- Complete OpenGraph & Social Preview Tags -->
@@ -182,8 +185,16 @@
 
   </main>
 
-  <footer>
-    <p>&copy; 2026 QuickDevBox.com - <a href="mailto:support@quickdevbox.com?subject=QuickDevBox%20Support">✉️ Contact Support</a> | <a href="privacy-policy.html">Privacy Policy</a> | <a href="terms.html">Terms of Service</a> | <a href="about.html">About Us</a></p>
+    <footer>
+    <div class="footer-container" style="max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem; text-align: center; color: var(--text-muted); font-size: 0.85rem; border-top: 1px solid var(--bg-card-border);">
+      <p>&copy; 2026 QuickDevBox.com — Free, Open Source &amp; Privacy-First Developer Tools</p>
+      <p style="margin-top: 0.5rem;">
+        <a href="privacy-policy.html" style="color: var(--text-muted); text-decoration: none; margin: 0 0.5rem;">Privacy Policy</a> |
+        <a href="terms.html" style="color: var(--text-muted); text-decoration: none; margin: 0 0.5rem;">Terms of Service</a> |
+        <a href="about.html" style="color: var(--text-muted); text-decoration: none; margin: 0 0.5rem;">About</a> |
+        <a href="mailto:support@quickdevbox.com?subject=QuickDevBox%20Feedback" style="color: var(--text-muted); text-decoration: none; margin: 0 0.5rem;">✉️ Contact Support</a>
+      </p>
+    </div>
   </footer>
 
   <script>
@@ -202,9 +213,13 @@
       const maxLen = Math.max(oldTxt.length, newTxt.length);
       let diffCount = 0;
 
+      function escapeHTML(str) {
+        return (str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+      }
+
       for (let i = 0; i < maxLen; i++) {
-        const lineOld = oldTxt[i] || '';
-        const lineNew = newTxt[i] || '';
+        const lineOld = escapeHTML(oldTxt[i] || '');
+        const lineNew = escapeHTML(newTxt[i] || '');
 
         if (lineOld === lineNew) {
           html += `<div style="color:var(--text-muted); padding:2px 0;">  ${lineOld}</div>`;
