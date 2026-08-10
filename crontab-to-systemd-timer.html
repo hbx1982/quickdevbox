@@ -270,9 +270,34 @@ function parseDevOpsPayload(input) {
     }
 
     
-    function computeSpecificToolLogic(input, file) {
-      let timer = `[Unit]\nDescription=Systemd Timer Schedule for ${input}\n\n[Timer]\nOnCalendar=Mon *-*-* 03:00:00\nPersistent=true\n\n[Install]\nWantedBy=timers.target\n`;
-      return timer;
+    function computeSpecificToolLogic(input) {
+      const parts = input.trim().split(/\s+/);
+      if (parts.length < 5) throw new Error("Invalid cron expression. Expected at least 5 fields.");
+      
+      const [min, hr, dom, mon, dow] = parts;
+      const cmd = parts.slice(5).join(' ') || '/bin/true';
+      
+      const dowMap = {'0': 'Sun', '1': 'Mon', '2': 'Tue', '3': 'Wed', '4': 'Thu', '5': 'Fri', '6': 'Sat', '7': 'Sun'};
+      let s_dow = '';
+      if (dow !== '*' && dow !== '?') {
+          s_dow = dow.split(',').map(part => {
+              return part.split('-').map(p => dowMap[p] || p).join('-');
+          }).join(',');
+      }
+      
+      let s_min = min.replace(/\*\//g, '0/');
+      let s_hr = hr.replace(/\*\//g, '0/');
+      let s_dom = dom.replace(/\*\//g, '*/'); // Systemd supports */n for dom? Just let it be.
+      
+      let onCalendar = `*-${mon}-${dom} ${s_hr}:${s_min}:00`;
+      if (s_dow) {
+          onCalendar = `${s_dow} ${onCalendar}`;
+      }
+      
+      const timer = `[Unit]\nDescription=Timer for ${cmd}\n\n[Timer]\nOnCalendar=${onCalendar}\nPersistent=true\n\n[Install]\nWantedBy=timers.target`;
+      const service = `[Unit]\nDescription=Service for ${cmd}\n\n[Service]\nType=oneshot\nExecStart=${cmd}`;
+      
+      return `# --- .timer unit ---\n${timer}\n\n# --- .service unit ---\n${service}\n`;
     }
     
 

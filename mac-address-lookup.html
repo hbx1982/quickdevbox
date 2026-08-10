@@ -278,6 +278,42 @@ function parseDevOpsPayload(input) {
     }
 
     
+    const OUI_DATABASE = {
+      "00:00:0C": "Cisco Systems",
+      "00:01:42": "Cisco Systems",
+      "00:01:43": "Cisco Systems",
+      "00:0A:95": "Apple",
+      "00:14:22": "Dell",
+      "00:1A:11": "Google",
+      "00:1A:2B": "Aya Networks",
+      "00:1B:44": "SanDisk",
+      "00:1E:C2": "Apple",
+      "00:21:CC": "Sony",
+      "00:23:14": "Intel",
+      "00:24:BE": "Samsung",
+      "00:50:56": "VMware",
+      "00:0C:29": "VMware",
+      "00:05:69": "VMware",
+      "00:16:3E": "Xensource",
+      "08:00:27": "VirtualBox",
+      "52:54:00": "QEMU",
+      "B8:27:EB": "Raspberry Pi Foundation",
+      "DC:A6:32": "Raspberry Pi Trading",
+      "E4:5F:01": "Raspberry Pi Trading",
+      "F0:9F:C2": "Ubiquiti",
+      "B4:FB:E4": "Ubiquiti",
+      "00:11:32": "Synology",
+      "00:11:D8": "Asustek",
+      "E0:CB:4E": "Asustek",
+      "00:25:9C": "Cisco Systems",
+      "3C:5A:B4": "Google",
+      "44:85:00": "Ericsson",
+      "5C:51:4F": "Samsung",
+      "68:A8:6D": "Cisco Systems",
+      "74:E1:B6": "Samsung",
+      "80:CE:62": "Apple"
+    };
+
     function computeSpecificToolLogic(input, file) {
       let hex = input.replace(/[^a-fA-F0-9]/g, '');
       if (hex.length < 6) throw new Error("MAC address must contain at least 6 hex characters (OUI prefix).");
@@ -291,12 +327,15 @@ function parseDevOpsPayload(input) {
       let firstByte = parseInt(hex.substring(0, 2), 16);
       let isMulticast = (firstByte & 1) !== 0;
       let isLocal = (firstByte & 2) !== 0;
+      
+      let vendor = OUI_DATABASE[oui] || "Unknown / Not found in common database";
 
       let out = `=== MAC Address OUI & Format Report ===\n`;
       out += `Colon Format  : ${colon}\n`;
       out += `Hyphen Format : ${hyphen}\n`;
       out += `Cisco Dot     : ${dot}\n`;
-      out += `OUI Prefix    : ${oui}\n\n`;
+      out += `OUI Prefix    : ${oui}\n`;
+      out += `Vendor        : ${vendor}\n\n`;
       out += `Address Type  : ${isMulticast ? 'Multicast (Group)' : 'Unicast (Individual)'}\n`;
       out += `Scope         : ${isLocal ? 'Locally Administered' : 'Globally Unique (IEEE OUI Assigned)'}\n`;
       return out;

@@ -12,6 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css?v=2.2">
+  <script src="https://unpkg.com/terser@4.8.1/dist/bundle.min.js"></script>
 
   <!-- Complete OpenGraph & Social Preview Tags -->
   <meta property="og:title" content="Online JavaScript Minifier & Script Compressor - QuickDevBox">
@@ -245,7 +246,14 @@
           if (file.includes('json')) return JSON.stringify(JSON.parse(input));
           if (file.includes('html')) return input.replace(/<!--[\s\S]*?-->/g, '').replace(/\s+/g, ' ').replace(/>\s+</g, '><').trim();
           if (file.includes('css')) return input.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\s+/g, ' ').replace(/\s*([{}:;,])\s*/g, '$1').trim();
-          if (file.includes('javascript')) return input.replace(/\/\/[^\r\n]*|\/\*[\s\S]*?\*\//g, '').replace(/\s+/g, ' ').replace(/\s*([{}:();,=+-])\s*/g, '$1').trim();
+          if (file.includes('javascript')) {
+            if (typeof Terser !== 'undefined') {
+              const result = Terser.minify(input);
+              if (result.error) throw result.error;
+              return result.code;
+            }
+            return input.replace(/\/\/[^\r\n]*|\/\*[\s\S]*?\*\//g, '').replace(/\s+/g, ' ').replace(/\s*([{}:();,=+-])\s*/g, '$1').trim();
+          }
         }
         if (file.includes('beautifier') || file.includes('formatter')) {
           if (file.includes('html')) {
@@ -409,7 +417,7 @@
           return JSON.stringify(obj, null, 2);
         }
         if (file.includes('string-escape-unescape')) {
-          return input.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '\\r').replace(/\t/g, '\\t');
+          return input.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\n').replace(/\r/g, '\\r').replace(/\t/g, '\\t');
         }
         if (file.includes('php-serialize')) {
           let obj = {};

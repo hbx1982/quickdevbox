@@ -106,7 +106,8 @@
 
 
         <div class="controls-bar" style="margin: 1rem 0; display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
-          <button class="btn btn-primary" id="btnProcess">🚀 Run Conversion (Ctrl+Enter)</button>
+          <button class="btn btn-primary" id="btnProcess">🚀 Escape String (Ctrl+E)</button>
+          <button class="btn btn-primary" id="btnUnescape">🔓 Unescape String (Ctrl+D)</button>
           <button class="btn btn-secondary" id="btnCopy">📋 Copy Result</button>
           <span id="statusMsg" style="font-size: 0.85rem; color: var(--success); display: none;"></span>
         </div>
@@ -234,6 +235,28 @@
         } catch (err) {
           outputEl.value = 'Error: ' + err.message;
           showStatus('Processing failed: ' + err.message, true);
+        }
+      }
+
+      function executeUnescape() {
+        const input = inputEl.value;
+        if (input.length > 2000000) {
+          showStatus('Input exceeds 2MB safety limit. Aborted to prevent memory crash.', true);
+          return;
+        }
+
+        try {
+          let result = input.replace(/\\n/g, '\n')
+                            .replace(/\\r/g, '\r')
+                            .replace(/\\t/g, '\t')
+                            .replace(/\\"/g, '"')
+                            .replace(/\\\\/g, '\\');
+          outputEl.value = result;
+          updateStats(outputEl, outputStats);
+          showStatus('Unescaped successfully!');
+        } catch (err) {
+          outputEl.value = 'Error: ' + err.message;
+          showStatus('Unescaping failed: ' + err.message, true);
         }
       }
 
@@ -446,6 +469,8 @@
 
       inputEl.addEventListener('input', () => updateStats(inputEl, inputStats));
       btnProcess.addEventListener('click', executeTool);
+      const btnUnescape = document.getElementById('btnUnescape');
+      if (btnUnescape) btnUnescape.addEventListener('click', executeUnescape);
       btnSample.addEventListener('click', () => {
         inputEl.value = sampleData;
         updateStats(inputEl, inputStats);
@@ -466,9 +491,19 @@
       });
 
       document.addEventListener('keydown', (e) => {
-        if (e.ctrlKey && e.key === 'Enter') {
-          e.preventDefault();
-          executeTool();
+        if (e.ctrlKey || e.metaKey) {
+          if (e.key === 'e' || e.key === 'E') {
+            e.preventDefault();
+            executeTool();
+          }
+          if (e.key === 'd' || e.key === 'D') {
+            e.preventDefault();
+            executeUnescape();
+          }
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            executeTool();
+          }
         }
       });
     });

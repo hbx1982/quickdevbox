@@ -58,6 +58,7 @@
   gtag('config', 'G-E0LZHPD7SL');
 </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sha3/0.8.0/sha3.min.js"></script>
 </head>
 <body>
 
@@ -185,7 +186,7 @@
       const output = document.getElementById('toolOutput');
       if (input.length > 2 * 1024 * 1024) { alert("Payload exceeds 2MB safety threshold."); return; }
       try {
-        output.value = "Keccak-256 (CryptoJS SHA3): " + CryptoJS.SHA3(input, { outputLength: 256 }).toString() + "\\nKeccak-512 (CryptoJS SHA3): " + CryptoJS.SHA3(input, { outputLength: 512 }).toString();
+        output.value = "NIST SHA3-256: " + window.sha3_256(input) + "\n\nEthereum Keccak-256: " + window.keccak_256(input);
       } catch(e) { output.value = "Error: " + e.message; }
     }
 

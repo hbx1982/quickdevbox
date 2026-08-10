@@ -409,13 +409,92 @@
           return JSON.stringify(obj, null, 2);
         }
         if (file.includes('string-escape-unescape')) {
-          return input.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '\\r').replace(/\t/g, '\\t');
+          return input.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\n').replace(/\r/g, '\\r').replace(/\t/g, '\\t');
         }
         if (file.includes('php-serialize')) {
-          let obj = {};
-          const matches = [...input.matchAll(/s:(\d+):"([^"]+)";s:(\d+):"([^"]+)";/g)];
-          matches.forEach(m => { obj[m[2]] = m[4]; });
-          return JSON.stringify(obj, null, 2);
+          function unserialize(str) {
+            let idx = 0;
+            function parse() {
+              if (idx >= str.length) return null;
+              let type = str.charAt(idx);
+              let val, len, obj, key;
+              switch (type) {
+                case 'i':
+                case 'd':
+                  let semi = str.indexOf(';', idx);
+                  val = Number(str.substring(idx + 2, semi));
+                  idx = semi + 1;
+                  return val;
+                case 'b':
+                  val = str.charAt(idx + 2) === '1';
+                  idx += 4;
+                  return val;
+                case 'N':
+                  idx += 2;
+                  return null;
+                case 's':
+                  let c1 = str.indexOf(':', idx + 2);
+                  len = parseInt(str.substring(idx + 2, c1), 10);
+                  let start = c1 + 2;
+                  let b = 0, c = 0;
+                  while (b < len && start + c < str.length) {
+                    let code = str.charCodeAt(start + c);
+                    if (code <= 0x7F) b += 1;
+                    else if (code <= 0x7FF) b += 2;
+                    else if (code >= 0xD800 && code <= 0xDBFF) { b += 4; c++; }
+                    else b += 3;
+                    c++;
+                  }
+                  val = str.substring(start, start + c);
+                  idx = start + c + 2;
+                  return val;
+                case 'a':
+                  let c2 = str.indexOf(':', idx + 2);
+                  len = parseInt(str.substring(idx + 2, c2), 10);
+                  idx = c2 + 2;
+                  let isArr = true, arr = [], dict = {};
+                  for (let i = 0; i < len; i++) {
+                    key = parse();
+                    val = parse();
+                    if (isArr && key !== i) isArr = false;
+                    dict[key] = val;
+                    if (isArr) arr.push(val);
+                  }
+                  idx++;
+                  return isArr ? arr : dict;
+                case 'O':
+                  let c3 = str.indexOf(':', idx + 2);
+                  let cLen = parseInt(str.substring(idx + 2, c3), 10);
+                  idx = c3 + 2;
+                  let bc = 0, cc = 0;
+                  while (bc < cLen && idx + cc < str.length) {
+                    let code = str.charCodeAt(idx + cc);
+                    if (code <= 0x7F) bc += 1;
+                    else if (code <= 0x7FF) bc += 2;
+                    else if (code >= 0xD800 && code <= 0xDBFF) { bc += 4; cc++; }
+                    else bc += 3;
+                    cc++;
+                  }
+                  let cName = str.substring(idx, idx + cc);
+                  idx = idx + cc + 2;
+                  let pLen = parseInt(str.substring(idx, str.indexOf(':', idx)), 10);
+                  idx = str.indexOf('{', idx) + 1;
+                  obj = { __className: cName };
+                  for (let i = 0; i < pLen; i++) {
+                    key = parse();
+                    val = parse();
+                    if (typeof key === 'string') key = key.replace(/\0.*?\0/, '').replace(/^\0/, '');
+                    obj[key] = val;
+                  }
+                  idx++;
+                  return obj;
+                default:
+                  throw new Error("Unknown type at idx " + idx + ": " + type);
+              }
+            }
+            return parse();
+          }
+          return JSON.stringify(unserialize(input.trim()), null, 2);
         }
         if (file.includes('bson-json')) {
           const obj = JSON.parse(input);

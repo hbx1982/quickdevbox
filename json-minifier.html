@@ -409,7 +409,7 @@
           return JSON.stringify(obj, null, 2);
         }
         if (file.includes('string-escape-unescape')) {
-          return input.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '\\r').replace(/\t/g, '\\t');
+          return input.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\n').replace(/\r/g, '\\r').replace(/\t/g, '\\t');
         }
         if (file.includes('php-serialize')) {
           let obj = {};

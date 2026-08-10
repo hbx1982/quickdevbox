@@ -90,30 +90,38 @@
 
     <div class="editor-stacked">
       <div class="tool-controls" style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem;">
-        <button class="btn btn-sample" onclick="loadSampleData()" style="animation: samplePulse 3.2s infinite ease-in-out;">💡 Fill Sample Data</button>
-        <button class="btn btn-primary" data-ux="action-primary" onclick="generateOutput()">⚡ Process Media (Ctrl+Enter)</button>
+        <button class="btn btn-sample" onclick="loadSampleData()" style="animation: samplePulse 3.2s infinite ease-in-out;">💡 Load Sample Image</button>
         <button class="btn btn-secondary" data-ux="action-clear" onclick="clearInputs()">🗑️ Clear</button>
-        <button class="btn btn-secondary" onclick="copyOutput()">📋 Copy Result</button>
       </div>
 
       <div class="editor-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
         <div class="editor-box">
           <div class="editor-header">
-            <span>⚙️ File Upload &amp; Input</span><span class="editor-counter" style="font-size:0.75rem; color:var(--text-muted);">Length: 0 chars</span>
+            <span>⚙️ File Upload</span>
           </div>
           <input type="file" id="imageFileInput" accept="image/*" style="display: none;" onchange="handleFileSelected(event)">
           <button class="btn btn-secondary" onclick="document.getElementById('imageFileInput').click()" style="width: 100%; margin-bottom: 0.75rem;">📁 Choose Local Image File</button>
-          <textarea id="mediaInput" class="code-editor" data-ux="input" rows="8" placeholder="Paste image Data URI, SVG markup, or raw Base64 string here..."></textarea>
+          
+          <div style="position: relative; overflow: hidden; border-radius: 6px; border: 1px dashed var(--bg-card-border); background: rgba(0,0,0,0.2); min-height: 250px; display: flex; align-items: center; justify-content: center;">
+             <canvas id="imageCanvas" style="display:none; max-width: 100%; cursor: crosshair;"></canvas>
+             <span id="canvasPlaceholder" style="color: var(--text-muted);">No image loaded</span>
+          </div>
         </div>
 
         <div class="editor-box">
           <div class="editor-header">
-            <span>👁️ Live Preview &amp; Output</span>
+            <span>👁️ Picked Color</span>
           </div>
-          <div id="mediaPreviewBox" style="min-height: 120px; background: rgba(0,0,0,0.3); border-radius: 6px; border: 1px dashed var(--bg-card-border); margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 600;">
-            Media Canvas Preview Area
+          <div id="colorPreview" style="min-height: 120px; background: rgba(0,0,0,0.3); border-radius: 6px; border: 1px dashed var(--bg-card-border); margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 600; text-shadow: 0 1px 3px rgba(0,0,0,0.5);">
+            Hover/Click over image to pick color
           </div>
-          <textarea id="mediaOutput" class="code-editor" rows="5" readonly placeholder="Output Base64, Hex codes, or generated markup will appear here..."></textarea>
+          <div style="display: flex; gap: 0.5rem; flex-direction: column;">
+             <label style="color:var(--text-heading); font-size:0.9rem; font-weight:600;">Hex:</label>
+             <input type="text" id="hexOutput" class="code-editor" readonly style="height:40px; margin-bottom:0.5rem;" />
+             <label style="color:var(--text-heading); font-size:0.9rem; font-weight:600;">RGB:</label>
+             <input type="text" id="rgbOutput" class="code-editor" readonly style="height:40px; margin-bottom:1rem;" />
+             <button class="btn btn-primary" onclick="copyHex()">📋 Copy Hex</button>
+          </div>
         </div>
       </div>
 
@@ -197,11 +205,15 @@
       setTimeout(() => { el.style.display = 'none'; }, 3000);
     }
 
+    let canvas, ctx, imgElement;
+
     function loadSampleData() {
-      const svgSample = '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="#6366f1"/><circle cx="50" cy="50" r="30" fill="#a855f7"/></svg>';
-      document.getElementById('mediaInput').value = svgSample;
-      generateOutput();
-      showStatus("Loaded sample vector graphic!");
+      const img = new Image();
+      img.onload = function() {
+        setupCanvas(this);
+      }
+      img.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300"><defs><linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:rgb(255,0,0);stop-opacity:1" /><stop offset="50%" style="stop-color:rgb(0,255,0);stop-opacity:1" /><stop offset="100%" style="stop-color:rgb(0,0,255);stop-opacity:1" /></linearGradient></defs><rect width="300" height="300" fill="url(%23grad1)" /></svg>';
+      showStatus("Loaded sample image!");
     }
 
     function handleFileSelected(event) {
@@ -209,57 +221,88 @@
       if (!file) return;
       const reader = new FileReader();
       reader.onload = function(e) {
-        document.getElementById('mediaInput').value = e.target.result;
-        generateOutput();
+        const image = new Image();
+        image.onload = function() {
+          setupCanvas(this);
+        };
+        image.src = e.target.result;
         showStatus("Image file loaded!");
       };
       reader.readAsDataURL(file);
     }
 
-    function generateOutput() {
-      const inputVal = (document.getElementById("cssInput") || document.getElementById("mediaInput")).value;
-      if (inputVal && inputVal.length > 2 * 1024 * 1024) {
-        showStatus("Input exceeds 2MB limit!", true);
-        return;
-      }
-      const val = document.getElementById('mediaInput').value.trim() || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="60"><rect width="120" height="60" fill="%236366f1"/><text x="10" y="35" fill="white" font-family="sans-serif">QuickDevBox</text></svg>';
-      document.getElementById('mediaOutput').value = val;
-      const box = document.getElementById('mediaPreviewBox');
-      if (val.startsWith('data:image/') || val.startsWith('<svg')) {
-        box.innerHTML = '';
-        const img = document.createElement('img');
-        img.src = val.startsWith('<svg') ? 'data:image/svg+xml;utf8,' + encodeURIComponent(val) : val;
-        img.style.maxWidth = '100%';
-        img.style.maxHeight = '120px';
-        img.style.borderRadius = '4px';
-        box.appendChild(img);
-      } else {
-        box.textContent = "Media Processed Successfully";
-      }
-      showStatus("Media processed!");
+    function setupCanvas(image) {
+       imgElement = image;
+       canvas = document.getElementById('imageCanvas');
+       const placeholder = document.getElementById('canvasPlaceholder');
+       ctx = canvas.getContext('2d', { willReadFrequently: true });
+       
+       canvas.width = image.width;
+       canvas.height = image.height;
+       ctx.drawImage(image, 0, 0);
+       
+       canvas.style.display = 'block';
+       placeholder.style.display = 'none';
+       
+       canvas.addEventListener('mousemove', pickColor);
+       canvas.addEventListener('click', pickColor);
+    }
+
+    function pickColor(e) {
+       if(!ctx) return;
+       const rect = canvas.getBoundingClientRect();
+       
+       const scaleX = canvas.width / rect.width;
+       const scaleY = canvas.height / rect.height;
+       
+       const x = (e.clientX - rect.left) * scaleX;
+       const y = (e.clientY - rect.top) * scaleY;
+       
+       const pixel = ctx.getImageData(x, y, 1, 1).data;
+       const r = pixel[0];
+       const g = pixel[1];
+       const b = pixel[2];
+       const a = pixel[3] / 255;
+       
+       const hex = "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+       const rgb = `rgba(${r}, ${g}, ${b}, ${a.toFixed(2)})`;
+       
+       document.getElementById('hexOutput').value = hex;
+       document.getElementById('rgbOutput').value = rgb;
+       
+       const preview = document.getElementById('colorPreview');
+       preview.style.backgroundColor = `rgba(${r}, ${g}, ${b}, ${a})`;
+       preview.textContent = '';
     }
 
     function clearInputs() {
-      document.getElementById('mediaInput').value = "";
-      document.getElementById('mediaOutput').value = "";
-      const box = document.getElementById('mediaPreviewBox');
-      box.innerHTML = "";
-      box.textContent = "Media Canvas Preview Area";
+      if(canvas && ctx) {
+         ctx.clearRect(0, 0, canvas.width, canvas.height);
+         canvas.style.display = 'none';
+      }
+      document.getElementById('canvasPlaceholder').style.display = 'inline';
+      document.getElementById('hexOutput').value = "";
+      document.getElementById('rgbOutput').value = "";
+      const preview = document.getElementById('colorPreview');
+      preview.style.backgroundColor = "rgba(0,0,0,0.3)";
+      preview.textContent = "Hover/Click over image to pick color";
       showStatus("Cleared!");
     }
 
-    function copyOutput() {
-      const out = document.getElementById('mediaOutput').value;
+    function copyHex() {
+      const out = document.getElementById('hexOutput').value;
       if (!out) {
         showStatus("Nothing to copy!", true);
         return;
       }
       navigator.clipboard.writeText(out).then(() => {
-        showStatus("Copied to clipboard!");
+        showStatus("Copied Hex to clipboard!");
       }).catch(() => {
         showStatus("Copy failed.", true);
       });
     }
+
+    function generateOutput() {}
 
     document.addEventListener('DOMContentLoaded', () => {
       document.addEventListener('keydown', (e) => {

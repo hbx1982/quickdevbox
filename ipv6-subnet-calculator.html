@@ -294,12 +294,15 @@ function parseDevOpsPayload(input) {
       let expanded = expandIPv6(ipStr);
       let compressed = compressIPv6(expanded);
       
+      let netExpanded = getNetworkPrefix(expanded, prefix);
+      let netCompressed = compressIPv6(netExpanded);
+      
       let out = `=== IPv6 Subnet Calculation Report ===\n`;
       out += `Input Address     : ${ipStr}\n`;
       out += `CIDR Prefix       : /${prefix}\n`;
       out += `Expanded Format   : ${expanded}\n`;
       out += `Canonical Format  : ${compressed}\n\n`;
-      out += `Network Prefix    : ${expanded.substring(0, Math.floor(prefix/4) + Math.floor(prefix/16))}\n`;
+      out += `Network Prefix    : ${netCompressed}/${prefix}\n`;
       out += `Total IP Addresses: 2^${128 - prefix} (${Math.pow(2, Math.min(53, 128 - prefix))} addresses)\n`;
       out += `RFC Standard      : RFC 4291 / RFC 5952 Canonical IPv6 Text Format\n`;
       return out;
@@ -312,15 +315,56 @@ function parseDevOpsPayload(input) {
         let missing = 8 - (left.length + right.length);
         let middle = Array(missing).fill('0000');
         let full = left.concat(middle).concat(right);
-        return full.map(h => h.padStart(4, '0')).join(':');
+        return full.map(h => (h || '0').padStart(4, '0')).join(':');
       } else {
-        return ip.split(':').map(h => h.padStart(4, '0')).join(':');
+        return ip.split(':').map(h => (h || '0').padStart(4, '0')).join(':');
       }
     }
     function compressIPv6(ip) {
       let groups = ip.split(':').map(h => h.replace(/^0+/, '') || '0');
-      let str = groups.join(':');
-      return str.replace(/(^|:)0(:0)+(:|$)/, '::');
+      let bestStart = -1, maxLen = 0, currentStart = -1, currentLen = 0;
+      for (let i = 0; i < 8; i++) {
+        if (groups[i] === '0') {
+          if (currentStart === -1) currentStart = i;
+          currentLen++;
+        } else {
+          if (currentLen > maxLen) {
+            maxLen = currentLen;
+            bestStart = currentStart;
+          }
+          currentStart = -1;
+          currentLen = 0;
+        }
+      }
+      if (currentLen > maxLen) {
+        maxLen = currentLen;
+        bestStart = currentStart;
+      }
+      if (maxLen >= 2) {
+        groups.splice(bestStart, maxLen, '');
+        if (bestStart === 0) groups.unshift('');
+        if (bestStart + maxLen === 8) groups.push('');
+      }
+      return groups.join(':');
+    }
+    function getNetworkPrefix(expanded, prefix) {
+      let groups = expanded.split(':').map(h => parseInt(h, 16));
+      let outGroups = [];
+      let rem = prefix;
+      for (let i = 0; i < 8; i++) {
+        if (rem >= 16) {
+          outGroups.push(groups[i].toString(16).padStart(4, '0'));
+          rem -= 16;
+        } else if (rem > 0) {
+          let mask = (0xffff << (16 - rem)) & 0xffff;
+          let val = groups[i] & mask;
+          outGroups.push(val.toString(16).padStart(4, '0'));
+          rem = 0;
+        } else {
+          outGroups.push('0000');
+        }
+      }
+      return outGroups.join(':');
     }
     
 

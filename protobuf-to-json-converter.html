@@ -409,7 +409,7 @@
           return JSON.stringify(obj, null, 2);
         }
         if (file.includes('string-escape-unescape')) {
-          return input.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '\\r').replace(/\t/g, '\\t');
+          return input.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\n').replace(/\r/g, '\\r').replace(/\t/g, '\\t');
         }
         if (file.includes('php-serialize')) {
           let obj = {};
@@ -436,7 +436,20 @@
           let schema = { type: "object", properties: {} };
           const matches = [...input.matchAll(/(repeated\s+)?(\w+)\s+(\w+)\s*=\s*\d+;/g)];
           matches.forEach(m => {
-            schema.properties[m[3]] = { type: m[2] === 'int32' || m[2] === 'int64' ? 'integer' : 'string' };
+            let pType = 'string';
+            let pbType = m[2];
+            if (['int32', 'int64', 'uint32', 'uint64', 'sint32', 'sint64', 'fixed32', 'fixed64', 'sfixed32', 'sfixed64'].includes(pbType)) {
+              pType = 'integer';
+            } else if (['float', 'double'].includes(pbType)) {
+              pType = 'number';
+            } else if (pbType === 'bool') {
+              pType = 'boolean';
+            }
+            let prop = { type: pType };
+            if (m[1] && m[1].trim() === 'repeated') {
+              prop = { type: 'array', items: prop };
+            }
+            schema.properties[m[3]] = prop;
           });
           return JSON.stringify(schema, null, 2);
         }

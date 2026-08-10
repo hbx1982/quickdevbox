@@ -207,7 +207,7 @@
       const urlMatch = curl.match(/(?:'|")?(https?:\/\/[^\s'"]+)/);
       const url = urlMatch ? urlMatch[1] : "https://api.example.com";
       const methodMatch = curl.match(/-X\s+([A-Z]+)/i);
-      const method = methodMatch ? methodMatch[1].toUpperCase() : (curl.includes('-d') || curl.includes('--data') ? 'POST' : 'GET');
+      const method = methodMatch ? methodMatch[1].toUpperCase() : (curl.includes('-d') || curl.includes('--data') || curl.includes('--data-raw') || curl.includes('--data-binary') ? 'POST' : 'GET');
       
       const headers = {};
       const headerRegex = /-H\s+['"]([^'"]+)['"]/g;
@@ -219,17 +219,30 @@
         }
       }
 
-      return { url, method, headers };
+      let body = null;
+      const bodyRegex = /(?:-d|--data|--data-raw|--data-binary)\s+(['"])(.*?)\1/s;
+      const bMatch = curl.match(bodyRegex);
+      if (bMatch) {
+        body = bMatch[2];
+      }
+
+      return { url, method, headers, body };
     }
 
     function toPython() {
       const input = document.getElementById('curlInput').value.trim();
       if (!input) return;
-      const { url, method, headers } = parseCurl(input);
+      const { url, method, headers, body } = parseCurl(input);
       
       let py = `import requests\n\nurl = "${url}"\n`;
       py += `headers = ${JSON.stringify(headers, null, 4)}\n\n`;
-      py += `response = requests.${method.toLowerCase()}(url, headers=headers)\nprint(response.status_code)\nprint(response.json())`;
+      if (body) {
+        py += `data = ${JSON.stringify(body)}\n\n`;
+        py += `response = requests.${method.toLowerCase()}(url, headers=headers, data=data)\n`;
+      } else {
+        py += `response = requests.${method.toLowerCase()}(url, headers=headers)\n`;
+      }
+      py += `print(response.status_code)\nprint(response.text)`;
       
       document.getElementById('codeOutput').value = py;
       showStatus("Converted cURL to Python requests!");
@@ -238,9 +251,13 @@
     function toFetch() {
       const input = document.getElementById('curlInput').value.trim();
       if (!input) return;
-      const { url, method, headers } = parseCurl(input);
+      const { url, method, headers, body } = parseCurl(input);
       
-      let js = `fetch("${url}", {\n  method: "${method}",\n  headers: ${JSON.stringify(headers, null, 4)}\n})\n.then(res => res.json())\n.then(data => console.log(data));`;
+      let js = `fetch("${url}", {\n  method: "${method}",\n  headers: ${JSON.stringify(headers, null, 4)}`;
+      if (body) {
+        js += `,\n  body: ${JSON.stringify(body)}`;
+      }
+      js += `\n})\n.then(res => res.text())\n.then(data => console.log(data));`;
       
       document.getElementById('codeOutput').value = js;
       showStatus("Converted cURL to JavaScript fetch()!");

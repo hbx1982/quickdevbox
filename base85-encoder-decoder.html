@@ -103,7 +103,8 @@
         </div>
 
         <div class="tool-controls" style="margin-top:0.8rem;">
-          <button class="btn btn-primary" id="execBtn" onclick="processTool();">⚡ Execute / Process (Ctrl+Enter)</button>
+          <button class="btn btn-primary" id="execBtn" onclick="processTool();">⚡ Encode (Ctrl+E)</button>
+          <button class="btn btn-primary" id="decodeBtn" onclick="decodeTool();">🔓 Decode (Ctrl+D)</button>
           <button class="btn btn-secondary" onclick="document.getElementById('toolInput').value='QuickDevBox Base85 Encoding Payload'; updateCounter(); processTool();" style="font-size:0.8rem; padding:0.4rem 0.8rem; margin-left:0.5rem;">💡 Fill Sample Data</button>
           <button class="btn btn-secondary" onclick="document.getElementById('toolInput').value=''; document.getElementById('toolOutput').value=''; updateCounter();" style="color:var(--danger); font-size:0.8rem; padding:0.4rem 0.8rem; margin-left:0.5rem;">🗑️ Clear</button>
         </div>
@@ -211,9 +212,48 @@
 
 
 
+    function decodeTool() {
+      const input = document.getElementById('toolInput').value;
+      const output = document.getElementById('toolOutput');
+      if (input.length > 1024 * 1024) { alert('Payload exceeds 1MB limit.'); return; }
+      try {
+        function decodeA85(str) {
+            str = str.replace(/<~/g, '').replace(/~>/g, '').replace(/\s/g, '');
+            let out = '';
+            let block = [];
+            for (let i = 0; i < str.length; i++) {
+                if (str[i] === 'z') {
+                    if (block.length !== 0) throw new Error("Invalid 'z' inside block");
+                    out += '\0\0\0\0';
+                } else {
+                    block.push(str.charCodeAt(i) - 33);
+                    if (block.length === 5) {
+                        let num = block[0]*52200625 + block[1]*614125 + block[2]*7225 + block[3]*85 + block[4];
+                        out += String.fromCharCode((num >>> 24) & 255, (num >>> 16) & 255, (num >>> 8) & 255, num & 255);
+                        block = [];
+                    }
+                }
+            }
+            if (block.length > 0) {
+                let padding = 5 - block.length;
+                for(let i=0; i<padding; i++) block.push(84); // pad with 'u' (117-33 = 84)
+                let num = block[0]*52200625 + block[1]*614125 + block[2]*7225 + block[3]*85 + block[4];
+                if (padding === 4) out += String.fromCharCode((num >>> 24) & 255);
+                else if (padding === 3) out += String.fromCharCode((num >>> 24) & 255, (num >>> 16) & 255);
+                else if (padding === 2) out += String.fromCharCode((num >>> 24) & 255, (num >>> 16) & 255, (num >>> 8) & 255);
+                else if (padding === 1) out += String.fromCharCode((num >>> 24) & 255, (num >>> 16) & 255, (num >>> 8) & 255, num & 255);
+            }
+            return out;
+        }
+        output.value = decodeA85(input);
+      } catch(e) { output.value = 'Error: ' + e.message; }
+    }
+
     document.addEventListener('keydown', function(e) {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-        processTool();
+      if (e.ctrlKey || e.metaKey) {
+        if (e.key === 'e' || e.key === 'E') { e.preventDefault(); processTool(); }
+        if (e.key === 'd' || e.key === 'D') { e.preventDefault(); decodeTool(); }
+        if (e.key === 'Enter') { e.preventDefault(); processTool(); }
       }
     });
 

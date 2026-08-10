@@ -225,14 +225,43 @@
       const val = document.getElementById('mediaInput').value.trim() || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="60"><rect width="120" height="60" fill="%236366f1"/><text x="10" y="35" fill="white" font-family="sans-serif">QuickDevBox</text></svg>';
       document.getElementById('mediaOutput').value = val;
       const box = document.getElementById('mediaPreviewBox');
-      if (val.startsWith('data:image/') || val.startsWith('<svg')) {
+      let imgSrc = val;
+      let isValidImage = false;
+
+      if (val.startsWith('<svg')) {
+        imgSrc = 'data:image/svg+xml;utf8,' + encodeURIComponent(val);
+        isValidImage = true;
+      } else if (val.startsWith('data:image/')) {
+        isValidImage = true;
+      } else if (/^[A-Za-z0-9+/=]+$/.test(val.replace(/\s/g, ''))) {
+        imgSrc = 'data:image/png;base64,' + val.replace(/\s/g, '');
+        isValidImage = true;
+      }
+
+      if (isValidImage) {
         box.innerHTML = '';
+        const container = document.createElement('div');
+        container.style.textAlign = 'center';
+        container.style.padding = '10px';
+
         const img = document.createElement('img');
-        img.src = val.startsWith('<svg') ? 'data:image/svg+xml;utf8,' + encodeURIComponent(val) : val;
+        img.src = imgSrc;
         img.style.maxWidth = '100%';
         img.style.maxHeight = '120px';
         img.style.borderRadius = '4px';
-        box.appendChild(img);
+        
+        const dlBtn = document.createElement('a');
+        dlBtn.href = imgSrc;
+        dlBtn.download = 'decoded-image';
+        dlBtn.className = 'btn btn-primary';
+        dlBtn.style.marginTop = '10px';
+        dlBtn.style.display = 'inline-block';
+        dlBtn.textContent = '📥 Download Image';
+        
+        container.appendChild(img);
+        container.appendChild(document.createElement('br'));
+        container.appendChild(dlBtn);
+        box.appendChild(container);
       } else {
         box.textContent = "Media Processed Successfully";
       }

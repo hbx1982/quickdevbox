@@ -333,12 +333,31 @@ function parseDevOpsPayload(input) {
       "30000": "Meteor / Custom apps"
 };
     function computeSpecificToolLogic(input, file) {
-      let port = input.trim();
-      let res = ports[port];
-      if (res) {
-        return `Port ${port}: ${res}`;
+      let query = input.trim();
+      if (/^\d+$/.test(query)) {
+        let res = ports[query];
+        if (res) {
+          return `Port ${query}: ${res}`;
+        } else {
+          let num = parseInt(query, 10);
+          if (num < 0 || num > 65535) {
+            return `Error: ${query} is out of range. Port numbers must be between 0 and 65535.`;
+          }
+          return `Port ${query}: Registered or Ephemeral Network Port (IANA Protocol Service Range 0-65535).`;
+        }
       } else {
-        return `Port ${port}: Registered or Ephemeral Network Port (IANA Protocol Service Range 0-65535).`;
+        let lowerQuery = query.toLowerCase();
+        let found = [];
+        for (let port in ports) {
+          if (ports[port].toLowerCase().includes(lowerQuery)) {
+            found.push(`Port ${port}: ${ports[port]}`);
+          }
+        }
+        if (found.length > 0) {
+          return `=== Search Results for "${query}" ===\n` + found.join('\n');
+        } else {
+          return `Service "${query}": Not found in common well-known list.`;
+        }
       }
     }
     

@@ -56,6 +56,7 @@
   gtag('js', new Date());
   gtag('config', 'G-E0LZHPD7SL');
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/typescript/5.3.3/typescript.min.js"></script>
 </head>
 <body>
   <!-- Global Header Nav -->
@@ -409,7 +410,7 @@
           return JSON.stringify(obj, null, 2);
         }
         if (file.includes('string-escape-unescape')) {
-          return input.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '\\r').replace(/\t/g, '\\t');
+          return input.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\n').replace(/\r/g, '\\r').replace(/\t/g, '\\t');
         }
         if (file.includes('php-serialize')) {
           let obj = {};
@@ -429,7 +430,10 @@
           }
           return JSON.stringify(unwrapBSON(obj), null, 2);
         }
-        if (file.includes('babel-js') || file.includes('typescript-to-javascript')) {
+        if (file.includes('typescript-to-javascript')) {
+          return window.ts.transpileModule(input, { compilerOptions: { module: window.ts.ModuleKind.ESNext, target: window.ts.ScriptTarget.ESNext } }).outputText;
+        }
+        if (file.includes('babel-js')) {
           return input.replace(/const|let/g, 'var').replace(/\(([^)]*)\)\s*=>\s*\{/g, 'function($1) {').replace(/`([^`]*)`/g, '"$1"');
         }
         if (file.includes('protobuf-to-json')) {

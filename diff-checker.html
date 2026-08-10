@@ -57,6 +57,7 @@
 
   gtag('config', 'G-E0LZHPD7SL');
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsdiff/5.1.0/diff.min.js"></script>
 </head>
 <body>
 
@@ -205,29 +206,39 @@
     }
 
     function compareDiff() {
-      const oldTxt = document.getElementById('diffOriginal').value.split('\n');
-      const newTxt = document.getElementById('diffModified').value.split('\n');
+      const oldTxt = document.getElementById('diffOriginal').value;
+      const newTxt = document.getElementById('diffModified').value;
       
       let html = '';
-      const maxLen = Math.max(oldTxt.length, newTxt.length);
       let diffCount = 0;
 
       function escapeHTML(str) {
         return (str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
       }
 
-      for (let i = 0; i < maxLen; i++) {
-        const lineOld = escapeHTML(oldTxt[i] || '');
-        const lineNew = escapeHTML(newTxt[i] || '');
-
-        if (lineOld === lineNew) {
-          html += `<div style="color:var(--text-muted); padding:2px 0;">  ${lineOld}</div>`;
-        } else {
-          diffCount++;
-          if (lineOld) html += `<div style="background:rgba(248,113,113,0.15); color:var(--danger); padding:2px 0;">- ${lineOld}</div>`;
-          if (lineNew) html += `<div style="background:rgba(52,211,153,0.15); color:var(--success); padding:2px 0;">+ ${lineNew}</div>`;
-        }
+      if (typeof Diff === 'undefined') {
+        showStatus("Error: Diff library failed to load.", true);
+        return;
       }
+
+      const diff = Diff.diffLines(oldTxt, newTxt);
+
+      diff.forEach((part) => {
+        const lines = part.value.replace(/\n$/, '').split('\n');
+        
+        lines.forEach(line => {
+          const escaped = escapeHTML(line);
+          if (part.added) {
+            diffCount++;
+            html += `<div style="background:rgba(52,211,153,0.15); color:var(--success); padding:2px 0;">+ ${escaped}</div>`;
+          } else if (part.removed) {
+            diffCount++;
+            html += `<div style="background:rgba(248,113,113,0.15); color:var(--danger); padding:2px 0;">- ${escaped}</div>`;
+          } else {
+            html += `<div style="color:var(--text-muted); padding:2px 0;">  ${escaped}</div>`;
+          }
+        });
+      });
 
       const out = document.getElementById('diffOutput');
       out.style.display = 'block';

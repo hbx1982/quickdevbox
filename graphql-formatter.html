@@ -248,15 +248,6 @@
           if (file.includes('javascript')) return input.replace(/\/\/[^\r\n]*|\/\*[\s\S]*?\*\//g, '').replace(/\s+/g, ' ').replace(/\s*([{}:();,=+-])\s*/g, '$1').trim();
         }
         if (file.includes('beautifier') || file.includes('formatter')) {
-          if (file.includes('html')) {
-            let indent = 0;
-            return input.replace(/></g, '>\n<').split('\n').map(line => {
-              if (line.match(/^<\/[^>]+>/)) indent = Math.max(0, indent - 1);
-              const padded = '  '.repeat(indent) + line;
-              if (line.match(/^<[^\/!][^>]*[^\/]>/) && !line.includes('</')) indent++;
-              return padded;
-            }).join('\n');
-          }
           if (file.includes('css')) {
             return input.replace(/\s*([{};])\s*/g, '$1\n').replace(/\s*:\s*/g, ': ').replace(/\n\s*\n/g, '\n').replace(/([^}]+){/g, '$1 {\n  ').replace(/;/g, ';\n  ').replace(/\n\s*}/g, '\n}').trim();
           }
@@ -268,6 +259,15 @@
               if (l.includes('{')) depth++;
               return p;
             }).filter(Boolean).join('\n');
+          }
+          if (file.includes('html')) {
+            let indent = 0;
+            return input.replace(/></g, '>\n<').split('\n').map(line => {
+              if (line.match(/^<\/[^>]+>/)) indent = Math.max(0, indent - 1);
+              const padded = '  '.repeat(indent) + line;
+              if (line.match(/^<[^\/!][^>]*[^\/]>/) && !line.includes('</')) indent++;
+              return padded;
+            }).join('\n');
           }
         }
         if (file.includes('xml-to-json')) {
@@ -409,7 +409,7 @@
           return JSON.stringify(obj, null, 2);
         }
         if (file.includes('string-escape-unescape')) {
-          return input.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '\\r').replace(/\t/g, '\\t');
+          return input.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\n').replace(/\r/g, '\\r').replace(/\t/g, '\\t');
         }
         if (file.includes('php-serialize')) {
           let obj = {};

@@ -57,6 +57,7 @@
 
   gtag('config', 'G-E0LZHPD7SL');
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
 </head>
 <body>
 
@@ -212,24 +213,6 @@
       el.innerText = msg;
     }
 
-    // Lightweight YAML to JSON Parser logic
-    function parseSimpleYAML(yaml) {
-      const lines = yaml.split('\n');
-      const obj = {};
-      lines.forEach(line => {
-        if (line.includes(':') && !line.trim().startsWith('#')) {
-          const parts = line.split(':');
-          const key = parts[0].trim();
-          let val = parts.slice(1).join(':').trim();
-          if (val === 'true') val = true;
-          else if (val === 'false') val = false;
-          else if (!isNaN(val) && val !== '') val = Number(val);
-          if (key) obj[key] = val;
-        }
-      });
-      return obj;
-    }
-
     function convertYaml() {
       const input = document.getElementById('yamlInput').value.trim();
       if (!input) {
@@ -237,7 +220,7 @@
         return;
       }
       try {
-        const parsed = parseSimpleYAML(input);
+        const parsed = jsyaml.load(input);
         document.getElementById('jsonOutput').value = JSON.stringify(parsed, null, 2);
         showStatus("YAML converted to JSON successfully!");
       } catch (err) {

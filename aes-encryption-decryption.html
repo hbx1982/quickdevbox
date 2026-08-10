@@ -100,12 +100,24 @@
         <div style="background:rgba(255,255,255,0.03); padding:1.25rem; border-radius:var(--radius-md); border:1px solid var(--bg-card-border);">
           <label style="display:block; color:var(--text-muted); font-size:0.85rem; font-weight:600; margin-bottom:0.3rem;">Input String / Payload:</label>
           <textarea data-ux="input-nopersist" id="toolInput" rows="5" oninput="updateCounter();" style="width:100%; font-family:monospace; background:#040711; color:#00f2fe; border:1px solid var(--bg-card-border); border-radius:6px; padding:0.8rem;">Secret Confidential Payload 2026</textarea>
+          
+          <div style="display:flex; gap:1rem; margin-top:1rem;">
+            <div style="flex:1;">
+              <label style="display:block; color:var(--text-muted); font-size:0.85rem; font-weight:600; margin-bottom:0.3rem;">Key (Hex):</label>
+              <input type="text" id="keyInput" style="width:100%; font-family:monospace; background:#040711; color:#00f2fe; border:1px solid var(--bg-card-border); border-radius:6px; padding:0.6rem;" placeholder="Leave empty to auto-generate">
+            </div>
+            <div style="flex:1;">
+              <label style="display:block; color:var(--text-muted); font-size:0.85rem; font-weight:600; margin-bottom:0.3rem;">IV (Hex):</label>
+              <input type="text" id="ivInput" style="width:100%; font-family:monospace; background:#040711; color:#00f2fe; border:1px solid var(--bg-card-border); border-radius:6px; padding:0.6rem;" placeholder="Leave empty to auto-generate">
+            </div>
+          </div>
         </div>
 
         <div class="tool-controls" style="margin-top:0.8rem;">
-          <button class="btn btn-primary" id="execBtn" onclick="processTool();">⚡ Execute / Process (Ctrl+Enter)</button>
-          <button class="btn btn-secondary" onclick="document.getElementById('toolInput').value='Secret Confidential Payload 2026'; updateCounter(); processTool();" style="font-size:0.8rem; padding:0.4rem 0.8rem; margin-left:0.5rem;">💡 Fill Sample Data</button>
-          <button class="btn btn-secondary" onclick="document.getElementById('toolInput').value=''; document.getElementById('toolOutput').value=''; updateCounter();" style="color:var(--danger); font-size:0.8rem; padding:0.4rem 0.8rem; margin-left:0.5rem;">🗑️ Clear</button>
+          <button class="btn btn-primary" id="execBtn" onclick="encryptTool();">⚡ Encrypt (Ctrl+E)</button>
+          <button class="btn btn-primary" id="decryptBtn" onclick="decryptTool();">🔓 Decrypt (Ctrl+D)</button>
+          <button class="btn btn-secondary" onclick="document.getElementById('toolInput').value='Secret Confidential Payload 2026'; document.getElementById('keyInput').value=''; document.getElementById('ivInput').value=''; updateCounter(); encryptTool();" style="font-size:0.8rem; padding:0.4rem 0.8rem; margin-left:0.5rem;">💡 Fill Sample Data</button>
+          <button class="btn btn-secondary" onclick="document.getElementById('toolInput').value=''; document.getElementById('keyInput').value=''; document.getElementById('ivInput').value=''; document.getElementById('toolOutput').value=''; updateCounter();" style="color:var(--danger); font-size:0.8rem; padding:0.4rem 0.8rem; margin-left:0.5rem;">🗑️ Clear</button>
         </div>
 
         <div style="background:rgba(255,255,255,0.03); padding:1.25rem; border-radius:var(--radius-md); border:1px solid var(--bg-card-border); margin-top:0.8rem;">
@@ -179,34 +191,65 @@
       }
     }
 
-    async function processTool() {
+    const hexToBuf = hex => new Uint8Array(hex.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+    const bufToHex = buf => Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+
+    async function encryptTool() {
       const input = document.getElementById('toolInput').value;
       const output = document.getElementById('toolOutput');
+      const keyInput = document.getElementById('keyInput');
+      const ivInput = document.getElementById('ivInput');
       if (input.length > 2 * 1024 * 1024) { alert("Payload exceeds 2MB safety threshold."); return; }
       try {
         const enc = new TextEncoder();
-        const rawKey = window.crypto.getRandomValues(new Uint8Array(32));
-        const iv = window.crypto.getRandomValues(new Uint8Array(12));
+        let rawKey, iv;
+        if (keyInput.value.trim()) {
+           rawKey = hexToBuf(keyInput.value.trim());
+        } else {
+           rawKey = window.crypto.getRandomValues(new Uint8Array(32));
+           keyInput.value = bufToHex(rawKey);
+        }
+        if (ivInput.value.trim()) {
+           iv = hexToBuf(ivInput.value.trim());
+        } else {
+           iv = window.crypto.getRandomValues(new Uint8Array(12));
+           ivInput.value = bufToHex(iv);
+        }
         const key = await crypto.subtle.importKey("raw", rawKey, {name: "AES-GCM"}, false, ["encrypt"]);
         const encrypted = await crypto.subtle.encrypt({name: "AES-GCM", iv: iv}, key, enc.encode(input));
-        const encHex = Array.from(new Uint8Array(encrypted)).map(b => b.toString(16).padStart(2, '0')).join('');
-        const ivHex = Array.from(iv).map(b => b.toString(16).padStart(2, '0')).join('');
-        const keyHex = Array.from(rawKey).map(b => b.toString(16).padStart(2, '0')).join('');
-        output.value = "AES-256-GCM [Encrypted Hex]: " + encHex + "\\nIV (Hex): " + ivHex + "\\nKey (Hex): " + keyHex;
+        output.value = bufToHex(encrypted);
       } catch(e) { output.value = "Error: " + e.message; }
+    }
+
+    async function decryptTool() {
+      const input = document.getElementById('toolInput').value.trim();
+      const output = document.getElementById('toolOutput');
+      const keyInput = document.getElementById('keyInput').value.trim();
+      const ivInput = document.getElementById('ivInput').value.trim();
+      if (!input || !keyInput || !ivInput) { output.value = "Error: Ciphertext, Key, and IV are required for decryption."; return; }
+      try {
+        const rawKey = hexToBuf(keyInput);
+        const iv = hexToBuf(ivInput);
+        const encrypted = hexToBuf(input);
+        const key = await crypto.subtle.importKey("raw", rawKey, {name: "AES-GCM"}, false, ["decrypt"]);
+        const decrypted = await crypto.subtle.decrypt({name: "AES-GCM", iv: iv}, key, encrypted);
+        const dec = new TextDecoder();
+        output.value = dec.decode(decrypted);
+      } catch(e) { output.value = "Error: " + e.message + " (Check if Key/IV are correct)"; }
     }
 
 
 
     document.addEventListener('keydown', function(e) {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-        processTool();
+      if (e.ctrlKey || e.metaKey) {
+        if (e.key === 'e' || e.key === 'E') { e.preventDefault(); encryptTool(); }
+        if (e.key === 'd' || e.key === 'D') { e.preventDefault(); decryptTool(); }
       }
     });
 
     window.addEventListener('DOMContentLoaded', function() {
       updateCounter();
-      processTool();
+      encryptTool();
     });
   </script>
   <script src="ux-enhancements.js?v=2.2"></script>

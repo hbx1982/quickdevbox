@@ -56,6 +56,7 @@
   gtag('js', new Date());
   gtag('config', 'G-E0LZHPD7SL');
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
 </head>
 <body>
   <!-- Global Header Nav -->
@@ -260,7 +261,11 @@
           if (file.includes('css')) {
             return input.replace(/\s*([{};])\s*/g, '$1\n').replace(/\s*:\s*/g, ': ').replace(/\n\s*\n/g, '\n').replace(/([^}]+){/g, '$1 {\n  ').replace(/;/g, ';\n  ').replace(/\n\s*}/g, '\n}').trim();
           }
-          if (file.includes('javascript') || file.includes('graphql') || file.includes('yaml')) {
+          if (file.includes('yaml')) {
+            const obj = jsyaml.load(input);
+            return jsyaml.dump(obj, { indent: 2 });
+          }
+          if (file.includes('javascript') || file.includes('graphql')) {
             let depth = 0;
             return input.replace(/\s*([{}])\s*/g, '$1\n').split('\n').map(l => {
               if (l.includes('}')) depth = Math.max(0, depth - 1);
@@ -387,13 +392,21 @@
           }
           return py;
         }
-        if (file.includes('json-to-yaml') || file.includes('toml-to-json') || file.includes('yaml-to-json')) {
+        if (file.includes('json-to-yaml')) {
+          const obj = JSON.parse(input);
+          return jsyaml.dump(obj, { indent: 2 });
+        }
+        if (file.includes('toml-to-json')) {
           const obj = JSON.parse(input);
           let yaml = "";
           for (let k in obj) {
             yaml += `${k}: ${JSON.stringify(obj[k])}\n`;
           }
           return yaml;
+        }
+        if (file.includes('yaml-to-json')) {
+          const obj = jsyaml.load(input);
+          return JSON.stringify(obj, null, 2);
         }
         if (file.includes('url-query-string')) {
           const params = new URLSearchParams(input.includes('?') ? input.split('?')[1] : input);
@@ -409,7 +422,7 @@
           return JSON.stringify(obj, null, 2);
         }
         if (file.includes('string-escape-unescape')) {
-          return input.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '\\r').replace(/\t/g, '\\t');
+          return input.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\n').replace(/\r/g, '\\r').replace(/\t/g, '\\t');
         }
         if (file.includes('php-serialize')) {
           let obj = {};

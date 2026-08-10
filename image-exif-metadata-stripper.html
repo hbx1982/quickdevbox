@@ -90,30 +90,28 @@
 
     <div class="editor-stacked">
       <div class="tool-controls" style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem;">
-        <button class="btn btn-sample" onclick="loadSampleData()" style="animation: samplePulse 3.2s infinite ease-in-out;">💡 Fill Sample Data</button>
-        <button class="btn btn-primary" data-ux="action-primary" onclick="generateOutput()">⚡ Process Media (Ctrl+Enter)</button>
+        <button class="btn btn-primary" data-ux="action-primary" onclick="generateOutput()">⚡ Strip EXIF Metadata</button>
         <button class="btn btn-secondary" data-ux="action-clear" onclick="clearInputs()">🗑️ Clear</button>
-        <button class="btn btn-secondary" onclick="copyOutput()">📋 Copy Result</button>
       </div>
 
       <div class="editor-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
         <div class="editor-box">
           <div class="editor-header">
-            <span>⚙️ File Upload &amp; Input</span><span class="editor-counter" style="font-size:0.75rem; color:var(--text-muted);">Length: 0 chars</span>
+            <span>⚙️ File Upload</span>
           </div>
-          <input type="file" id="imageFileInput" accept="image/*" style="display: none;" onchange="handleFileSelected(event)">
-          <button class="btn btn-secondary" onclick="document.getElementById('imageFileInput').click()" style="width: 100%; margin-bottom: 0.75rem;">📁 Choose Local Image File</button>
-          <textarea id="mediaInput" class="code-editor" data-ux="input" rows="8" placeholder="Paste image Data URI, SVG markup, or raw Base64 string here..."></textarea>
+          <input type="file" id="imageFileInput" accept="image/jpeg, image/png" style="display: none;" onchange="handleFileSelected(event)">
+          <button class="btn btn-secondary" onclick="document.getElementById('imageFileInput').click()" style="width: 100%; margin-bottom: 0.75rem;">📁 Choose Local JPEG/PNG File</button>
+          <div id="fileInfo" style="padding: 1rem; background: rgba(0,0,0,0.2); border-radius: 6px; color: var(--text-muted); text-align: center;">No file selected</div>
         </div>
 
         <div class="editor-box">
           <div class="editor-header">
-            <span>👁️ Live Preview &amp; Output</span>
+            <span>👁️ Stripped Output</span>
           </div>
-          <div id="mediaPreviewBox" style="min-height: 120px; background: rgba(0,0,0,0.3); border-radius: 6px; border: 1px dashed var(--bg-card-border); margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 600;">
-            Media Canvas Preview Area
+          <div id="mediaPreviewBox" style="min-height: 120px; background: rgba(0,0,0,0.3); border-radius: 6px; border: 1px dashed var(--bg-card-border); margin-bottom: 1rem; display: flex; flex-direction:column; align-items: center; justify-content: center; color: #fff; font-weight: 600; padding:1rem;">
+            Processed image will appear here
           </div>
-          <textarea id="mediaOutput" class="code-editor" rows="5" readonly placeholder="Output Base64, Hex codes, or generated markup will appear here..."></textarea>
+          <a id="downloadBtn" class="btn btn-primary" style="display:none; text-align:center; text-decoration:none; padding: 0.5rem;" download="stripped.jpg">⬇️ Download Clean Image</a>
         </div>
       </div>
 
@@ -197,68 +195,119 @@
       setTimeout(() => { el.style.display = 'none'; }, 3000);
     }
 
-    function loadSampleData() {
-      const svgSample = '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="#6366f1"/><circle cx="50" cy="50" r="30" fill="#a855f7"/></svg>';
-      document.getElementById('mediaInput').value = svgSample;
-      generateOutput();
-      showStatus("Loaded sample vector graphic!");
-    }
+    let currentFileBuffer = null;
+    let currentFileName = "";
+    let currentFileType = "";
 
     function handleFileSelected(event) {
       const file = event.target.files[0];
       if (!file) return;
+      currentFileName = file.name;
+      currentFileType = file.type;
+      
+      const fileInfo = document.getElementById('fileInfo');
+      fileInfo.textContent = `Loading ${currentFileName}...`;
+      
       const reader = new FileReader();
       reader.onload = function(e) {
-        document.getElementById('mediaInput').value = e.target.result;
-        generateOutput();
-        showStatus("Image file loaded!");
+        currentFileBuffer = e.target.result;
+        fileInfo.innerHTML = `Loaded <strong>${currentFileName}</strong><br><span style="font-size:0.8rem">${(currentFileBuffer.byteLength/1024).toFixed(2)} KB</span>`;
+        showStatus("Image file loaded! Click Strip EXIF to process.");
       };
-      reader.readAsDataURL(file);
+      reader.readAsArrayBuffer(file);
     }
 
     function generateOutput() {
-      const inputVal = (document.getElementById("cssInput") || document.getElementById("mediaInput")).value;
-      if (inputVal && inputVal.length > 2 * 1024 * 1024) {
-        showStatus("Input exceeds 2MB limit!", true);
-        return;
-      }
-      const val = document.getElementById('mediaInput').value.trim() || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="60"><rect width="120" height="60" fill="%236366f1"/><text x="10" y="35" fill="white" font-family="sans-serif">QuickDevBox</text></svg>';
-      document.getElementById('mediaOutput').value = val;
-      const box = document.getElementById('mediaPreviewBox');
-      if (val.startsWith('data:image/') || val.startsWith('<svg')) {
-        box.innerHTML = '';
-        const img = document.createElement('img');
-        img.src = val.startsWith('<svg') ? 'data:image/svg+xml;utf8,' + encodeURIComponent(val) : val;
-        img.style.maxWidth = '100%';
-        img.style.maxHeight = '120px';
-        img.style.borderRadius = '4px';
-        box.appendChild(img);
-      } else {
-        box.textContent = "Media Processed Successfully";
-      }
-      showStatus("Media processed!");
+       if (!currentFileBuffer) {
+          showStatus("Please upload a file first.", true);
+          return;
+       }
+       
+       if (currentFileType !== 'image/jpeg') {
+          showStatus("Currently only JPEG EXIF stripping is supported.", true);
+          return;
+       }
+       
+       const view = new DataView(currentFileBuffer);
+       const segments = [];
+       let offset = 0;
+       
+       if (view.getUint16(0) !== 0xFFD8) {
+          showStatus("Not a valid JPEG file.", true);
+          return;
+       }
+       
+       segments.push(currentFileBuffer.slice(0, 2));
+       offset = 2;
+       
+       let strippedBytes = 0;
+       
+       while (offset < view.byteLength) {
+           if (view.getUint8(offset) !== 0xFF) {
+               break;
+           }
+           const marker = view.getUint8(offset + 1);
+           if (marker === 0xD9 || marker === 0xDA) { // EOI or SOS
+               segments.push(currentFileBuffer.slice(offset));
+               break;
+           }
+           
+           const length = view.getUint16(offset + 2);
+           
+           if (marker === 0xE1) { // APP1 EXIF marker
+               strippedBytes += length + 2;
+           } else {
+               segments.push(currentFileBuffer.slice(offset, offset + 2 + length));
+           }
+           offset += 2 + length;
+       }
+       
+       const totalLength = segments.reduce((acc, seg) => acc + seg.byteLength, 0);
+       const cleanBuffer = new Uint8Array(totalLength);
+       let curr = 0;
+       segments.forEach(seg => {
+           cleanBuffer.set(new Uint8Array(seg), curr);
+           curr += seg.byteLength;
+       });
+       
+       const blob = new Blob([cleanBuffer], {type: currentFileType});
+       const url = URL.createObjectURL(blob);
+       
+       const box = document.getElementById('mediaPreviewBox');
+       box.innerHTML = '';
+       const img = document.createElement('img');
+       img.src = url;
+       img.style.maxWidth = '100%';
+       img.style.maxHeight = '200px';
+       img.style.borderRadius = '4px';
+       box.appendChild(img);
+       
+       const dBtn = document.getElementById('downloadBtn');
+       dBtn.href = url;
+       dBtn.download = "clean_" + currentFileName;
+       dBtn.style.display = 'block';
+       
+       if (strippedBytes > 0) {
+          showStatus(`Stripped ${strippedBytes} bytes of EXIF data!`);
+       } else {
+          showStatus(`No EXIF data found. Image is already clean.`);
+       }
     }
 
     function clearInputs() {
-      document.getElementById('mediaInput').value = "";
-      document.getElementById('mediaOutput').value = "";
+      currentFileBuffer = null;
+      currentFileName = "";
+      currentFileType = "";
+      document.getElementById('fileInfo').textContent = "No file selected";
+      
       const box = document.getElementById('mediaPreviewBox');
       box.innerHTML = "";
-      box.textContent = "Media Canvas Preview Area";
+      box.textContent = "Processed image will appear here";
+      
+      document.getElementById('downloadBtn').style.display = 'none';
+      document.getElementById('imageFileInput').value = "";
+      
       showStatus("Cleared!");
-    }
-
-    function copyOutput() {
-      const out = document.getElementById('mediaOutput').value;
-      if (!out) {
-        showStatus("Nothing to copy!", true);
-        return;
-      }
-      navigator.clipboard.writeText(out).then(() => {
-        showStatus("Copied to clipboard!");
-      }).catch(() => {
-        showStatus("Copy failed.", true);
-      });
     }
 
     document.addEventListener('DOMContentLoaded', () => {

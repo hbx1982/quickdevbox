@@ -272,21 +272,51 @@ function parseDevOpsPayload(input) {
     function computeSpecificToolLogic(input, file) {
       let lines = input.split('\n');
       let parsed = [];
+      const knownClasses = ['IN', 'CS', 'CH', 'HS'];
+      const knownTypes = ['A', 'AAAA', 'CNAME', 'MX', 'TXT', 'SRV', 'NS', 'SOA', 'PTR', 'CAA', 'SPF', 'DS', 'DNSKEY', 'RRSIG', 'NSEC', 'NSEC3', 'NSEC3PARAM', 'TLSA', 'SMIMEA', 'LOC', 'NAPTR', 'KX', 'CERT', 'DNAME', 'OPT', 'APL', 'DS', 'SSHFP', 'IPSECKEY', 'TA', 'DLV', 'ALIAS', 'SVCB', 'HTTPS'];
+      
       lines.forEach((line, idx) => {
         line = line.trim();
         if (!line || line.startsWith(';') || line.startsWith('#')) return;
+        
         let parts = line.split(/\s+/);
-        if (parts.length >= 4) {
+        if (parts.length < 3) return;
+
+        let domain = parts[0];
+        let ttl = '-';
+        let cls = 'IN';
+        let type = '';
+        let dataIndex = 1;
+
+        for (let i = 1; i <= 3 && i < parts.length; i++) {
+          let p = parts[i].toUpperCase();
+          if (knownClasses.includes(p)) {
+            cls = p;
+          } else if (knownTypes.includes(p)) {
+            type = p;
+            dataIndex = i + 1;
+            break;
+          } else if (/^\d+[smhdw]?$/i.test(p)) {
+            ttl = p;
+          } else {
+            type = p;
+            dataIndex = i + 1;
+            break;
+          }
+        }
+
+        if (type) {
           parsed.push({
             line: idx + 1,
-            domain: parts[0],
-            ttl: parts[1],
-            class: parts[2],
-            type: parts[3],
-            data: parts.slice(4).join(' ')
+            domain: domain,
+            ttl: ttl,
+            class: cls,
+            type: type,
+            data: parts.slice(dataIndex).join(' ')
           });
         }
       });
+      
       let out = `=== Parsed DNS Zone Records (${parsed.length} records) ===\n\n`;
       parsed.forEach(r => {
         out += `Line ${r.line}: ${r.domain} | TTL:${r.ttl} | Class:${r.class} | Type:${r.type} => Data: ${r.data}\n`;

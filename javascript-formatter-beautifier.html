@@ -12,6 +12,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css?v=2.2">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prettier/2.8.8/standalone.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prettier/2.8.8/parser-babel.js"></script>
 
   <!-- Complete OpenGraph & Social Preview Tags -->
   <meta property="og:title" content="Online JavaScript Code Beautifier & Formatter - QuickDevBox">
@@ -261,6 +263,9 @@
             return input.replace(/\s*([{};])\s*/g, '$1\n').replace(/\s*:\s*/g, ': ').replace(/\n\s*\n/g, '\n').replace(/([^}]+){/g, '$1 {\n  ').replace(/;/g, ';\n  ').replace(/\n\s*}/g, '\n}').trim();
           }
           if (file.includes('javascript') || file.includes('graphql') || file.includes('yaml')) {
+            if (file.includes('javascript')) {
+              return prettier.format(input, { parser: "babel", plugins: prettierPlugins });
+            }
             let depth = 0;
             return input.replace(/\s*([{}])\s*/g, '$1\n').split('\n').map(l => {
               if (l.includes('}')) depth = Math.max(0, depth - 1);
@@ -409,7 +414,7 @@
           return JSON.stringify(obj, null, 2);
         }
         if (file.includes('string-escape-unescape')) {
-          return input.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '\\r').replace(/\t/g, '\\t');
+          return input.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\n').replace(/\r/g, '\\r').replace(/\t/g, '\\t');
         }
         if (file.includes('php-serialize')) {
           let obj = {};

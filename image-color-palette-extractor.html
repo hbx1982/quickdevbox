@@ -91,9 +91,9 @@
     <div class="editor-stacked">
       <div class="tool-controls" style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem;">
         <button class="btn btn-sample" onclick="loadSampleData()" style="animation: samplePulse 3.2s infinite ease-in-out;">💡 Fill Sample Data</button>
-        <button class="btn btn-primary" data-ux="action-primary" onclick="generateOutput()">⚡ Process Media (Ctrl+Enter)</button>
+        <button class="btn btn-primary" data-ux="action-primary" onclick="generateOutput()">⚡ Extract Palette (Ctrl+Enter)</button>
         <button class="btn btn-secondary" data-ux="action-clear" onclick="clearInputs()">🗑️ Clear</button>
-        <button class="btn btn-secondary" onclick="copyOutput()">📋 Copy Result</button>
+        <button class="btn btn-secondary" onclick="copyOutput()">📋 Copy Hex Codes</button>
       </div>
 
       <div class="editor-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
@@ -108,12 +108,12 @@
 
         <div class="editor-box">
           <div class="editor-header">
-            <span>👁️ Live Preview &amp; Output</span>
+            <span>👁️ Extracted Palette</span>
           </div>
-          <div id="mediaPreviewBox" style="min-height: 120px; background: rgba(0,0,0,0.3); border-radius: 6px; border: 1px dashed var(--bg-card-border); margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 600;">
-            Media Canvas Preview Area
+          <div id="mediaPreviewBox" style="min-height: 120px; background: rgba(0,0,0,0.3); border-radius: 6px; border: 1px dashed var(--bg-card-border); margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 600; padding:1rem; flex-wrap:wrap; gap:0.5rem;">
+            Extracted swatches will appear here
           </div>
-          <textarea id="mediaOutput" class="code-editor" rows="5" readonly placeholder="Output Base64, Hex codes, or generated markup will appear here..."></textarea>
+          <textarea id="mediaOutput" class="code-editor" rows="5" readonly placeholder="Hex codes will appear here..."></textarea>
         </div>
       </div>
 
@@ -198,7 +198,7 @@
     }
 
     function loadSampleData() {
-      const svgSample = '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="#6366f1"/><circle cx="50" cy="50" r="30" fill="#a855f7"/></svg>';
+      const svgSample = '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="#6366f1"/><circle cx="50" cy="50" r="30" fill="#a855f7"/><circle cx="20" cy="20" r="15" fill="#10b981"/></svg>';
       document.getElementById('mediaInput').value = svgSample;
       generateOutput();
       showStatus("Loaded sample vector graphic!");
@@ -217,26 +217,90 @@
     }
 
     function generateOutput() {
-      const inputVal = (document.getElementById("cssInput") || document.getElementById("mediaInput")).value;
-      if (inputVal && inputVal.length > 2 * 1024 * 1024) {
-        showStatus("Input exceeds 2MB limit!", true);
+      const val = document.getElementById('mediaInput').value.trim();
+      if (!val) {
+        showStatus("Please provide an image first.", true);
         return;
       }
-      const val = document.getElementById('mediaInput').value.trim() || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="60"><rect width="120" height="60" fill="%236366f1"/><text x="10" y="35" fill="white" font-family="sans-serif">QuickDevBox</text></svg>';
-      document.getElementById('mediaOutput').value = val;
-      const box = document.getElementById('mediaPreviewBox');
-      if (val.startsWith('data:image/') || val.startsWith('<svg')) {
+      
+      const img = new Image();
+      img.onload = function() {
+        const cvs = document.createElement('canvas');
+        // scale down to speed up pixel processing
+        const scale = Math.min(1, 200 / Math.max(img.width, img.height));
+        cvs.width = Math.floor(img.width * scale) || 1;
+        cvs.height = Math.floor(img.height * scale) || 1;
+        const ctx = cvs.getContext('2d');
+        ctx.drawImage(img, 0, 0, cvs.width, cvs.height);
+        
+        let data;
+        try {
+            data = ctx.getImageData(0, 0, cvs.width, cvs.height).data;
+        } catch(e) {
+            showStatus("Canvas tainted by cross-origin data.", true);
+            return;
+        }
+        
+        const colorCounts = {};
+        
+        for (let i = 0; i < data.length; i += 4) {
+          if (data[i+3] < 128) continue; // skip transparent
+          // Quantize colors by grouping into bins of 16 to find dominant areas
+          const r = Math.round(data[i] / 16) * 16;
+          const g = Math.round(data[i+1] / 16) * 16;
+          const b = Math.round(data[i+2] / 16) * 16;
+          
+          const rgb = `${Math.min(255, r)},${Math.min(255, g)},${Math.min(255, b)}`;
+          colorCounts[rgb] = (colorCounts[rgb] || 0) + 1;
+        }
+        
+        let sortedColors = Object.entries(colorCounts).sort((a, b) => b[1] - a[1]);
+        const palette = [];
+        for(let i = 0; i < sortedColors.length; i++) {
+           if(palette.length >= 6) break;
+           const [rgbStr] = sortedColors[i];
+           const [r, g, b] = rgbStr.split(',').map(Number);
+           
+           let isTooSimilar = false;
+           for(let j=0; j<palette.length; j++) {
+              const p = palette[j];
+              // Cityblock distance
+              const dist = Math.abs(r - p.r) + Math.abs(g - p.g) + Math.abs(b - p.b);
+              if (dist < 64) {
+                 isTooSimilar = true;
+                 break;
+              }
+           }
+           if (!isTooSimilar) {
+              palette.push({r, g, b});
+           }
+        }
+        
+        const box = document.getElementById('mediaPreviewBox');
         box.innerHTML = '';
-        const img = document.createElement('img');
-        img.src = val.startsWith('<svg') ? 'data:image/svg+xml;utf8,' + encodeURIComponent(val) : val;
-        img.style.maxWidth = '100%';
-        img.style.maxHeight = '120px';
-        img.style.borderRadius = '4px';
-        box.appendChild(img);
-      } else {
-        box.textContent = "Media Processed Successfully";
-      }
-      showStatus("Media processed!");
+        
+        let textOutput = '';
+        palette.forEach(c => {
+           const hex = "#" + ((1 << 24) + (c.r << 16) + (c.g << 8) + c.b).toString(16).slice(1).toUpperCase();
+           textOutput += `${hex}\\n`;
+           
+           const d = document.createElement('div');
+           d.style.width = '60px';
+           d.style.height = '60px';
+           d.style.backgroundColor = hex;
+           d.style.borderRadius = '4px';
+           d.style.border = '1px solid rgba(255,255,255,0.1)';
+           d.title = hex;
+           box.appendChild(d);
+        });
+        
+        document.getElementById('mediaOutput').value = textOutput.trim();
+        showStatus("Palette extracted!");
+      };
+      img.onerror = function() {
+        showStatus("Invalid image data.", true);
+      };
+      img.src = val.startsWith('<svg') ? 'data:image/svg+xml;utf8,' + encodeURIComponent(val) : val;
     }
 
     function clearInputs() {
@@ -244,7 +308,7 @@
       document.getElementById('mediaOutput').value = "";
       const box = document.getElementById('mediaPreviewBox');
       box.innerHTML = "";
-      box.textContent = "Media Canvas Preview Area";
+      box.textContent = "Extracted swatches will appear here";
       showStatus("Cleared!");
     }
 

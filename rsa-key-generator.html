@@ -193,11 +193,11 @@
         const publicKey = await crypto.subtle.exportKey("spki", keyPair.publicKey);
         const privateKey = await crypto.subtle.exportKey("pkcs8", keyPair.privateKey);
         
-        const pubBase64 = btoa(String.fromCharCode(...new Uint8Array(publicKey))).match(/.{1,64}/g).join('\\n');
-        const privBase64 = btoa(String.fromCharCode(...new Uint8Array(privateKey))).match(/.{1,64}/g).join('\\n');
+        const pubBase64 = btoa(String.fromCharCode(...new Uint8Array(publicKey))).match(/.{1,64}/g).join('\n');
+        const privBase64 = btoa(String.fromCharCode(...new Uint8Array(privateKey))).match(/.{1,64}/g).join('\n');
         
-        output.value = "-----BEGIN PUBLIC KEY-----\\n" + pubBase64 + "\\n-----END PUBLIC KEY-----\\n\\n" + 
-                       "-----BEGIN PRIVATE KEY-----\\n" + privBase64 + "\\n-----END PRIVATE KEY-----";
+        output.value = "-----BEGIN PUBLIC KEY-----\n" + pubBase64 + "\n-----END PUBLIC KEY-----\n\n" + 
+                       "-----BEGIN PRIVATE KEY-----\n" + privBase64 + "\n-----END PRIVATE KEY-----";
       } catch(e) { output.value = "Error: " + e.message; }
     }
 

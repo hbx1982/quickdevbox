@@ -12,6 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css?v=2.2">
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
   <!-- Complete OpenGraph & Social Preview Tags -->
   <meta property="og:title" content="Online JavaScript Compiler (ES6+ to ES5 Transpiler) - QuickDevBox">
@@ -409,7 +410,7 @@
           return JSON.stringify(obj, null, 2);
         }
         if (file.includes('string-escape-unescape')) {
-          return input.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '\\r').replace(/\t/g, '\\t');
+          return input.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\n').replace(/\r/g, '\\r').replace(/\t/g, '\\t');
         }
         if (file.includes('php-serialize')) {
           let obj = {};
@@ -430,7 +431,7 @@
           return JSON.stringify(unwrapBSON(obj), null, 2);
         }
         if (file.includes('babel-js') || file.includes('typescript-to-javascript')) {
-          return input.replace(/const|let/g, 'var').replace(/\(([^)]*)\)\s*=>\s*\{/g, 'function($1) {').replace(/`([^`]*)`/g, '"$1"');
+          return Babel.transform(input, { presets: ['env'] }).code;
         }
         if (file.includes('protobuf-to-json')) {
           let schema = { type: "object", properties: {} };

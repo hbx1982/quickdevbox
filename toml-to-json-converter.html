@@ -56,6 +56,10 @@
   gtag('js', new Date());
   gtag('config', 'G-E0LZHPD7SL');
 </script>
+<script type="module">
+  import * as toml from 'https://cdn.jsdelivr.net/npm/@iarna/toml@2.2.5/+esm';
+  window.toml = toml;
+</script>
 </head>
 <body>
   <!-- Global Header Nav -->
@@ -387,7 +391,11 @@
           }
           return py;
         }
-        if (file.includes('json-to-yaml') || file.includes('toml-to-json') || file.includes('yaml-to-json')) {
+        if (file.includes('toml-to-json')) {
+          const obj = window.toml.parse(input);
+          return JSON.stringify(obj, null, 2);
+        }
+        if (file.includes('json-to-yaml') || file.includes('yaml-to-json')) {
           const obj = JSON.parse(input);
           let yaml = "";
           for (let k in obj) {
@@ -409,7 +417,7 @@
           return JSON.stringify(obj, null, 2);
         }
         if (file.includes('string-escape-unescape')) {
-          return input.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '\\r').replace(/\t/g, '\\t');
+          return input.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\n').replace(/\r/g, '\\r').replace(/\t/g, '\\t');
         }
         if (file.includes('php-serialize')) {
           let obj = {};

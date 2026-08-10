@@ -42,6 +42,7 @@
   gtag('js', new Date());
   gtag('config', 'G-E0LZHPD7SL');
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/forge/1.3.1/forge.min.js" crossorigin="anonymous"></script>
 </head>
 <body>
 
@@ -269,19 +270,41 @@ function parseDevOpsPayload(input) {
     }
 
     
-    function computeSpecificToolLogic(input, file) {
+    function computeSpecificToolLogic(input) {
       if (!input.includes("BEGIN CERTIFICATE")) {
         throw new Error("Invalid PEM format. Must contain '-----BEGIN CERTIFICATE-----'");
       }
-      let b64 = input.replace(/-----(BEGIN|END) CERTIFICATE-----/g, '').replace(/\s+/g, '');
-      let len = Math.floor(b64.length * 0.75);
-      let out = `=== X.509 PEM Certificate Inspection ===\n`;
-      out += `Format          : PEM Base64 Encoded X.509 v3\n`;
-      out += `Decoded Size    : ${len} bytes\n`;
-      out += `Public Key Algo : RSA / ECDSA (SubjectPublicKeyInfo)\n`;
-      out += `Signature Algo  : sha256WithRSAEncryption\n`;
-      out += `Validity Period : Active (Inspected via Web Crypto ASN.1 DER parser)\n`;
-      return out;
+      try {
+        const cert = forge.pki.certificateFromPem(input);
+        
+        const formatAttr = (attrs) => {
+          return attrs.map(a => `${a.shortName || a.name || 'Unknown'}=${a.value}`).join(', ');
+        };
+        
+        let out = `=== X.509 PEM Certificate Inspection ===\n\n`;
+        out += `[ Subject ]\n${formatAttr(cert.subject.attributes)}\n\n`;
+        out += `[ Issuer ]\n${formatAttr(cert.issuer.attributes)}\n\n`;
+        out += `[ Validity ]\nNot Before: ${cert.validity.notBefore.toUTCString()}\nNot After : ${cert.validity.notAfter.toUTCString()}\n`;
+        
+        const now = new Date();
+        const daysRemaining = Math.floor((cert.validity.notAfter - now) / (1000 * 60 * 60 * 24));
+        out += `Status    : ${daysRemaining > 0 ? daysRemaining + ' days remaining' : 'EXPIRED'}\n\n`;
+        
+        const ext = cert.getExtension('subjectAltName');
+        if (ext && ext.altNames) {
+           const sans = ext.altNames.map(n => n.value).join(', ');
+           out += `[ Subject Alternative Names (SANs) ]\n${sans}\n\n`;
+        }
+        
+        const pk = forge.pki.publicKeyToPem(cert.publicKey);
+        out += `[ Public Key Algorithm ]\n${cert.publicKey.n ? 'RSA' : 'Other'}\n\n`;
+        
+        out += `[ Signature Algorithm ]\n${cert.signatureOid || 'Unknown'}\n`;
+        
+        return out;
+      } catch (err) {
+        throw new Error("Failed to parse certificate. " + err.message);
+      }
     }
     
 
