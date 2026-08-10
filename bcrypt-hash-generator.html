@@ -102,8 +102,8 @@
         </div>
 
         <div class="tool-controls">
-        <button class="btn btn-secondary" onclick="var ta=document.querySelector('textarea'); if(ta){ta.value='QuickDevBoxSuperSecretPass123!';} if(typeof updateCounter==='function')updateCounter();" style="font-size:0.8rem; padding:0.4rem 0.8rem; margin-left:0.5rem;">💡 Fill Sample Data</button>
-        <button class="btn btn-secondary" onclick="document.querySelectorAll('textarea, input[type=text], input[type=number]').forEach(el => el.value=''); if(typeof updateCounter==='function')updateCounter();" style="color:var(--danger); font-size:0.8rem; padding:0.4rem 0.8rem; margin-left:0.5rem;">🗑️ Clear</button>
+        <button class="btn btn-secondary" onclick="document.getElementById('bcryptInput').value='QuickDevBoxSuperSecretPass123!';" style="font-size:0.8rem; padding:0.4rem 0.8rem; margin-left:0.5rem;">💡 Fill Sample Data</button>
+        <button class="btn btn-secondary" onclick="document.querySelectorAll('input[type=text], input[type=number]').forEach(el => el.value='');" style="color:var(--danger); font-size:0.8rem; padding:0.4rem 0.8rem; margin-left:0.5rem;">🗑️ Clear</button>
           <button data-ux="action-primary" class="btn" onclick="generateBcrypt()">🔒 Generate Bcrypt Hash</button>
           <button class="btn btn-secondary" onclick="copyHash()">📋 Copy Hash</button>
         </div>

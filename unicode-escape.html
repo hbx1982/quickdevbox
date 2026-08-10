@@ -102,10 +102,11 @@
           <textarea data-ux="input" id="toolInput" rows="5" oninput="updateCounter();" style="width:100%; font-family:monospace; background:#040711; color:#00f2fe; border:1px solid var(--bg-card-border); border-radius:6px; padding:0.8rem;">Hello 🌍 World! 测试</textarea>
         </div>
 
-        <div class="tool-controls" style="margin-top:0.8rem;">
-          <button class="btn btn-primary" id="execBtn" onclick="processTool();">⚡ Execute / Process (Ctrl+Enter)</button>
-          <button class="btn btn-secondary" onclick="document.getElementById('toolInput').value='Hello 🌍 World! 测试'; updateCounter(); processTool();" style="font-size:0.8rem; padding:0.4rem 0.8rem; margin-left:0.5rem;">💡 Fill Sample Data</button>
-          <button class="btn btn-secondary" onclick="document.getElementById('toolInput').value=''; document.getElementById('toolOutput').value=''; updateCounter();" style="color:var(--danger); font-size:0.8rem; padding:0.4rem 0.8rem; margin-left:0.5rem;">🗑️ Clear</button>
+        <div class="tool-controls" style="margin-top:0.8rem; display:flex; gap:0.5rem;">
+          <button class="btn btn-primary" onclick="processTool('encode');">Encode Unicode</button>
+          <button class="btn btn-primary" onclick="processTool('decode');" style="background:#10b981;">Decode Unicode</button>
+          <button class="btn btn-secondary" onclick="document.getElementById('toolInput').value='Hello 🌍 World! 测试'; updateCounter(); processTool('encode');" style="font-size:0.8rem;">💡 Sample</button>
+          <button class="btn btn-secondary" onclick="document.getElementById('toolInput').value=''; document.getElementById('toolOutput').value=''; updateCounter();" style="color:var(--danger); font-size:0.8rem;">🗑️ Clear</button>
         </div>
 
         <div style="background:rgba(255,255,255,0.03); padding:1.25rem; border-radius:var(--radius-md); border:1px solid var(--bg-card-border); margin-top:0.8rem;">
@@ -179,15 +180,21 @@
       }
     }
 
-    function processTool() {
+    function processTool(action = 'encode') {
       const input = document.getElementById('toolInput').value;
       const output = document.getElementById('toolOutput');
       if (input.length > 2 * 1024 * 1024) { alert('Payload exceeds 2MB limit.'); return; }
       try {
-        if (/^(\\[uU][0-9A-Fa-f]{4})+$/.test(input.replace(/\s/g, ''))) {
-            output.value = 'Decoded:\n' + input.replace(/\\[uU]([0-9A-Fa-f]{4})/g, (m, g1) => String.fromCharCode(parseInt(g1, 16)));
+        if (action === 'decode') {
+            output.value = input.replace(/\\u([\d\w]{4})/gi, (match, grp) => String.fromCharCode(parseInt(grp, 16)));
         } else {
-            output.value = 'Encoded:\n' + input.split('').map(c => '\\u' + ('0000' + c.charCodeAt(0).toString(16)).slice(-4)).join('');
+            output.value = input.split('').map(c => {
+                const code = c.charCodeAt(0);
+                if (code > 127) {
+                    return '\\u' + ('0000' + code.toString(16)).slice(-4);
+                }
+                return c;
+            }).join('');
         }
       } catch(e) { output.value = 'Error: ' + e.message; }
     }

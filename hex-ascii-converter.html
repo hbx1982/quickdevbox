@@ -102,10 +102,11 @@
           <textarea data-ux="input" id="toolInput" rows="5" oninput="updateCounter();" style="width:100%; font-family:monospace; background:#040711; color:#00f2fe; border:1px solid var(--bg-card-border); border-radius:6px; padding:0.8rem;">51 75 69 63 6b 44 65 76 42 6f 78 20 54 6f 6f 6c 73</textarea>
         </div>
 
-        <div class="tool-controls" style="margin-top:0.8rem;">
-          <button class="btn btn-primary" id="execBtn" onclick="processTool();">⚡ Execute / Process (Ctrl+Enter)</button>
-          <button class="btn btn-secondary" onclick="document.getElementById('toolInput').value='51 75 69 63 6b 44 65 76 42 6f 78 20 54 6f 6f 6c 73'; updateCounter(); processTool();" style="font-size:0.8rem; padding:0.4rem 0.8rem; margin-left:0.5rem;">💡 Fill Sample Data</button>
-          <button class="btn btn-secondary" onclick="document.getElementById('toolInput').value=''; document.getElementById('toolOutput').value=''; updateCounter();" style="color:var(--danger); font-size:0.8rem; padding:0.4rem 0.8rem; margin-left:0.5rem;">🗑️ Clear</button>
+        <div class="tool-controls" style="margin-top:0.8rem; display:flex; gap:0.5rem;">
+          <button class="btn btn-primary" onclick="processTool('encode');">Text to Hex</button>
+          <button class="btn btn-primary" onclick="processTool('decode');" style="background:#10b981;">Hex to Text</button>
+          <button class="btn btn-secondary" onclick="document.getElementById('toolInput').value='51 75 69 63 6b 44 65 76 42 6f 78 20 54 6f 6f 6c 73'; updateCounter(); processTool('decode');" style="font-size:0.8rem;">💡 Sample</button>
+          <button class="btn btn-secondary" onclick="document.getElementById('toolInput').value=''; document.getElementById('toolOutput').value=''; updateCounter();" style="color:var(--danger); font-size:0.8rem;">🗑️ Clear</button>
         </div>
 
         <div style="background:rgba(255,255,255,0.03); padding:1.25rem; border-radius:var(--radius-md); border:1px solid var(--bg-card-border); margin-top:0.8rem;">
@@ -179,20 +180,24 @@
       }
     }
 
-    function processTool() {
+    function processTool(action = 'decode') {
       const input = document.getElementById('toolInput').value;
       const output = document.getElementById('toolOutput');
       if (input.length > 2 * 1024 * 1024) { alert('Payload exceeds 2MB limit.'); return; }
       try {
-        if (/^[0-9A-Fa-f\s]+$/.test(input) && input.trim().length > 0) {
+        if (action === 'decode') {
             const hex = input.replace(/\s/g, '');
+            if (!/^[0-9A-Fa-f]*$/.test(hex)) {
+                output.value = "Error: Input contains invalid hex characters.";
+                return;
+            }
             let str = '';
             for (let i = 0; i < hex.length; i += 2) {
                 str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
             }
-            output.value = 'ASCII Decoded:\n' + str;
+            output.value = str;
         } else {
-            output.value = 'HEX Encoded:\n' + input.split('').map(c => c.charCodeAt(0).toString(16).padStart(2, '0')).join(' ');
+            output.value = input.split('').map(c => c.charCodeAt(0).toString(16).padStart(2, '0')).join(' ');
         }
       } catch(e) { output.value = 'Error: ' + e.message; }
     }

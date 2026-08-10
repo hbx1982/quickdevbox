@@ -194,8 +194,7 @@
           keyMaterial, 256
         );
         const hashHex = Array.from(new Uint8Array(derivedBits)).map(b => b.toString(16).padStart(2, '0')).join('');
-        output.value = "PBKDF2-HMAC-SHA256 (10,000 Iterations):
-Derived Key (256-bit): " + hashHex;
+        output.value = "PBKDF2-HMAC-SHA256 (10,000 Iterations):\\nDerived Key (256-bit): " + hashHex;
       } catch(e) { output.value = "Error: " + e.message; }
     }
 

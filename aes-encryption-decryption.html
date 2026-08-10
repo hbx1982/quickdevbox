@@ -192,9 +192,7 @@
         const encHex = Array.from(new Uint8Array(encrypted)).map(b => b.toString(16).padStart(2, '0')).join('');
         const ivHex = Array.from(iv).map(b => b.toString(16).padStart(2, '0')).join('');
         const keyHex = Array.from(rawKey).map(b => b.toString(16).padStart(2, '0')).join('');
-        output.value = "AES-256-GCM [Encrypted Hex]: " + encHex + "
-IV (Hex): " + ivHex + "
-Key (Hex): " + keyHex;
+        output.value = "AES-256-GCM [Encrypted Hex]: " + encHex + "\\nIV (Hex): " + ivHex + "\\nKey (Hex): " + keyHex;
       } catch(e) { output.value = "Error: " + e.message; }
     }
 

@@ -98,14 +98,16 @@
           <span id="editor-counter">0 chars | 0 lines</span>
         </div>
         <div style="background:rgba(255,255,255,0.03); padding:1.25rem; border-radius:var(--radius-md); border:1px solid var(--bg-card-border);">
-          <label style="display:block; color:var(--text-muted); font-size:0.85rem; font-weight:600; margin-bottom:0.3rem;">Input String / Payload:</label>
-          <textarea data-ux="input-nopersist" id="toolInput" rows="5" oninput="updateCounter();" style="width:100%; font-family:monospace; background:#040711; color:#00f2fe; border:1px solid var(--bg-card-border); border-radius:6px; padding:0.8rem;">2048-bit RSA PKCS#8</textarea>
+          <label style="display:block; color:var(--text-muted); font-size:0.85rem; font-weight:600; margin-bottom:0.3rem;">Key Size (Bits):</label>
+          <select id="keySize" style="width:100%; padding:0.5rem; border-radius:4px; background:rgba(0,0,0,0.5); color:#fff; border:1px solid var(--bg-card-border); font-family:var(--font-mono);">
+            <option value="2048">2048-bit (Standard Security)</option>
+            <option value="4096" selected>4096-bit (High Security)</option>
+          </select>
         </div>
 
         <div class="tool-controls" style="margin-top:0.8rem;">
-          <button class="btn btn-primary" id="execBtn" onclick="processTool();">⚡ Execute / Process (Ctrl+Enter)</button>
-          <button class="btn btn-secondary" onclick="document.getElementById('toolInput').value='2048-bit RSA PKCS#8'; updateCounter(); processTool();" style="font-size:0.8rem; padding:0.4rem 0.8rem; margin-left:0.5rem;">💡 Fill Sample Data</button>
-          <button class="btn btn-secondary" onclick="document.getElementById('toolInput').value=''; document.getElementById('toolOutput').value=''; updateCounter();" style="color:var(--danger); font-size:0.8rem; padding:0.4rem 0.8rem; margin-left:0.5rem;">🗑️ Clear</button>
+          <button class="btn btn-primary" id="execBtn" onclick="processTool();">⚡ Generate Key Pair (Ctrl+Enter)</button>
+          <button class="btn btn-secondary" onclick="document.getElementById('toolOutput').value=''; updateCounter();" style="color:var(--danger); font-size:0.8rem; padding:0.4rem 0.8rem; margin-left:0.5rem;">🗑️ Clear</button>
         </div>
 
         <div style="background:rgba(255,255,255,0.03); padding:1.25rem; border-radius:var(--radius-md); border:1px solid var(--bg-card-border); margin-top:0.8rem;">
@@ -181,28 +183,21 @@
 
     async function processTool() {
       const output = document.getElementById('toolOutput');
+      const size = parseInt(document.getElementById('keySize').value);
       try {
-        output.value = "Generating 2048-bit RSA Key Pair... (Please wait)";
+        output.value = "Generating " + size + "-bit RSA Key Pair... (Please wait)";
         const keyPair = await crypto.subtle.generateKey(
-          { name: "RSA-OAEP", modulusLength: 2048, publicExponent: new Uint8Array([1, 0, 1]), hash: "SHA-256" },
+          { name: "RSA-OAEP", modulusLength: size, publicExponent: new Uint8Array([1, 0, 1]), hash: "SHA-256" },
           true, ["encrypt", "decrypt"]
         );
         const publicKey = await crypto.subtle.exportKey("spki", keyPair.publicKey);
         const privateKey = await crypto.subtle.exportKey("pkcs8", keyPair.privateKey);
         
-        const pubBase64 = btoa(String.fromCharCode(...new Uint8Array(publicKey))).match(/.{1,64}/g).join('
-');
-        const privBase64 = btoa(String.fromCharCode(...new Uint8Array(privateKey))).match(/.{1,64}/g).join('
-');
+        const pubBase64 = btoa(String.fromCharCode(...new Uint8Array(publicKey))).match(/.{1,64}/g).join('\\n');
+        const privBase64 = btoa(String.fromCharCode(...new Uint8Array(privateKey))).match(/.{1,64}/g).join('\\n');
         
-        output.value = "-----BEGIN PUBLIC KEY-----
-" + pubBase64 + "
------END PUBLIC KEY-----
-
-" + 
-                       "-----BEGIN PRIVATE KEY-----
-" + privBase64 + "
------END PRIVATE KEY-----";
+        output.value = "-----BEGIN PUBLIC KEY-----\\n" + pubBase64 + "\\n-----END PUBLIC KEY-----\\n\\n" + 
+                       "-----BEGIN PRIVATE KEY-----\\n" + privBase64 + "\\n-----END PRIVATE KEY-----";
       } catch(e) { output.value = "Error: " + e.message; }
     }
 

@@ -99,14 +99,17 @@
           <span id="editor-counter">0 chars | 0 lines</span>
         </div>
         <div style="background:rgba(255,255,255,0.03); padding:1.25rem; border-radius:var(--radius-md); border:1px solid var(--bg-card-border);">
+          <label style="display:block; color:var(--text-muted); font-size:0.85rem; font-weight:600; margin-bottom:0.3rem;">Secret Key (String):</label>
+          <input data-ux="input-nopersist" type="text" id="desKey" value="SecretPass123!" style="width:100%; margin-bottom:1rem; padding:0.5rem; border-radius:4px; background:rgba(0,0,0,0.5); color:#fff; border:1px solid var(--bg-card-border);">
+          
           <label style="display:block; color:var(--text-muted); font-size:0.85rem; font-weight:600; margin-bottom:0.3rem;">Input String / Payload:</label>
           <textarea data-ux="input-nopersist" id="toolInput" rows="5" oninput="updateCounter();" style="width:100%; font-family:monospace; background:#040711; color:#00f2fe; border:1px solid var(--bg-card-border); border-radius:6px; padding:0.8rem;">Legacy System Payload Test</textarea>
         </div>
 
-        <div class="tool-controls" style="margin-top:0.8rem;">
-          <button class="btn btn-primary" id="execBtn" onclick="processTool();">⚡ Execute / Process (Ctrl+Enter)</button>
-          <button class="btn btn-secondary" onclick="document.getElementById('toolInput').value='Legacy System Payload Test'; updateCounter(); processTool();" style="font-size:0.8rem; padding:0.4rem 0.8rem; margin-left:0.5rem;">💡 Fill Sample Data</button>
-          <button class="btn btn-secondary" onclick="document.getElementById('toolInput').value=''; document.getElementById('toolOutput').value=''; updateCounter();" style="color:var(--danger); font-size:0.8rem; padding:0.4rem 0.8rem; margin-left:0.5rem;">🗑️ Clear</button>
+        <div class="tool-controls" style="margin-top:0.8rem; display:flex; gap:0.5rem;">
+          <button class="btn btn-primary" onclick="processTool('encrypt');">🔒 Encrypt 3DES</button>
+          <button class="btn btn-primary" onclick="processTool('decrypt');" style="background:#10b981;">🔓 Decrypt 3DES</button>
+          <button class="btn btn-secondary" onclick="document.getElementById('toolInput').value=''; document.getElementById('toolOutput').value=''; updateCounter();" style="color:var(--danger);">🗑️ Clear</button>
         </div>
 
         <div style="background:rgba(255,255,255,0.03); padding:1.25rem; border-radius:var(--radius-md); border:1px solid var(--bg-card-border); margin-top:0.8rem;">
@@ -180,18 +183,22 @@
       }
     }
 
-    function processTool() {
+    function processTool(action = 'encrypt') {
       const input = document.getElementById('toolInput').value;
+      const key = document.getElementById('desKey').value;
       const output = document.getElementById('toolOutput');
-      if (input.length > 2 * 1024 * 1024) { alert("Payload exceeds 2MB safety threshold."); return; }
+      if (!input || !key) { alert("Please enter both input and key."); return; }
       try {
-        const key = CryptoJS.enc.Utf8.parse("123456789012345678901234"); // 24 byte key for 3DES
-        const encrypted = CryptoJS.TripleDES.encrypt(input, key, { mode: CryptoJS.mode.ECB });
-        output.value = "3DES-TDEA [Encrypted Base64]: " + encrypted.toString();
+        if (action === 'encrypt') {
+            const encrypted = CryptoJS.TripleDES.encrypt(input, key).toString();
+            output.value = encrypted;
+        } else {
+            const decrypted = CryptoJS.TripleDES.decrypt(input, key).toString(CryptoJS.enc.Utf8);
+            if (!decrypted) throw new Error("Malformed UTF-8 data or wrong key");
+            output.value = decrypted;
+        }
       } catch(e) { output.value = "Error: " + e.message; }
     }
-
-
 
     document.addEventListener('keydown', function(e) {
       if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {

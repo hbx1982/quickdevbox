@@ -98,6 +98,9 @@
           <span id="editor-counter">0 chars | 0 lines</span>
         </div>
         <div style="background:rgba(255,255,255,0.03); padding:1.25rem; border-radius:var(--radius-md); border:1px solid var(--bg-card-border);">
+          <label style="display:block; color:var(--text-muted); font-size:0.85rem; font-weight:600; margin-bottom:0.3rem;">Shift Amount:</label>
+          <input data-ux="input-nopersist" type="number" id="shiftAmount" value="13" style="width:100%; margin-bottom:1rem; padding:0.5rem; border-radius:4px; background:rgba(0,0,0,0.5); color:#fff; border:1px solid var(--bg-card-border);">
+          
           <label style="display:block; color:var(--text-muted); font-size:0.85rem; font-weight:600; margin-bottom:0.3rem;">Input String / Payload:</label>
           <textarea data-ux="input" id="toolInput" rows="5" oninput="updateCounter();" style="width:100%; font-family:monospace; background:#040711; color:#00f2fe; border:1px solid var(--bg-card-border); border-radius:6px; padding:0.8rem;">The Quick Brown Fox Jumps Over The Lazy Dog</textarea>
         </div>
@@ -181,13 +184,29 @@
 
     function processTool() {
       const input = document.getElementById('toolInput').value;
+      const shift = parseInt(document.getElementById('shiftAmount').value) || 0;
       const output = document.getElementById('toolOutput');
-      if (input.length > 2 * 1024 * 1024) { alert('Payload exceeds 2MB limit.'); return; }
+      if (input.length > 2 * 1024 * 1024) { alert("Payload exceeds 2MB safety threshold."); return; }
       try {
-        output.value = input.replace(/[a-zA-Z]/g, function(c){
-             return String.fromCharCode((c <= 'Z' ? 90 : 122) >= (c = c.charCodeAt(0) + 13) ? c : c - 26);
-        });
-      } catch(e) { output.value = 'Error: ' + e.message; }
+        const caesar = (str, amount) => {
+            if (amount < 0) return caesar(str, amount + 26);
+            let res = '';
+            for (let i = 0; i < str.length; i++) {
+                let c = str[i];
+                if (c.match(/[a-z]/i)) {
+                    let code = str.charCodeAt(i);
+                    if (code >= 65 && code <= 90) {
+                        c = String.fromCharCode(((code - 65 + amount) % 26) + 65);
+                    } else if (code >= 97 && code <= 122) {
+                        c = String.fromCharCode(((code - 97 + amount) % 26) + 97);
+                    }
+                }
+                res += c;
+            }
+            return res;
+        };
+        output.value = caesar(input, shift);
+      } catch(e) { output.value = "Error: " + e.message; }
     }
 
 
