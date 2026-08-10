@@ -56,6 +56,8 @@
   gtag('js', new Date());
   gtag('config', 'G-E0LZHPD7SL');
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prettier/2.8.8/standalone.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prettier/2.8.8/parser-postcss.js"></script>
 </head>
 <body>
   <!-- Global Header Nav -->
@@ -258,7 +260,7 @@
             }).join('\n');
           }
           if (file.includes('css')) {
-            return input.replace(/\s*([{};])\s*/g, '$1\n').replace(/\s*:\s*/g, ': ').replace(/\n\s*\n/g, '\n').replace(/([^}]+){/g, '$1 {\n  ').replace(/;/g, ';\n  ').replace(/\n\s*}/g, '\n}').trim();
+            return prettier.format(input, { parser: "css", plugins: prettierPlugins });
           }
           if (file.includes('javascript') || file.includes('graphql') || file.includes('yaml')) {
             let depth = 0;

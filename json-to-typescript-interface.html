@@ -365,14 +365,37 @@
         }
         if (file.includes('json-to-typescript')) {
           const obj = JSON.parse(input);
-          let ts = `export interface RootObject {\n`;
-          for (let k in obj) {
-            const val = obj[k];
-            let t = typeof val;
-            if (Array.isArray(val)) t = "any[]";
-            ts += `  ${k}: ${t};\n`;
+          let interfaces = [];
+          function parseObj(o, name) {
+            let fields = [];
+            for (let k in o) {
+              const val = o[k];
+              let interfaceName = k.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('').replace(/[^a-zA-Z0-9]/g, '');
+              if (/^\d/.test(interfaceName)) interfaceName = 'Num' + interfaceName;
+              if (!interfaceName) interfaceName = 'Interface';
+              let t = "string";
+              if (typeof val === 'number') t = "number";
+              else if (typeof val === 'boolean') t = "boolean";
+              else if (Array.isArray(val)) {
+                if (val.length > 0 && typeof val[0] === 'object' && val[0] !== null && !Array.isArray(val[0])) {
+                  t = `${interfaceName}[]`;
+                  parseObj(val[0], interfaceName);
+                } else if (val.length > 0) {
+                  t = `${typeof val[0]}[]`;
+                } else {
+                  t = "any[]";
+                }
+              }
+              else if (typeof val === 'object' && val !== null) {
+                t = interfaceName;
+                parseObj(val, interfaceName);
+              }
+              fields.push(`  "${k}": ${t};`);
+            }
+            interfaces.push(`export interface ${name} {\n${fields.join('\n')}\n}`);
           }
-          return ts + "}";
+          parseObj(obj, "RootObject");
+          return interfaces.reverse().join('\n\n');
         }
         if (file.includes('json-to-python')) {
           const obj = JSON.parse(input);

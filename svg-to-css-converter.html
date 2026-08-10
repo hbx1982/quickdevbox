@@ -213,7 +213,7 @@
     function encodeSVG(svg) {
         // Optimize and URL encode SVG
         // Removing newlines and extra spaces
-        let optimized = svg.replace(/\\r?\\n|\\r/g, '').replace(/>\\s+</g, '><').trim();
+        let optimized = svg.replace(/\r?\n|\r/g, '').replace(/>\s+</g, '><').trim();
         // Replace quotes and encode special characters
         optimized = optimized.replace(/"/g, "'");
         optimized = optimized.replace(/%/g, '%25');
@@ -239,7 +239,7 @@
         }
         
         const cssUrl = encodeSVG(inputVal);
-        const cssRule = `background-image: ${cssUrl};\\nbackground-repeat: no-repeat;\\nbackground-position: center;`;
+        const cssRule = `background-image: ${cssUrl};\nbackground-repeat: no-repeat;\nbackground-position: center;`;
         
         document.getElementById('cssOutput').value = cssRule;
         

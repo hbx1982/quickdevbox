@@ -301,10 +301,16 @@ function parseDevOpsPayload(input) {
       
       const isAlpine = config.alpine === 'true';
       const isMulti = config.multi_stage === 'true';
-      const baseTag = `${config.version}${isAlpine ? '-alpine' : ''}`;
+      let baseTag = `${config.version}${isAlpine ? '-alpine' : ''}`;
+      
+      // Fix fallback rust:latest-alpine to rust:alpine
+      if (config.language.toLowerCase() === 'rust' && baseTag === 'latest-alpine') {
+          baseTag = 'alpine';
+      }
       
       if (config.language.includes('node') || config.language.includes('javascript')) {
           if (isMulti) {
+              df += `FROM node:${baseTag} AS builder\nWORKDIR /app\nCOPY package*.json ./\nRUN ${config.package_manager === 'yarn' ? 'yarn install' : 'npm ci'}\nCOPY . .\nRUN ${config.package_manager === 'yarn' ? 'yarn build' : 'npm run build'}\n\n`;
               df += `FROM node:${baseTag}\nENV NODE_ENV=production\nRUN addgroup -S appgroup && adduser -S appuser -G appgroup\nUSER appuser\nWORKDIR /app\n`;
               df += `COPY --from=builder /app/package*.json ./\n`;
               df += `COPY --from=builder /app/node_modules ./node_modules\n`;

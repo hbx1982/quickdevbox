@@ -282,7 +282,7 @@
         let textOutput = '';
         palette.forEach(c => {
            const hex = "#" + ((1 << 24) + (c.r << 16) + (c.g << 8) + c.b).toString(16).slice(1).toUpperCase();
-           textOutput += `${hex}\\n`;
+           textOutput += `${hex}\n`;
            
            const d = document.createElement('div');
            d.style.width = '60px';

@@ -282,7 +282,7 @@
         let optimized = serializer.serializeToString(doc.documentElement);
         
         // Basic minification: remove empty spaces between tags
-        optimized = optimized.replace(/>\\s+</g, '><');
+        optimized = optimized.replace(/>\s+</g, '><');
         
         document.getElementById('cssOutput').value = optimized;
         const preview = document.getElementById('visualPreview');

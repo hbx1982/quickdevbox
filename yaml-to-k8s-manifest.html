@@ -276,8 +276,85 @@ function parseDevOpsPayload(input) {
 
     
     function computeSpecificToolLogic(input, file) {
-      let appName = input.replace(/[^a-zA-Z0-9-]/g, '-').toLowerCase() || "my-app";
-      let k8s = `apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: ${appName}\n  labels:\n    app: ${appName}\nspec:\n  replicas: 3\n  selector:\n    matchLabels:\n      app: ${appName}\n  template:\n    metadata:\n      labels:\n        app: ${appName}\n    spec:\n      containers:\n      - name: ${appName}\n        image: ${appName}:latest\n        ports:\n        - containerPort: 8080\n        resources:\n          limits:\n            cpu: "500m"\n            memory: "512Mi"\n          requests:\n            cpu: "100m"\n            memory: "128Mi"\n---\napiVersion: v1\nkind: Service\nmetadata:\n  name: ${appName}-svc\nspec:\n  type: ClusterIP\n  ports:\n  - port: 80\n    targetPort: 8080\n  selector:\n    app: ${appName}\n`;
+      let rawInput = input.trim();
+      let parts = rawInput.split(':');
+      let rawAppName = parts[0];
+      let appName = rawAppName.replace(/[^a-zA-Z0-9-]/g, '-').toLowerCase() || "my-app";
+      let image = rawInput || `${appName}:latest`;
+      
+      let k8s = `apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${appName}
+  labels:
+    app: ${appName}
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: ${appName}
+  template:
+    metadata:
+      labels:
+        app: ${appName}
+    spec:
+      containers:
+      - name: ${appName}
+        image: ${image}
+        ports:
+        - containerPort: 8080
+        resources:
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ${appName}-svc
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 8080
+  selector:
+    app: ${appName}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ${appName}-config
+data:
+  APP_ENV: "production"
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ${appName}-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: ${appName}.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: ${appName}-svc
+            port:
+              number: 80
+`;
       return k8s;
     }
     

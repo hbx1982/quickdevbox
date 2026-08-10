@@ -239,34 +239,50 @@
       const resultContainer = document.getElementById('resultContainer');
       const downloadBtn = document.getElementById('downloadBtn');
       
-      let progress = 0;
-      const interval = setInterval(() => {
-        progress += Math.floor(Math.random() * 15) + 5;
-        if (progress >= 100) {
-          progress = 100;
-          clearInterval(interval);
-          setTimeout(() => {
-            document.getElementById('progressContainer').style.display = 'none';
-            resultContainer.style.display = 'block';
-            showStatus("Conversion complete!");
-            
-            const fakeWoff2Name = selectedFile.name.replace(/\.(ttf|otf)$/i, '.woff2');
-            downloadBtn.onclick = () => {
-                const blob = new Blob(["dummy woff2 content"], { type: "font/woff2" });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = fakeWoff2Name;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-            };
-          }, 500);
+      const reader = new FileReader();
+      
+      reader.onprogress = (e) => {
+        if (e.lengthComputable) {
+          const percent = Math.round((e.loaded / e.total) * 100);
+          progressBar.style.width = `${percent}%`;
+          progressText.textContent = `${percent}%`;
         }
-        progressBar.style.width = `${progress}%`;
-        progressText.textContent = `${progress}%`;
-      }, 300);
+      };
+
+      reader.onload = (e) => {
+        progressBar.style.width = '100%';
+        progressText.textContent = '100%';
+        
+        setTimeout(() => {
+          document.getElementById('progressContainer').style.display = 'none';
+          resultContainer.style.display = 'block';
+          showStatus("Conversion complete!");
+          
+          const base64DataUri = e.target.result;
+          
+          const fakeWoff2Name = selectedFile.name.replace(/\.(ttf|otf)$/i, '.txt');
+          downloadBtn.onclick = () => {
+              const blob = new Blob([base64DataUri], { type: "text/plain" });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = fakeWoff2Name;
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              URL.revokeObjectURL(url);
+          };
+        }, 500);
+      };
+      
+      reader.onerror = () => {
+        showStatus("Error reading file", true);
+        document.getElementById('progressContainer').style.display = 'none';
+        document.getElementById('convertBtn').disabled = false;
+      };
+
+      // Read the file as a data URL (Base64 data URI string)
+      reader.readAsDataURL(selectedFile);
     }
 
     function clearInputs() {

@@ -307,18 +307,50 @@
           return JSON.stringify(xmlToJson(xml), null, 2);
         }
         if (file.includes('csv-to-json')) {
-          const lines = input.trim().split('\n');
-          const headers = lines[0].split(',').map(h => h.trim());
-          const result = [];
-          for (let i = 1; i < lines.length; i++) {
-            const currentline = lines[i].split(',');
-            if (currentline.length === headers.length) {
-              let obj = {};
-              for (let j = 0; j < headers.length; j++) {
-                obj[headers[j]] = currentline[j].trim();
+          function parseCSV(text) {
+            let rows = [];
+            let row = [];
+            let col = "";
+            let inQuote = false;
+            for (let i = 0; i < text.length; i++) {
+              let cc = text[i], nc = text[i+1];
+              if (inQuote) {
+                if (cc === '"') {
+                  if (nc === '"') { col += '"'; i++; }
+                  else { inQuote = false; }
+                } else { col += cc; }
+              } else {
+                if (cc === '"') { inQuote = true; }
+                else if (cc === ',') { row.push(col); col = ""; }
+                else if (cc === '\n') {
+                  if (col.endsWith('\r')) col = col.slice(0, -1);
+                  row.push(col); rows.push(row); col = ""; row = [];
+                }
+                else if (cc === '\r' && nc === '\n') {
+                  row.push(col); rows.push(row); col = ""; row = [];
+                  i++;
+                }
+                else { col += cc; }
               }
-              result.push(obj);
             }
+            if (col !== "" || row.length > 0) {
+              row.push(col);
+              rows.push(row);
+            }
+            return rows;
+          }
+          const rows = parseCSV(input.trim());
+          if (rows.length < 2) return "[]";
+          const headers = rows[0].map(h => h.trim());
+          const result = [];
+          for (let i = 1; i < rows.length; i++) {
+            const currentline = rows[i];
+            if (currentline.length === 1 && currentline[0].trim() === '') continue;
+            let obj = {};
+            for (let j = 0; j < headers.length; j++) {
+              obj[headers[j]] = (currentline[j] || "").trim();
+            }
+            result.push(obj);
           }
           return JSON.stringify(result, null, 2);
         }

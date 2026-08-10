@@ -89,10 +89,18 @@
       <div class="editor-wrapper">
         <div>
           <div class="editor-header">
-            <span>Service Description & Execution Command (e.g. /usr/bin/node /app/server.js) <small style="color:var(--primary); font-size:0.75rem;">(Ctrl+Enter)</small></span>
+            <span>Service Settings <small style="color:var(--primary); font-size:0.75rem;">(Ctrl+Enter)</small></span>
             <span class="editor-counter" id="inputCounter">0 chars</span>
           </div>
-          <textarea data-ux="input" id="toolInput" rows="11" oninput="updateCounter()" placeholder="Enter your data payload here..."></textarea>
+          <input type="text" id="toolInput" class="code-editor" style="margin-bottom: 0.5rem; width: 100%; box-sizing: border-box;" oninput="updateCounter()" placeholder="Service Description (e.g. Node App)">
+          <input type="text" id="inputExecStart" class="code-editor" style="margin-bottom: 0.5rem; width: 100%; box-sizing: border-box;" placeholder="ExecStart (e.g. /usr/bin/node server.js)">
+          <input type="text" id="inputUser" class="code-editor" style="margin-bottom: 0.5rem; width: 100%; box-sizing: border-box;" placeholder="User (e.g. appuser)">
+          <select id="inputRestart" class="code-editor" style="margin-bottom: 0.5rem; width: 100%; box-sizing: border-box; appearance: auto;">
+            <option value="always">always</option>
+            <option value="on-failure">on-failure</option>
+            <option value="no">no</option>
+          </select>
+          <input type="text" id="inputEnv" class="code-editor" style="width: 100%; box-sizing: border-box;" placeholder="Environment (e.g. NODE_ENV=production)">
         </div>
         <div>
           <div class="editor-header">
@@ -209,12 +217,20 @@ function parseDevOpsPayload(input) {
 
     function loadSampleData() {
       document.getElementById('toolInput').value = sampleData;
+      document.getElementById('inputExecStart').value = '/usr/bin/node /opt/app/server.js';
+      document.getElementById('inputUser').value = 'nodejs';
+      document.getElementById('inputRestart').value = 'always';
+      document.getElementById('inputEnv').value = 'NODE_ENV=production';
       updateCounter();
       processToolData();
     }
 
     function clearAll() {
       document.getElementById('toolInput').value = '';
+      document.getElementById('inputExecStart').value = '';
+      document.getElementById('inputUser').value = '';
+      document.getElementById('inputRestart').value = 'always';
+      document.getElementById('inputEnv').value = '';
       document.getElementById('toolOutput').value = '';
       document.getElementById('inputCounter').textContent = '0 chars';
       document.getElementById('outputCounter').textContent = '0 chars';
@@ -272,8 +288,15 @@ function parseDevOpsPayload(input) {
 
     
     function computeSpecificToolLogic(input, file) {
-      let name = input.split(' ')[0] || "my-service";
-      let sys = `[Unit]\nDescription=${input}\nAfter=network.target\n\n[Service]\nType=simple\nUser=appuser\nWorkingDirectory=/opt/${name}\nExecStart=/usr/bin/node /opt/${name}/server.js\nRestart=always\nRestartSec=5s\nEnvironment=NODE_ENV=production\n\n[Install]\nWantedBy=multi-user.target\n`;
+      let desc = input || "my-service";
+      let name = desc.split(' ')[0] || "my-service";
+      let execStart = document.getElementById('inputExecStart').value.trim() || `/usr/bin/node /opt/${name}/server.js`;
+      let user = document.getElementById('inputUser').value.trim() || 'appuser';
+      let restart = document.getElementById('inputRestart').value;
+      let env = document.getElementById('inputEnv').value.trim();
+      let envLine = env ? `\nEnvironment=${env}` : '';
+
+      let sys = `[Unit]\nDescription=${desc}\nAfter=network.target\n\n[Service]\nType=simple\nUser=${user}\nWorkingDirectory=/opt/${name}\nExecStart=${execStart}\nRestart=${restart}\nRestartSec=5s${envLine}\n\n[Install]\nWantedBy=multi-user.target\n`;
       return sys;
     }
     
