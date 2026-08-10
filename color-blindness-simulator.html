@@ -89,11 +89,16 @@
     <div class="ad-slot-header"></div>
 
     <div class="editor-stacked">
-      <div class="tool-controls" style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem;">
+      <div class="tool-controls" style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem; align-items: center;">
+        <select id="cvdType" style="padding: 0.5rem; border-radius: 4px; background: rgba(0,0,0,0.5); color: #fff; border: 1px solid var(--bg-card-border);">
+            <option value="protanopia">Protanopia (Red-Blind)</option>
+            <option value="deuteranopia" selected>Deuteranopia (Green-Blind)</option>
+            <option value="tritanopia">Tritanopia (Blue-Blind)</option>
+            <option value="achromatopsia">Achromatopsia (Monochromacy)</option>
+        </select>
         <button class="btn btn-sample" onclick="loadSampleData()" style="animation: samplePulse 3.2s infinite ease-in-out;">💡 Fill Sample Data</button>
-        <button class="btn btn-primary" data-ux="action-primary" onclick="generateOutput()">⚡ Process Media (Ctrl+Enter)</button>
+        <button class="btn btn-primary" data-ux="action-primary" onclick="generateOutput()">⚡ Simulate Vision (Ctrl+Enter)</button>
         <button class="btn btn-secondary" data-ux="action-clear" onclick="clearInputs()">🗑️ Clear</button>
-        <button class="btn btn-secondary" onclick="copyOutput()">📋 Copy Result</button>
       </div>
 
       <div class="editor-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
@@ -217,26 +222,87 @@
     }
 
     function generateOutput() {
-      const inputVal = (document.getElementById("cssInput") || document.getElementById("mediaInput")).value;
-      if (inputVal && inputVal.length > 2 * 1024 * 1024) {
-        showStatus("Input exceeds 2MB limit!", true);
+      const val = document.getElementById('mediaInput').value.trim();
+      if (!val) {
+        showStatus("Please input an image data URI or SVG.", true);
         return;
       }
-      const val = document.getElementById('mediaInput').value.trim() || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="60"><rect width="120" height="60" fill="%236366f1"/><text x="10" y="35" fill="white" font-family="sans-serif">QuickDevBox</text></svg>';
-      document.getElementById('mediaOutput').value = val;
+      
+      const cvdType = document.getElementById('cvdType').value;
       const box = document.getElementById('mediaPreviewBox');
-      if (val.startsWith('data:image/') || val.startsWith('<svg')) {
-        box.innerHTML = '';
-        const img = document.createElement('img');
-        img.src = val.startsWith('<svg') ? 'data:image/svg+xml;utf8,' + encodeURIComponent(val) : val;
-        img.style.maxWidth = '100%';
-        img.style.maxHeight = '120px';
-        img.style.borderRadius = '4px';
-        box.appendChild(img);
-      } else {
-        box.textContent = "Media Processed Successfully";
+      
+      let src = val;
+      if (val.startsWith('<svg')) {
+          src = 'data:image/svg+xml;utf8,' + encodeURIComponent(val);
+      } else if (!val.startsWith('data:image/')) {
+          showStatus("Invalid image Data URI.", true);
+          return;
       }
-      showStatus("Media processed!");
+
+      // Color deficiency matrices
+      const matrices = {
+          protanopia: [
+              0.56667, 0.43333, 0.00000,
+              0.55833, 0.44167, 0.00000,
+              0.00000, 0.24167, 0.75833
+          ],
+          deuteranopia: [
+              0.625, 0.375, 0.0,
+              0.70, 0.30, 0.0,
+              0.0, 0.30, 0.70
+          ],
+          tritanopia: [
+              0.95, 0.05, 0.0,
+              0.0, 0.43333, 0.56667,
+              0.0, 0.475, 0.525
+          ],
+          achromatopsia: [
+              0.299, 0.587, 0.114,
+              0.299, 0.587, 0.114,
+              0.299, 0.587, 0.114
+          ]
+      };
+      const mat = matrices[cvdType];
+
+      const img = new Image();
+      img.crossOrigin = "Anonymous";
+      img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          
+          const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          const d = imgData.data;
+          
+          for (let i = 0; i < d.length; i += 4) {
+              const r = d[i], g = d[i+1], b = d[i+2];
+              d[i]   = r * mat[0] + g * mat[1] + b * mat[2];
+              d[i+1] = r * mat[3] + g * mat[4] + b * mat[5];
+              d[i+2] = r * mat[6] + g * mat[7] + b * mat[8];
+          }
+          ctx.putImageData(imgData, 0, 0);
+          
+          try {
+              const dataUrl = canvas.toDataURL("image/png");
+              document.getElementById('mediaOutput').value = dataUrl;
+              
+              box.innerHTML = '';
+              const previewImg = document.createElement('img');
+              previewImg.src = dataUrl;
+              previewImg.style.maxWidth = '100%';
+              previewImg.style.maxHeight = '120px';
+              previewImg.style.borderRadius = '4px';
+              box.appendChild(previewImg);
+              
+              showStatus(`Simulated ${cvdType.toUpperCase()} vision!`);
+          } catch(e) {
+              showStatus("Processing failed: " + e.message, true);
+          }
+      };
+      img.onerror = () => showStatus("Failed to load image.", true);
+      img.src = src;
     }
 
     function clearInputs() {
