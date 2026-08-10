@@ -173,7 +173,8 @@
 
   <script>
     function updateCounter() {
-      const val = document.getElementById('toolInput').value;
+      const el = document.getElementById('toolOutput');
+      const val = el ? el.value : '';
       const cnt = document.getElementById('editor-counter');
       if (cnt) {
         const lines = val ? val.split('\n').length : 0;

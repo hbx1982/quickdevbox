@@ -225,7 +225,7 @@
     document.addEventListener('keydown', function(e) {
       if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
         e.preventDefault();
-        const primaryBtn = document.querySelector('.tool-controls .btn:first-child');
+        const primaryBtn = document.querySelector('[data-ux="action-primary"], .btn-primary, button[onclick^="process"], button[onclick^="generate"], button[onclick^="analyze"]');
         if (primaryBtn) primaryBtn.click();
       }
     });
