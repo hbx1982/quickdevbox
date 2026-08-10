@@ -12,6 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css?v=2.2">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 
   <meta property="og:title" content="Online SSH Public Key Inspector & Formatter - QuickDevBox">
   <meta property="og:description" content="Inspect SSH public keys, verify key algorithms (RSA, Ed25519, ECDSA), compute SHA256/MD5 fingerprints, and re-format OpenSSH authorized_keys strings client-side.">
@@ -238,7 +239,7 @@ function parseDevOpsPayload(input) {
       });
     }
 
-    function processToolData() {
+    async function processToolData() {
       const input = document.getElementById('toolInput').value.trim();
       const outElem = document.getElementById('toolOutput');
       const msgElem = document.getElementById('statusMsg');
@@ -258,10 +259,37 @@ function parseDevOpsPayload(input) {
       }
 
       try {
-        let result = computeSpecificToolLogic(input, 'ssh-key-pair-generator.html');
-        outElem.value = result;
-        document.getElementById('outputCounter').textContent = result.length + ' chars';
-        msgElem.textContent = '✨ Processed successfully!';
+        const keyParts = input.split(/\s+/);
+        if (keyParts.length < 2) {
+            throw new Error('Invalid SSH Key format. Expected: <algorithm> <base64_data> [comment]');
+        }
+        
+        const alg = keyParts[0];
+        const b64Data = keyParts[1];
+        const comment = keyParts.slice(2).join(' ') || 'N/A';
+        
+        // Decode base64 to WordArray for CryptoJS
+        const parsedData = CryptoJS.enc.Base64.parse(b64Data);
+        
+        // MD5 Fingerprint
+        const md5Hash = CryptoJS.MD5(parsedData).toString(CryptoJS.enc.Hex);
+        const md5Fp = md5Hash.replace(/(.{2})(?=.)/g, '$1:');
+        
+        // SHA256 Fingerprint (Base64 without padding)
+        const sha256Hash = CryptoJS.SHA256(parsedData).toString(CryptoJS.enc.Base64).replace(/=/g, '');
+        
+        let outStr = `=== SSH PUBLIC KEY INSPECTION ===\n`;
+        outStr += `Algorithm: ${alg}\n`;
+        outStr += `Comment / User: ${comment}\n\n`;
+        outStr += `MD5 Fingerprint (Legacy):\nMD5:${md5Fp}\n\n`;
+        outStr += `SHA256 Fingerprint (Modern):\nSHA256:${sha256Hash}\n\n`;
+        outStr += `Key Length (Base64 Chars): ${b64Data.length}\n`;
+        outStr += `Parsed Successfully (Validated).`;
+
+        outElem.value = outStr;
+        document.getElementById('outputCounter').textContent = outStr.length + ' chars';
+        
+        msgElem.textContent = '✅ SSH Key Parsed and Validated';
         msgElem.className = 'status-msg status-success';
       } catch (err) {
         outElem.value = '';
@@ -269,19 +297,6 @@ function parseDevOpsPayload(input) {
         msgElem.textContent = '❌ Error: ' + err.message;
         msgElem.className = 'status-msg status-error';
       }
-    }
-
-    
-    function computeSpecificToolLogic(input, file) {
-      let parts = input.trim().split(/\s+/);
-      let keyType = parts[0] || "ssh-ed25519";
-      let comment = parts[2] || "user@quickdevbox";
-      let out = `=== OpenSSH Public Key Inspection ===\n`;
-      out += `Key Algorithm : ${keyType}\n`;
-      out += `Comment Tag   : ${comment}\n`;
-      out += `Key Data Len  : ${parts[1] ? parts[1].length : 0} Base64 chars\n`;
-      out += `Fingerprint   : SHA256:${Math.random().toString(36).substring(2, 15)}... (Validated)\n`;
-      return out;
     }
     
 

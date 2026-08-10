@@ -12,10 +12,12 @@
   --bg-card-border-glow: rgba(56, 189, 248, 0.4);
   
   --text-main: #f8fafc;
+  --text-heading: #ffffff;
   --text-muted: #94a3b8;
   --text-dim: #64748b;
 
   --primary: #38bdf8;
+  --primary-light: #7dd3fc;
   --primary-hover: #0284c7;
   --primary-glow: rgba(56, 189, 248, 0.25);
   
@@ -468,6 +470,14 @@ main {
   }
 
   .nav-links {
+    display: flex;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 0.2rem;
+  }
+  .nav-links::-webkit-scrollbar {
     display: none;
   }
 

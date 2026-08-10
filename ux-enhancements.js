@@ -24,9 +24,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const clearBtns = document.querySelectorAll('button[data-ux="action-clear"]');
     const pageId = window.location.pathname.split('/').pop().replace('.html', '') || 'index';
 
+    const sensitiveTools = ['aes-encryption-decryption', 'des-encryption-decryption', 'rsa-key-generator', 'ssh-key-pair-generator', 'bcrypt-hash-generator', 'pbkdf2-hash-generator', 'hmac-generator'];
+
     // 1. Hook Input Areas (Persistence, Drag & Drop, Auto-Trigger)
     inputAreas.forEach((ta, index) => {
-        const isNoPersist = ta.getAttribute('data-ux') === 'input-nopersist' || ta.hasAttribute('data-no-persist');
+        let isNoPersist = ta.getAttribute('data-ux') === 'input-nopersist' || ta.hasAttribute('data-no-persist');
+        if (sensitiveTools.includes(pageId)) {
+            isNoPersist = true; // Force disable persistence for sensitive crypto pages
+        }
         const storageKey = `qdb_${pageId}_input_${index}`;
 
         // Restore from LocalStorage if allowed

@@ -226,7 +226,13 @@
       document.getElementById('mediaOutput').value = val;
       const box = document.getElementById('mediaPreviewBox');
       if (val.startsWith('data:image/') || val.startsWith('<svg')) {
-        box.innerHTML = `<img src="${val.startsWith('<svg') ? 'data:image/svg+xml;utf8,' + encodeURIComponent(val) : val}" style="max-width: 100%; max-height: 120px; border-radius: 4px;">`;
+        box.innerHTML = '';
+        const img = document.createElement('img');
+        img.src = val.startsWith('<svg') ? 'data:image/svg+xml;utf8,' + encodeURIComponent(val) : val;
+        img.style.maxWidth = '100%';
+        img.style.maxHeight = '120px';
+        img.style.borderRadius = '4px';
+        box.appendChild(img);
       } else {
         box.textContent = "Media Processed Successfully";
       }

@@ -57,6 +57,7 @@
 
   gtag('config', 'G-E0LZHPD7SL');
 </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 </head>
 <body>
 
@@ -182,57 +183,15 @@
     function processTool() {
       const input = document.getElementById('toolInput').value;
       const output = document.getElementById('toolOutput');
-      const fname = "des-encryption-decryption.html";
-
-      // 2MB Safeguard Check
-      if (input.length > 2 * 1024 * 1024) {
-        alert("File / String Payload exceeds 2MB safety threshold. Please shorten input to protect main thread performance.");
-        return;
-      }
-      
+      if (input.length > 2 * 1024 * 1024) { alert("Payload exceeds 2MB safety threshold."); return; }
       try {
-        if (fname === "aes-encryption-decryption.html") {
-          output.value = "AES-256-GCM [Encrypted]: " + btoa(input) + "\nIV: " + btoa("123456789012");
-        } else if (fname === "des-encryption-decryption.html") {
-          output.value = "3DES-TDEA [Encrypted]: " + btoa("3DES:" + input);
-        } else if (fname === "rsa-key-generator.html") {
-          output.value = "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAz5..." + btoa(input).substring(0, 30) + "\n-----END PUBLIC KEY-----\n\n-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQD\n-----END PRIVATE KEY-----";
-        } else if (fname === "sha384-sha512-hash-generator.html") {
-          output.value = "SHA-384: c8f39568285579f1" + btoa(input).substring(0, 16) + "\nSHA-512: 9b71d224bd62f3785d96d46ad3ea3d73319bfbc289" + btoa(input).substring(0, 20);
-        } else if (fname === "sha3-hash-generator.html") {
-          output.value = "SHA3-256: a7ffc6f8bf1ed76651c14756a061d662f580ff4de43b49fa82d80a4b80f8434a\nKeccak-256: c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470";
-        } else if (fname === "md5-hash-generator.html") {
-          output.value = "MD5 Digest: 5d41402abc4b2a76b9719d911017c592";
-        } else if (fname === "sha1-hash-generator.html") {
-          output.value = "SHA-1 Digest: 2fd4e1c67a2d28fced849ee1bb76e7391b93eb12";
-        } else if (fname === "base85-encoder-decoder.html") {
-          output.value = "<~9jqo^BlbD-F(r9~>";
-        } else if (fname === "caesar-cipher.html") {
-          output.value = input.replace(/[a-zA-Z]/g, function(c){
-            return String.fromCharCode((c <= 'Z' ? 90 : 122) >= (c = c.charCodeAt(0) + 13) ? c : c - 26);
-          });
-        } else if (fname === "password-strength-generator.html") {
-          output.value = "Entropy: 112.5 Bits (Very Strong)\nCracking Estimate: 4.8 x 10^18 Years\nGenerated Pass: " + input + "_Sec!2026";
-        } else if (fname === "html-unescape.html") {
-          var doc = new DOMParser().parseFromString(input, 'text/html');
-          output.value = doc.documentElement.textContent;
-        } else if (fname === "unicode-escape.html") {
-          output.value = input.split('').map(function(c) {
-            return '\\u' + ('0000' + c.charCodeAt(0).toString(16)).slice(-4);
-          }).join('');
-        } else if (fname === "hex-ascii-converter.html") {
-          output.value = input.split('').map(c => c.charCodeAt(0).toString(16).padStart(2, '0')).join(' ');
-        } else if (fname === "pbkdf2-hash-generator.html") {
-          output.value = "PBKDF2-HMAC-SHA256 (10,000 Iterations):\nDerived Key (256-bit): e2a4b87f9c...12";
-        } else if (fname === "crc32-checksum.html") {
-          output.value = "CRC32 Polynomial Checksum: 0xcbf43926 (3421780262)";
-        } else {
-          output.value = btoa(input);
-        }
-      } catch(e) {
-        output.value = "Error: " + e.message;
-      }
+        const key = CryptoJS.enc.Utf8.parse("123456789012345678901234"); // 24 byte key for 3DES
+        const encrypted = CryptoJS.TripleDES.encrypt(input, key, { mode: CryptoJS.mode.ECB });
+        output.value = "3DES-TDEA [Encrypted Base64]: " + encrypted.toString();
+      } catch(e) { output.value = "Error: " + e.message; }
     }
+
+
 
     document.addEventListener('keydown', function(e) {
       if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {

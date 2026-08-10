@@ -12,6 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css?v=2.2">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js"></script>
 
   <!-- Complete OpenGraph & Social Preview Tags -->
   <meta property="og:title" content="Online Bcrypt Password Hash Generator & Verifier - QuickDevBox">
@@ -191,24 +192,16 @@
 
     function generateBcrypt() {
       const pass = document.getElementById('bcryptInput').value;
-      const rounds = document.getElementById('bcryptRounds').value || 10;
+      const rounds = parseInt(document.getElementById('bcryptRounds').value || 10);
       if (!pass) return;
 
-      // Simulated Bcrypt $2b$ Hash Format for Browser Engine
-      const saltChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789./";
-      let salt = "";
-      for (let i = 0; i < 22; i++) {
-        salt += saltChars.charAt(Math.floor(Math.random() * saltChars.length));
+      try {
+        const hash = dcodeIO.bcrypt.hashSync(pass, rounds);
+        document.getElementById('bcryptOutput').value = hash;
+        showStatus("Bcrypt password hash generated successfully!");
+      } catch (err) {
+        showStatus("Error generating hash: " + err.message, true);
       }
-      
-      let hashBody = "";
-      for (let i = 0; i < 31; i++) {
-        hashBody += saltChars.charAt(Math.floor(Math.random() * saltChars.length));
-      }
-
-      const formattedHash = `$2b$${rounds.toString().padStart(2, '0')}$${salt}${hashBody}`;
-      document.getElementById('bcryptOutput').value = formattedHash;
-      showStatus("Bcrypt password hash generated successfully!");
     }
 
     function copyHash() {
