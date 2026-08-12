@@ -253,13 +253,13 @@
         
         // Custom Client-Side Processing Routing
         if (file.includes('minifier')) {
-          if (file.includes('json')) return JSON.stringify(JSON.parse(input));
-          if (file.includes('html')) return input.replace(/<!--[\s\S]*?-->/g, '').replace(/\s+/g, ' ').replace(/>\s+</g, '><').trim();
-          if (file.includes('css')) return input.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\s+/g, ' ').replace(/\s*([{}:;,])\s*/g, '$1').trim();
-          if (file.includes('javascript')) return input.replace(/\/\/[^\r\n]*|\/\*[\s\S]*?\*\//g, '').replace(/\s+/g, ' ').replace(/\s*([{}:();,=+-])\s*/g, '$1').trim();
+          if (file.includes('json-')) return JSON.stringify(JSON.parse(input));
+          if (file.includes('html-')) return input.replace(/<!--[\s\S]*?-->/g, '').replace(/\s+/g, ' ').replace(/>\s+</g, '><').trim();
+          if (file.includes('css-')) return input.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\s+/g, ' ').replace(/\s*([{}:;,])\s*/g, '$1').trim();
+          if (file.includes('javascript-')) return input.replace(/\/\/[^\r\n]*|\/\*[\s\S]*?\*\//g, '').replace(/\s+/g, ' ').replace(/\s*([{}:();,=+-])\s*/g, '$1').trim();
         }
         if (file.includes('beautifier') || file.includes('formatter')) {
-          if (file.includes('html')) {
+          if (file.includes('html-')) {
             let indent = 0;
             return input.replace(/></g, '>\n<').split('\n').map(line => {
               if (line.match(/^<\/[^>]+>/)) indent = Math.max(0, indent - 1);
@@ -268,10 +268,10 @@
               return padded;
             }).join('\n');
           }
-          if (file.includes('css')) {
+          if (file.includes('css-')) {
             return input.replace(/\s*([{};])\s*/g, '$1\n').replace(/\s*:\s*/g, ': ').replace(/\n\s*\n/g, '\n').replace(/([^}]+){/g, '$1 {\n  ').replace(/;/g, ';\n  ').replace(/\n\s*}/g, '\n}').trim();
           }
-          if (file.includes('javascript') || file.includes('graphql') || file.includes('yaml')) {
+          if (file.includes('javascript-') || file.includes('graphql') || file.includes('yaml')) {
             let depth = 0;
             return input.replace(/\s*([{}])\s*/g, '$1\n').split('\n').map(l => {
               if (l.includes('}')) depth = Math.max(0, depth - 1);

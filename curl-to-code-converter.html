@@ -204,8 +204,30 @@
     }
 
     function parseCurl(curl) {
-      const urlMatch = curl.match(/(?:'|")?(https?:\/\/[^\s'"]+)/);
-      const url = urlMatch ? urlMatch[1] : "https://api.example.com";
+      curl = curl.trim();
+      let rawUrl = null;
+      if (/^https?:\/\//i.test(curl)) {
+        const firstSpace = curl.indexOf(' ');
+        if (firstSpace === -1) {
+          rawUrl = curl;
+        } else {
+          const quotedMatch = curl.match(/^['"](https?:\/\/[^'"]+)['"]/);
+          if (quotedMatch) {
+            rawUrl = quotedMatch[1];
+          } else {
+            if (/\s-[a-zA-Z]/.test(curl)) {
+              rawUrl = curl.substring(0, firstSpace);
+            } else {
+              rawUrl = curl;
+            }
+          }
+        }
+      } else {
+        const quotedMatch = curl.match(/['"](https?:\/\/[^'"]+)['"]/);
+        const unquotedMatch = curl.match(/(https?:\/\/[^\s'"]+)/);
+        rawUrl = quotedMatch ? quotedMatch[1] : (unquotedMatch ? unquotedMatch[1] : "https://api.example.com");
+      }
+      const url = rawUrl ? rawUrl.replace(/ /g, '%20') : "https://api.example.com";
       const methodMatch = curl.match(/-X\s+([A-Z]+)/i);
       const method = methodMatch ? methodMatch[1].toUpperCase() : (curl.includes('-d') || curl.includes('--data') || curl.includes('--data-raw') || curl.includes('--data-binary') ? 'POST' : 'GET');
       
