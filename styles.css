@@ -643,9 +643,19 @@ footer a:hover {
 
 /* AdSense Responsive Slot Placeholder (Hidden until AdSense is approved) */
 .ad-slot-header {
-  display: none;
-  min-height: 90px;
-  margin-bottom: 15px;
+  display: none !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+.ad-slot-header:empty {
+  display: none !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 /* Fill Sample Data Button Soft Pulse Glow Animation */
