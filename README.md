@@ -14,11 +14,11 @@ QuickDevBox is a modern, privacy-first, 100% client-side developer toolbox desig
 
 ---
 
-### 🛠️ Featured Tool Categories (45+ Utilities)
+### 🛠️ Featured Tool Categories (116+ Utilities)
 
-- 🔑 **Security & Cryptography**: [AES Encryption](https://quickdevbox.com/aes-encryption-decryption.html), [RSA Key Generator](https://quickdevbox.com/rsa-key-generator.html), [PBKDF2 Generator](https://quickdevbox.com/pbkdf2-hash-generator.html), [SHA3 Hash](https://quickdevbox.com/sha3-hash-generator.html)
-- 📊 **Formatters & Converters**: [JSON Formatter](https://quickdevbox.com/json-formatter.html), [Base64 Encoder](https://quickdevbox.com/base64-encoder-decoder.html), [JWT Decoder](https://quickdevbox.com/jwt-decoder.html), [SQL Formatter](https://quickdevbox.com/sql-formatter.html)
-- ⚙️ **DevOps & Cloud**: [Cron Expression Generator](https://quickdevbox.com/cron-expression-generator.html), [Subnet Calculator](https://quickdevbox.com/subnet-calculator.html), [Htpasswd Generator](https://quickdevbox.com/htpasswd-generator.html)
+- 🔑 **Security & Cryptography**: [AES Encryption](https://quickdevbox.com/aes-encryption-decryption), [RSA Key Generator](https://quickdevbox.com/rsa-key-generator), [PBKDF2 Generator](https://quickdevbox.com/pbkdf2-hash-generator), [SHA3 Hash](https://quickdevbox.com/sha3-hash-generator)
+- 📊 **Formatters & Converters**: [JSON Formatter](https://quickdevbox.com/json-formatter), [Base64 Encoder](https://quickdevbox.com/base64-encoder-decoder), [JWT Decoder](https://quickdevbox.com/jwt-decoder), [SQL Formatter](https://quickdevbox.com/sql-formatter)
+- ⚙️ **DevOps & Cloud**: [Cron Expression Generator](https://quickdevbox.com/cron-expression-generator), [Subnet Calculator](https://quickdevbox.com/subnet-calculator), [Htpasswd Generator](https://quickdevbox.com/htpasswd-generator)
 
 ---
 
