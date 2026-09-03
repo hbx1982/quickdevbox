@@ -47,7 +47,31 @@
     }
 }
   </script>
-<!-- Google tag (gtag.js) -->
+  <script type="application/ld+json">
+  {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "When should you inline images as Base64 Data URIs vs serving standalone files?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Use Base64 for tiny critical icons to eliminate HTTP roundtrips; avoid for large images due to cache loss and 33% bloat."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does decoding a large Base64 image in CSS cause mobile browser stutter?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Oversized Data URIs in stylesheets block main thread CSSOM construction. Serve large graphics as standalone URLs."
+      }
+    }
+  ]
+}
+  </script>
+  <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -120,26 +144,74 @@
       <div id="statusMessage" class="status-box" style="display: none;"></div>
     </div>
 
-    <article class="seo-article" style="margin-top: 3rem; border-top: 1px solid var(--bg-card-border); padding-top: 2rem;">
-      <h2>Specification Guide: Understanding Image to Base64 Data URI Converter</h2>
-      <p>Convert PNG, JPG, WebP, SVG, and GIF images into Base64 Data URIs and inline CSS background strings 100% client-side. Handling image graphics and vector assets client-side ensures zero network bandwidth overhead, ultra-fast rendering, and absolute privacy protection.</p>
-      
-      <h3>Key Technical Advantages &amp; Security Principles</h3>
-      <ul>
-        <li><strong>HTML5 Canvas &amp; File API:</strong> Processes binary blobs directly in browser memory without sending data across network sockets.</li>
-        <li><strong>Privacy Protection:</strong> Sensitive photos, ID graphics, or corporate assets never leave your local machine.</li>
-        <li><strong>High Efficiency:</strong> Instant real-time preview and export capability across modern mobile and desktop browsers.</li>
-      </ul>
+                    <article class="seo-article">
+      <h2>Image to Base64 Data URI: In-Memory Binary FileReader & Network Payloads</h2>
+      <p>Converting bitmap and vector images into RFC 2397 Data URIs inlines visual assets directly into HTML, CSS, and JSON payloads. Client-side conversion executes entirely via the HTML5 FileReader API without uploading sensitive graphics to external servers.</p>
 
-      <div class="author-box" style="margin-top: 2.5rem; padding: 1.25rem; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid var(--bg-card-border); display: flex; align-items: center; gap: 1rem;">
-        <div style="font-size: 2rem;">🛡️</div>
-        <div>
-          <div style="font-weight: 700; color: var(--text-heading);">Verified Technical Documentation</div>
-          <div style="font-size: 0.85rem; color: var(--text-muted);">Maintained by the QuickDevBox Media Engineering Team. Verified against W3C Canvas &amp; File API standards.</div>
+      <div class="tech-specs">
+        <div class="spec-card">
+          <strong>Data URI Standard</strong>
+          <span>IETF RFC 2397: The 'data' URL Scheme (data:image/[format];base64,...)</span>
+        </div>
+        <div class="spec-card">
+          <strong>HTML5 API</strong>
+          <span>FileReader.readAsDataURL() / Canvas.toDataURL()</span>
+        </div>
+        <div class="spec-card">
+          <strong>Payload Inflation</strong>
+          <span>Exactly 33.3% larger than raw binary images</span>
+        </div>
+        <div class="spec-card">
+          <strong>Supported Formats</strong>
+          <span>PNG, JPEG, WebP, SVG, GIF, AVIF, BMP, ICO</span>
         </div>
       </div>
+
+      <h3>Implementation &amp; Code Examples</h3>
+      <h4>JavaScript FileReader Client-Side Conversion</h4>
+      <pre><code>function convertImageToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = error => reject(error);
+    reader.readAsDataURL(file);
+  });
+}</code></pre>
+      <h4>Python 3 (base64 image embedding)</h4>
+      <pre><code>import base64
+
+with open("icon.png", "rb") as image_file:
+    b64_string = base64.b64encode(image_file.read()).decode('ascii')
+data_uri = f"data:image/png;base64,{b64_string}"
+print("Data URI Header:", data_uri[:35])</code></pre>
+
+      <h3>Memory Management &amp; Client-Side Buffer Handling</h3>
+      <p>Processing Image to Base64 Data URI directly in browser client memory demands proactive memory cleanup and resource limits:</p>
+      <ul>
+        <li><strong>Blob Lifecycle Cleanup:</strong> Always invoke <code>URL.revokeObjectURL()</code> once binary image blobs finish loading to release allocated texture memory and prevent browser tab memory exhaustion.</li>
+        <li><strong>Offscreen Canvas Workers:</strong> Offload CPU-heavy pixel matrix loops and color quantization algorithms to background Web Workers using <code>OffscreenCanvas</code> to keep user interactions smooth.</li>
+        <li><strong>Texture Dimension Clamping:</strong> Verify source image dimensions prior to canvas allocation to prevent mobile browser crashes caused by device-specific maximum canvas texture limits.</li>
+      </ul>
+
+      <section class="faq-section">
+        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
+        <div class="faq-item">
+          <h3>When should you inline images as Base64 Data URIs vs serving standalone files?</h3>
+          <p>Inline Base64 is optimal for small critical icons (&lt; 2KB) to eliminate separate HTTP requests on initial page load. Avoid inlining large images (&gt; 50KB) because Base64 cannot be cached independently by browser HTTP caches and increases HTML payload by 33%.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Why does decoding a large Base64 image in CSS cause mobile browser stutter?</h3>
+          <p>Large Base64 strings in CSS stylesheets force browser parsing engines to allocate large string buffers on the main UI thread during CSSOM construction, blocking paint.</p>
+        </div>
+      </section>
+
+      <h3>Official Standards &amp; Technical References</h3>
+      <ul>
+        <li><a href="https://datatracker.ietf.org/doc/html/rfc2397" target="_blank" rel="noopener noreferrer">IETF RFC 2397: The 'data' URL Scheme</a></li>
+        <li><a href="https://www.w3.org/TR/FileAPI/#readAsDataURL" target="_blank" rel="noopener noreferrer">W3C File API: FileReader.readAsDataURL</a></li>
+      </ul>
     </article>
-  
+
     <section class="related-tools" style="margin-top: 3rem; border-top: 1px solid var(--bg-card-border); padding-top: 2rem;">
       <h3 style="margin-bottom: 1rem; color: var(--text-heading);">🛠️ Related Utility Tools</h3>
       <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem;">

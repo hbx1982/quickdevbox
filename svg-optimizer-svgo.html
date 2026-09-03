@@ -47,7 +47,31 @@
     }
 }
   </script>
-<!-- Google tag (gtag.js) -->
+  <script type="application/ld+json">
+  {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Why does reducing SVG decimal precision dramatically shrink file size?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Coordinate rounding from 6 decimal places to 2 strips bulk ASCII bytes without visible distortion on standard displays."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does SVGO sometimes break SVG animations or CSS styling?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Aggressive ID cleaning can strip hooks used by CSS animations. Disable cleanupIDs if targeting SVG nodes with script."
+      }
+    }
+  ]
+}
+  </script>
+  <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -118,33 +142,81 @@
       <div id="statusMessage" class="status-box" style="display: none;"></div>
     </div>
 
-    <article class="seo-article" style="margin-top: 3rem; border-top: 1px solid var(--bg-card-border); padding-top: 2rem;">
-      <h2>Specification Guide: Understanding SVG Cleaner & SVGO Optimizer</h2>
-      <p>Clean and optimize SVG code client-side. Remove metadata, comments, editor namespaces, empty tags, and minifying path data. Modern web design demands precision, accessibility, and high-performance layout rendering across high-DPI screens and mobile devices.</p>
-      
-      <h3>Key Engineering Advantages &amp; Best Practices</h3>
-      <ul>
-        <li><strong>Sub-Millisecond Rendering:</strong> 100% in-browser calculation with zero network latency.</li>
-        <li><strong>W3C / WHATWG Standard Compliance:</strong> Follows official W3C CSS specifications for maximum cross-browser rendering accuracy.</li>
-        <li><strong>Zero Data Exposure:</strong> All color, vector, and layout computations stay entirely within your local browser memory space.</li>
-      </ul>
+                    <article class="seo-article">
+      <h2>SVGO Vector Optimization: XML Pruning, Coordinate Precision & Path Merging</h2>
+      <p>Scalable Vector Graphics (SVG) exported from graphic design tools (Figma, Illustrator) contain redundant XML metadata, hidden editor layers, and excessive floating-point decimal precision. SVGO cleans and minifies vector files by 30-70% without altering visual rendering.</p>
 
-      <h3>CSS Integration Code Example</h3>
-      <pre><code>/* Example Production CSS Rules */
-.target-element {
-  box-sizing: border-box;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}</code></pre>
-
-      <div class="author-box" style="margin-top: 2.5rem; padding: 1.25rem; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid var(--bg-card-border); display: flex; align-items: center; gap: 1rem;">
-        <div style="font-size: 2rem;">🛡️</div>
-        <div>
-          <div style="font-weight: 700; color: var(--text-heading);">Verified Technical Documentation</div>
-          <div style="font-size: 0.85rem; color: var(--text-muted);">Maintained by the QuickDevBox Web Engineering &amp; CSS Standards Team. Verified against W3C CSS specifications.</div>
+      <div class="tech-specs">
+        <div class="spec-card">
+          <strong>Optimization Engine</strong>
+          <span>SVGO (SVG Optimizer) Node.js AST Transformation Pipeline</span>
+        </div>
+        <div class="spec-card">
+          <strong>Coordinate Rounding</strong>
+          <span>Reduces coordinate decimal precision (e.g. 14.238491 to 14.24)</span>
+        </div>
+        <div class="spec-card">
+          <strong>Pruning Directives</strong>
+          <span>Removes XML declarations, doctypes, metadata tags, and unused defs</span>
+        </div>
+        <div class="spec-card">
+          <strong>Standard</strong>
+          <span>W3C Scalable Vector Graphics (SVG) 2 Specification</span>
         </div>
       </div>
+
+      <h3>Implementation &amp; Code Examples</h3>
+      <h4>Node.js SVGO Programmatic Optimization</h4>
+      <pre><code>import { optimize } from 'svgo';
+
+const rawSvg = `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="100" height="100">
+  <!-- Generator: Adobe Illustrator -->
+  <circle cx="50.000000" cy="50.000000" r="40.000000" fill="#FF0000"/>
+</svg>`;
+
+const result = optimize(rawSvg, {
+  multipass: true,
+  plugins: [
+    'removeDoctype',
+    'removeXMLProcInst',
+    'removeComments',
+    'removeMetadata',
+    { name: 'cleanupNumericValues', params: { floatPrecision: 2 } }
+  ]
+});
+
+console.log("Minified SVG Size:", result.data.length);</code></pre>
+      <h4>CLI SVGO Command</h4>
+      <pre><code># Optimize entire directory of icons in-place
+npx svgo -f ./src/icons -o ./dist/icons --multipass</code></pre>
+
+      <h3>Browser Rendering Performance &amp; Hardware Compositing</h3>
+      <p>Executing SVGO Vector Optimization in modern web applications requires optimizing layout rendering across the browser rendering pipeline:</p>
+      <ul>
+        <li><strong>GPU Compositor Promotion:</strong> Restrict high-frequency dynamic transitions to compositor-only CSS properties (<code>transform</code> and <code>opacity</code>) to avoid triggering costly CPU layout reflows and repaints.</li>
+        <li><strong>Layout Thrashing Prevention:</strong> Decouple DOM geometry measurements from subsequent style write operations to eliminate forced synchronous reflow cycles and preserve 60 FPS scrolling.</li>
+        <li><strong>Subpixel Antialiasing:</strong> Design visual components with hardware-accelerated vector units and clamp scaling boundaries to eliminate visual pixel rounding jitter on high-DPI displays.</li>
+      </ul>
+
+      <section class="faq-section">
+        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
+        <div class="faq-item">
+          <h3>Why does reducing SVG decimal precision dramatically shrink file size?</h3>
+          <p>Design tools output vector path nodes with 6 to 8 decimal places (e.g. <code>12.3847291</code>). Truncating coordinates to 1 or 2 decimal places strips millions of ASCII characters while remaining visually imperceptible on screen.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Why does SVGO sometimes break SVG animations or CSS styling?</h3>
+          <p>Default aggressive SVGO plugins collapse IDs and remove unused classes. If your CSS or JavaScript references elements by ID (e.g. <code>#gear-icon</code>), disable the <code>cleanupIDs</code> plugin to preserve target hooks.</p>
+        </div>
+      </section>
+
+      <h3>Official Standards &amp; Technical References</h3>
+      <ul>
+        <li><a href="https://www.w3.org/TR/SVG2/" target="_blank" rel="noopener noreferrer">W3C SVG 2 Specification</a></li>
+        <li><a href="https://github.com/svg/svgo" target="_blank" rel="noopener noreferrer">SVGO GitHub Open Source Project</a></li>
+      </ul>
     </article>
-  
+
     <section class="related-tools" style="margin-top: 3rem; border-top: 1px solid var(--bg-card-border); padding-top: 2rem;">
       <h3 style="margin-bottom: 1rem; color: var(--text-heading);">🛠️ Related Utility Tools</h3>
       <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem;">
@@ -220,6 +292,10 @@
       const inputVal = document.getElementById("cssInput").value.trim();
       if (!inputVal) {
         showStatus("Please enter SVG code first.", true);
+        return;
+      }
+      if (inputVal.length > 2097152) {
+        showStatus("Payload exceeds 2MB limit.", true);
         return;
       }
       

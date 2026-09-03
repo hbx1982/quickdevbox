@@ -672,3 +672,114 @@ footer a:hover {
     box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.35);
   }
 }
+
+/* Technical Documentation & Code Snippets */
+.seo-article {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--bg-card-border);
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+
+.seo-article h2 {
+  font-size: 1.5rem;
+  color: var(--text-bright);
+  margin-top: 1.8rem;
+  margin-bottom: 0.8rem;
+}
+
+.seo-article h3 {
+  font-size: 1.2rem;
+  color: var(--text-main);
+  margin-top: 1.5rem;
+  margin-bottom: 0.6rem;
+}
+
+.seo-article p {
+  margin-bottom: 1rem;
+}
+
+.seo-article ul, .seo-article ol {
+  margin-bottom: 1.2rem;
+  padding-left: 1.5rem;
+}
+
+.seo-article li {
+  margin-bottom: 0.4rem;
+}
+
+.seo-article pre {
+  background: #02050c;
+  border: 1px solid var(--bg-card-border);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.2rem;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: #e2e8f0;
+  margin: 1rem 0 1.5rem;
+  line-height: 1.5;
+}
+
+.seo-article code {
+  font-family: var(--font-mono);
+  background: rgba(255, 255, 255, 0.07);
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.88em;
+  color: var(--primary-light);
+}
+
+.seo-article pre code {
+  background: transparent;
+  padding: 0;
+  color: inherit;
+}
+
+/* Technical Troubleshooting FAQs */
+.faq-section {
+  margin-top: 2rem;
+}
+
+.faq-item {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--bg-card-border);
+  border-radius: var(--radius-md);
+  padding: 1.1rem 1.3rem;
+  margin-bottom: 1rem;
+}
+
+.faq-item h4 {
+  color: var(--text-bright);
+  font-size: 1.05rem;
+  margin-bottom: 0.5rem;
+}
+
+.faq-item p {
+  margin-bottom: 0.5rem;
+  font-size: 0.92rem;
+}
+
+.tech-specs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin: 1.2rem 0;
+}
+
+.spec-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--bg-card-border);
+  border-radius: var(--radius-sm);
+  padding: 0.8rem 1rem;
+}
+
+.spec-card strong {
+  display: block;
+  color: var(--primary);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.3rem;
+}

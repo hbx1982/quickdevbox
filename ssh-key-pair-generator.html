@@ -35,7 +35,31 @@
     "browserRequirements": "Requires JavaScript. Requires HTML5."
   }
   </script>
-<!-- Google tag (gtag.js) -->
+  <script type="application/ld+json">
+  {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Why is Ed25519 preferred over RSA for SSH keys?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Ed25519 offers constant-time side-channel resistance, rapid signature generation, and compact 68-char keys."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does SSH reject keys with 'Permissions 0644 are too open'?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "OpenSSH aborts connections if private keys are world-readable. Enforce chmod 600 on private key files."
+      }
+    }
+  ]
+}
+  </script>
+  <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -108,6 +132,69 @@
     </section>
 
     <!-- Related Tools Internal Link Building -->
+                    <article class="seo-article">
+      <h2>SSH Key Generation: Ed25519 vs RSA 4096 & OpenSSH Key Serialization</h2>
+      <p>Secure Shell (SSH, RFC 4253) authenticates remote server sessions using asymmetric public-key cryptography. Modern infrastructure mandates Ed25519 (Edwards-curve Digital Signature Algorithm) for superior performance, compact key length, and resilience to side-channel attacks.</p>
+
+      <div class="tech-specs">
+        <div class="spec-card">
+          <strong>Recommended Cryptosuite</strong>
+          <span>Ed25519 (RFC 8709: Ed25519 in OpenSSH)</span>
+        </div>
+        <div class="spec-card">
+          <strong>Legacy Fallback</strong>
+          <span>RSA with 4096-bit modulus (RFC 4253)</span>
+        </div>
+        <div class="spec-card">
+          <strong>File Permissions</strong>
+          <span>Private Key: 0600 (chmod 600) | .ssh Directory: 0700 (chmod 700)</span>
+        </div>
+        <div class="spec-card">
+          <strong>Key Serialization</strong>
+          <span>OpenSSH Private Key Format (BEGIN OPENSSH PRIVATE KEY)</span>
+        </div>
+      </div>
+
+      <h3>Implementation &amp; Code Examples</h3>
+      <h4>OpenSSH CLI Generation</h4>
+      <pre><code># Generate modern Ed25519 SSH keypair
+ssh-keygen -t ed25519 -C "developer@quickdevbox.com" -f ~/.ssh/id_ed25519
+
+# Set strict POSIX permissions
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/id_ed25519
+chmod 644 ~/.ssh/id_ed25519.pub</code></pre>
+      <h4>Add to Remote Server</h4>
+      <pre><code># Copy public key to authorized_keys on remote server
+ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server.example.com</code></pre>
+
+      <h3>Production Infrastructure Reliability &amp; Hardening</h3>
+      <p>Managing SSH Key Generation configurations within automated cloud native clusters requires robust deployment practices:</p>
+      <ul>
+        <li><strong>Zero-Trust Ingress Enforcement:</strong> Protect service boundaries with strict ingress controller timeout policies, TLS termination standards, and mutual TLS (mTLS) authentication across inter-service meshes.</li>
+        <li><strong>Declarative Manifest Validation:</strong> Automate schema validation and syntax linting inside CI/CD pipelines before applying infrastructure configuration units to staging and production clusters.</li>
+        <li><strong>Liveness Probes &amp; Graceful Termination:</strong> Configure proper termination grace intervals (SIGTERM traps) and decouple health check probes from heavy backend dependencies to prevent cascading reboot loops.</li>
+      </ul>
+
+      <section class="faq-section">
+        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
+        <div class="faq-item">
+          <h3>Why is Ed25519 preferred over RSA for SSH keys?</h3>
+          <p>Ed25519 keys are only 68 characters long (compared to ~750 characters for RSA 4096), generate signatures significantly faster, and provide constant-time execution that is naturally immune to side-channel cache timing attacks.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Why does SSH reject keys with 'Permissions 0644 are too open'?</h3>
+          <p>OpenSSH clients strictly refuse to use private keys that are readable by other local user accounts. The private key permissions must be set to <code>0600</code> (read/write only by the owner).</p>
+        </div>
+      </section>
+
+      <h3>Official Standards &amp; Technical References</h3>
+      <ul>
+        <li><a href="https://datatracker.ietf.org/doc/html/rfc8709" target="_blank" rel="noopener noreferrer">IETF RFC 8709: Ed25519 and Ed448 in SSH</a></li>
+        <li><a href="https://www.openssh.com/specs.html" target="_blank" rel="noopener noreferrer">OpenSSH Protocol Specifications</a></li>
+      </ul>
+    </article>
+
     <section class="related-tools" style="margin-top:2rem;">
       <h3>🛠️ Related DevOps & Security Tools</h3>
       <div class="related-grid">
@@ -131,62 +218,7 @@
     </section>
 
     <!-- SEO Technical Article (EEAT & RFC Compliant) -->
-    <article class="seo-article">
-      
-        <h2>Secure Shell (SSH) Asymmetric Authentication Mechanics</h2>
-        <p>The SSH protocol utilizes asymmetric cryptographic key pairs to authenticate users logging into remote Linux servers without transmitting plaintext passwords across insecure networks.</p>
-
-        <h3>1. Comparing Ed25519 and RSA Key Algorithms</h3>
-        <ul>
-          <li><strong>Ed25519:</strong> Uses Edwards-curve Digital Signature Algorithm (EdDSA) over Curve25519. It offers superior security, high-speed key generation, immunity to side-channel timing attacks, and compact 68-character public keys.</li>
-          <li><strong>RSA:</strong> Relies on prime integer factorization. Legacy 1024-bit RSA is cryptographically broken; production SSH servers require minimum 2048-bit or 4096-bit RSA keys.</li>
-        </ul>
-
-        <h3>2. SHA-256 Key Fingerprint Calculation</h3>
-        <p>SSH key fingerprints are computed by decoding the Base64 key blob component, executing a SHA-256 cryptographic hash over the binary array, and encoding the resulting digest in unpadded Base64.</p>
-        
-
-      <h3>Specifications and Operating Boundaries</h3>
-      <ul>
-        <li><strong>Primary Protocols & Specifications:</strong> SSH Key Inspector, Ed25519 Public Key, OpenSSH Key Formatter, SSH Fingerprint SHA256, authorized_keys Config, RFC 4253 SSH Transport</li>
-        <li><strong>Execution Environment:</strong> 100% Client-Side In-Memory JavaScript / WebCrypto Engine (Zero Remote Telemetry).</li>
-        <li><strong>Memory Safety Limit:</strong> 2MB Maximum Payload Safeguard against browser thread blocking.</li>
-      </ul>
-
-      <h3>Implementation Code Example</h3>
-      <p>Here is a reference implementation demonstrating how to parse or handle this protocol programmatically in modern JavaScript / Node.js:</p>
-
-      <pre><code>// Programmatic Implementation Reference (ssh-key-pair-generator.html)
-function parseDevOpsPayload(input) {
-  if (!input || input.length > 2097152) {
-    throw new Error("Payload size exceeds 2MB safety threshold.");
-  }
-  // Normalize line endings and trim whitespace
-  const sanitized = input.trim();
-  console.log("Processing payload against RFC 4253 / RFC 8709 spec...");
-  return sanitized;
-}</code></pre>
-
-      <h3>Frequently Asked Questions (FAQ)</h3>
-      <div class="faq-item">
-        <h4>Q: Does this tool send any server configuration or IP payload to remote servers?</h4>
-        <p>A: No. All parsing, validation, calculation, and generation occur exclusively within your browser's local V8/JavaScript execution context. No network requests are initiated.</p>
-      </div>
-      <div class="faq-item">
-        <h4>Q: How does this tool prevent browser freezes on large log files or configurations?</h4>
-        <p>A: The tool features a 2MB input safeguard and non-blocking DOM rendering routines, ensuring smooth response times even during intensive parsing operations.</p>
-      </div>
-
-      <!-- EEAT Institutional Trust Badge -->
-      <div class="eeat-badge">
-        <div class="badge-icon">🛡️</div>
-        <div class="badge-content">
-          <h4>Verified Technical Documentation</h4>
-          <p>Audited for compliance with RFC 4253 / RFC 8709 specifications, WebCrypto standards, and OWASP security guidelines. Maintained by QuickDevBox Engineering.</p>
-        </div>
-      </div>
-    </article>
-  </main>
+        </main>
 
     <footer>
     <div class="footer-container" style="max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem; text-align: center; color: var(--text-muted); font-size: 0.85rem; border-top: 1px solid var(--bg-card-border);">

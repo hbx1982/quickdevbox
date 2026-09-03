@@ -47,7 +47,31 @@
     }
 }
   </script>
-<!-- Google tag (gtag.js) -->
+  <script type="application/ld+json">
+  {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Why do text strings refuse to truncate with text-overflow: ellipsis inside a flex item?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Flex items default to min-width: auto. Set min-width: 0 on the child element to allow text-overflow: ellipsis."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between flex-basis: 0 and flex-basis: auto?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "flex-basis: 0 distributes space proportionally from zero; flex-basis: auto distributes remaining space after content sizing."
+      }
+    }
+  ]
+}
+  </script>
+  <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -171,33 +195,74 @@
       </div>
     </div>
 
-    <article class="seo-article" style="margin-top: 3rem; border-top: 1px solid var(--bg-card-border); padding-top: 2rem;">
-      <h2>Specification Guide: Understanding CSS Flexbox Layout Generator & Visual Builder</h2>
-      <p>Build CSS Flexbox layouts interactively. Visual controls for flex-direction, justify-content, align-items, flex-wrap, and gap. Modern web design demands precision, accessibility, and high-performance layout rendering across high-DPI screens and mobile devices.</p>
-      
-      <h3>Key Engineering Advantages &amp; Best Practices</h3>
-      <ul>
-        <li><strong>Sub-Millisecond Rendering:</strong> 100% in-browser calculation with zero network latency.</li>
-        <li><strong>W3C / WHATWG Standard Compliance:</strong> Follows official W3C CSS specifications for maximum cross-browser rendering accuracy.</li>
-        <li><strong>Zero Data Exposure:</strong> All color, vector, and layout computations stay entirely within your local browser memory space.</li>
-      </ul>
+                    <article class="seo-article">
+      <h2>CSS Flexible Box Layout: Main/Cross Axis Alignment & Flex Shrink Mechanics</h2>
+      <p>CSS Flexbox (Flexible Box Layout Module) distributes space along a single dimensional axis (row or column). Flex items dynamically expand (flex-grow) or contract (flex-shrink) relative to their flex-basis to fit viewport constraints.</p>
 
-      <h3>CSS Integration Code Example</h3>
-      <pre><code>/* Example Production CSS Rules */
-.target-element {
-  box-sizing: border-box;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}</code></pre>
-
-      <div class="author-box" style="margin-top: 2.5rem; padding: 1.25rem; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid var(--bg-card-border); display: flex; align-items: center; gap: 1rem;">
-        <div style="font-size: 2rem;">🛡️</div>
-        <div>
-          <div style="font-weight: 700; color: var(--text-heading);">Verified Technical Documentation</div>
-          <div style="font-size: 0.85rem; color: var(--text-muted);">Maintained by the QuickDevBox Web Engineering &amp; CSS Standards Team. Verified against W3C CSS specifications.</div>
+      <div class="tech-specs">
+        <div class="spec-card">
+          <strong>Dimensionality</strong>
+          <span>One-dimensional layout model (Main Axis vs Cross Axis)</span>
+        </div>
+        <div class="spec-card">
+          <strong>Alignment Properties</strong>
+          <span>justify-content (Main axis), align-items & align-content (Cross axis)</span>
+        </div>
+        <div class="spec-card">
+          <strong>Item Sizing Formula</strong>
+          <span>flex: <flex-grow> <flex-shrink> <flex-basis> (e.g., flex: 1 1 0%)</span>
+        </div>
+        <div class="spec-card">
+          <strong>Standard</strong>
+          <span>W3C CSS Flexible Box Layout Module Level 1</span>
         </div>
       </div>
+
+      <h3>Implementation &amp; Code Examples</h3>
+      <h4>Responsive Holy Grail Navbar</h4>
+      <pre><code>.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+}
+.brand { flex: 0 0 auto; }
+.search-bar { flex: 1 1 auto; max-width: 600px; }
+.nav-actions { flex: 0 0 auto; display: flex; gap: 0.75rem; }</code></pre>
+      <h4>Center Anything Perfectly</h4>
+      <pre><code>.center-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}</code></pre>
+
+      <h3>Browser Rendering Performance &amp; Hardware Compositing</h3>
+      <p>Executing CSS Flexible Box Layout in modern web applications requires optimizing layout rendering across the browser rendering pipeline:</p>
+      <ul>
+        <li><strong>GPU Compositor Promotion:</strong> Restrict high-frequency dynamic transitions to compositor-only CSS properties (<code>transform</code> and <code>opacity</code>) to avoid triggering costly CPU layout reflows and repaints.</li>
+        <li><strong>Layout Thrashing Prevention:</strong> Decouple DOM geometry measurements from subsequent style write operations to eliminate forced synchronous reflow cycles and preserve 60 FPS scrolling.</li>
+        <li><strong>Subpixel Antialiasing:</strong> Design visual components with hardware-accelerated vector units and clamp scaling boundaries to eliminate visual pixel rounding jitter on high-DPI displays.</li>
+      </ul>
+
+      <section class="faq-section">
+        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
+        <div class="faq-item">
+          <h3>Why do text strings refuse to truncate with text-overflow: ellipsis inside a flex item?</h3>
+          <p>Flex items have a default <code>min-width: auto</code>, preventing them from shrinking narrower than their content. Setting <code>min-width: 0</code> on the flex child allows text truncation to calculate properly.</p>
+        </div>
+        <div class="faq-item">
+          <h3>What is the difference between flex-basis: 0 and flex-basis: auto?</h3>
+          <p><code>flex-basis: 0</code> distributes total available space strictly according to <code>flex-grow</code> proportions, ignoring content width. <code>flex-basis: auto</code> subtracts item content width first before distributing remaining space.</p>
+        </div>
+      </section>
+
+      <h3>Official Standards &amp; Technical References</h3>
+      <ul>
+        <li><a href="https://www.w3.org/TR/css-flexbox-1/" target="_blank" rel="noopener noreferrer">W3C CSS Flexible Box Layout Module Level 1</a></li>
+      </ul>
     </article>
-  
+
     <section class="related-tools" style="margin-top: 3rem; border-top: 1px solid var(--bg-card-border); padding-top: 2rem;">
       <h3 style="margin-bottom: 1rem; color: var(--text-heading);">🛠️ Related Utility Tools</h3>
       <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem;">

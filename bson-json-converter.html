@@ -48,7 +48,31 @@
     }
 }
   </script>
-<!-- Google tag (gtag.js) -->
+  <script type="application/ld+json">
+  {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the difference between MongoDB Canonical and Relaxed Extended JSON?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Canonical format wraps all types losslessly; Relaxed format outputs clean standard JSON numbers and strings."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does standard JSON.stringify corrupt MongoDB 64-bit integers ($numberLong)?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Standard JSON parsers truncate 64-bit integers exceeding 2^53-1; BSON $numberLong wrappers preserve exact precision."
+      }
+    }
+  ]
+}
+  </script>
+  <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -122,44 +146,72 @@
     </section>
 
     <!-- SEO Technical Article Section -->
-    <article class="seo-article">
-<h2>MongoDB Extended JSON Specification: Type Annotations, BSON Representation, and Relational Compatibility</h2>
-      <p>MongoDB Extended JSON to JSON conversion unwraps BSON type wrapper objects ($oid, $date, $numberLong, $numberDecimal) into clean standard JSON primitives.</p>
+            <!-- Related Tools Grid Section -->
+                    <article class="seo-article">
+      <h2>BSON to Extended JSON: Canonical vs Relaxed Modes & MongoDB Type Wrappers</h2>
+      <p>Binary JSON (BSON) extends standard JSON with additional data types (ObjectId, 64-bit int64, ISODate, Regex, Binary). Converting BSON to MongoDB Extended JSON v2 bridges MongoDB binary dumps with standard web JSON clients.</p>
 
-      <h3>Canonical vs. Relaxed Extended JSON Modes</h3>
-      <p>MongoDB exports data in Canonical (preserving exact BSON types) or Relaxed mode. This tool normalizes both representations into clean, readable JSON for API responses.</p>
+      <div class="tech-specs">
+        <div class="spec-card">
+          <strong>BSON Specification</strong>
+          <span>BSON (Binary JSON) Serialization Specification Version 1.1</span>
+        </div>
+        <div class="spec-card">
+          <strong>MongoDB Extended JSON</strong>
+          <span>Extended JSON v2 Specification (Canonical and Relaxed formats)</span>
+        </div>
+        <div class="spec-card">
+          <strong>Type Wrappers</strong>
+          <span>{"$oid": "..."}, {"$date": {"$numberLong": "..."}}, {"$numberLong": "..."}</span>
+        </div>
+        <div class="spec-card">
+          <strong>Precision Preservation</strong>
+          <span>Prevents 64-bit integer overflow under JavaScript IEEE 754 numbers</span>
+        </div>
+      </div>
 
-      <h3>Simplifying MongoDB Exports for Frontend Displays</h3>
-      <p>Stripping BSON $oid wrappers allows frontend developers to display MongoDB document IDs directly in user tables without custom parsing logic.</p>
+      <h3>Implementation &amp; Code Examples</h3>
+      <h4>Node.js (bson library)</h4>
+      <pre><code>import { EJSON } from 'bson';
 
-      <h3>MongoDB Extended JSON v2 Specification / BSON Spec</h3>
-      <p>MongoDB JSON, BSON to JSON, Extended JSON Parser, MongoDB ObjectId, NoSQL Data</p>
+const extendedJsonText = '{"_id": {"$oid": "65e492b4f1234567890abcde"}, "createdAt": {"$date": "2026-09-03T12:00:00Z"}}';
+const doc = EJSON.parse(extendedJsonText, { relaxed: true });
+console.log("Parsed MongoDB Document:", doc);</code></pre>
+      <h4>Python (bson.json_util / PyMongo)</h4>
+      <pre><code>from bson import json_util, ObjectId
+import json
 
-      
-      <h3>RFC Architectural Standards and Enterprise Implementation</h3>
-      <p>Implementing reliable code formatters and data converters requires strict alignment with established language specifications and RFC transport protocols. Whether processing structured JSON payloads, tokenizing raw JavaScript, or parsing complex markup trees, adherence to official specifications prevents syntax degradation and guarantees cross-platform interoperability across enterprise software systems.</p>
-      
-      <p>Modern microservice architectures reliance on zero-trust security demands that data processing tools operate with absolute privacy guarantees. By executing all parsing, minification, and code transformation algorithms strictly within the local browser runtime using WebCrypto and native JavaScript engines, applications eliminate third-party server exposure, mitigate data exfiltration risks, and ensure compliance with stringent GDPR and HIPAA data protection mandates.</p>
+doc = {"_id": ObjectId("65e492b4f1234567890abcde"), "counter": 9007199254740995}
+json_str = json.dumps(doc, default=json_util.default)
+print(json_str)</code></pre>
 
-
-      <h3>Technical Specifications & RFC Standards</h3>
+      <h3>Architectural Design &amp; High-Throughput Pipeline Optimization</h3>
+      <p>Integrating BSON to Extended JSON into continuous delivery pipelines requires balancing lexical analysis latency with memory consumption:</p>
       <ul>
-        <li><strong>Specification Standard:</strong> Unwrapping Extended JSON Wrapper Objects</li>
-        <li><strong>Target Keywords:</strong> The unwrapper engine recursively extracts ObjectId strings ({"$oid": "..."} -> "..."), converts ISO date objects ({"$date": "..."}) to ISO strings, and casts numeric decimals into numbers.</li>
-        <li><strong>Security & Privacy Safeguard:</strong> Local client-side in-memory computation guarantees zero data transmission to external remote servers, protecting sensitive development data and proprietary payloads from network exposure or third-party logging.</li>
-        <li><strong>Time & Space Complexity:</strong> O(N) linear time processing and memory allocation relative to input text character length.</li>
+        <li><strong>Stream-Based Tokenization:</strong> For large data buffers exceeding 1MB, avoid synchronous in-memory string parsing on the main event thread. Stream input tokens through chunked pipelines to prevent event-loop thread starvation.</li>
+        <li><strong>Defensive Parsing &amp; Exception Isolation:</strong> Always wrap syntax transformations inside structured exception handlers to isolate malformed inputs, truncated payloads, and illegal control characters from crashing downstream microservices.</li>
+        <li><strong>Character Encoding Verification:</strong> Enforce strict UTF-8 input normalization at API gateways to prevent byte-order mark (BOM) anomalies, truncated multi-byte sequences, and surrogate pair deserialization errors.</li>
       </ul>
 
-      
+      <section class="faq-section">
+        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
+        <div class="faq-item">
+          <h3>What is the difference between MongoDB Canonical and Relaxed Extended JSON?</h3>
+          <p>Canonical format represents all numbers and dates with explicit type wrappers (e.g. <code>{"$numberInt": "42"}</code>) to preserve lossless roundtripping. Relaxed format converts numbers and dates to standard JSON primitives for human readability.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Why does standard JSON.stringify corrupt MongoDB 64-bit integers ($numberLong)?</h3>
+          <p>JavaScript numbers are IEEE 754 64-bit floating-point values with a maximum safe integer limit of <code>2^53 - 1</code>. BSON 64-bit integers exceeding this limit lose precision unless serialized as strings with <code>$numberLong</code>.</p>
+        </div>
+      </section>
 
-      <div class="author-box" style="margin-top: 2rem; padding: 1.5rem; background: rgba(255,255,255,0.02); border-left: 4px solid var(--primary); border-radius: 8px; color: var(--text-muted); font-size: 0.95rem; line-height: 1.6;">
-          <strong>🛡️ Verified Technical Documentation</strong><br>
-          <em>Written & Technical Review by QuickDevBox Engineering Team</em><br>
-          <span style="font-size: 0.85rem; opacity: 0.8;">This documentation adheres strictly to E-E-A-T (Experience, Expertise, Authoritativeness, and Trustworthiness) standards. Content is mathematically and algorithmically verified for technical accuracy.</span>
-      </div>
+      <h3>Official Standards &amp; Technical References</h3>
+      <ul>
+        <li><a href="https://bsonspec.org/spec.html" target="_blank" rel="noopener noreferrer">BSON (Binary JSON) Specification v1.1</a></li>
+        <li><a href="https://www.mongodb.com/docs/manual/reference/mongodb-extended-json/" target="_blank" rel="noopener noreferrer">MongoDB Extended JSON v2 Specification</a></li>
+      </ul>
     </article>
 
-    <!-- Related Tools Grid Section -->
     <section class="related-tools" style="margin-top: 3rem;">
       <h3>Explore Related Developer Tools</h3>
       <div class="related-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; margin-top: 1rem;">

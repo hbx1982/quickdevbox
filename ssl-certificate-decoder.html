@@ -34,7 +34,31 @@
     "browserRequirements": "Requires JavaScript. Requires HTML5."
   }
   </script>
-<!-- Google tag (gtag.js) -->
+  <script type="application/ld+json">
+  {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Why are Common Name (CN) attributes deprecated in favor of Subject Alternative Names (SAN)?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Modern browsers ignore Common Name (CN) and strictly enforce Subject Alternative Name (SAN) domain validation."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What causes 'SSL Certificate Problem: unable to get local issuer certificate'?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Missing intermediate CA certificates in server TLS handshakes trigger untrusted issuer errors. Configure fullchain.pem."
+      }
+    }
+  ]
+}
+  </script>
+  <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -108,6 +132,74 @@
     </section>
 
     <!-- Related Tools Internal Link Building -->
+                    <article class="seo-article">
+      <h2>X.509 Certificate Decoding: ASN.1 DER Structures, SAN & PKI Validation</h2>
+      <p>SSL/TLS certificates use the ITU-T X.509 standard to bind cryptographic public keys to domain identities. Parsing certificate PEM blocks decodes ASN.1 DER data structures, checking validity timestamps, Subject Alternative Names (SAN), and issuer chains.</p>
+
+      <div class="tech-specs">
+        <div class="spec-card">
+          <strong>PKI Standard</strong>
+          <span>IETF RFC 5280: Internet X.509 Public Key Infrastructure Certificate</span>
+        </div>
+        <div class="spec-card">
+          <strong>Encoding Formats</strong>
+          <span>Base64 PEM (ASCII Armor) and Binary DER (Distinguished Encoding Rules)</span>
+        </div>
+        <div class="spec-card">
+          <strong>Identity Extension</strong>
+          <span>Subject Alternative Name (SAN, id-ce-subjectAltName)</span>
+        </div>
+        <div class="spec-card">
+          <strong>Signature Cryptosuites</strong>
+          <span>ECDSA with SHA-256 (P-256) | RSA 2048/4096 with SHA-256</span>
+        </div>
+      </div>
+
+      <h3>Implementation &amp; Code Examples</h3>
+      <h4>OpenSSL CLI Certificate Inspection</h4>
+      <pre><code># View human-readable certificate details
+openssl x509 -in cert.pem -noout -text
+
+# Check expiration date and Subject Alternative Names
+openssl x509 -in cert.pem -noout -dates -ext subjectAltName</code></pre>
+      <h4>Node.js (tls module certificate inspection)</h4>
+      <pre><code>import tls from 'tls';
+
+const socket = tls.connect(443, 'quickdevbox.com', { servername: 'quickdevbox.com' }, () => {
+  const cert = socket.getPeerCertificate();
+  console.log("Issuer:", cert.issuer.O);
+  console.log("Valid To:", cert.valid_to);
+  console.log("SANs:", cert.subjectaltname);
+  socket.destroy();
+});</code></pre>
+
+      <h3>Production Infrastructure Reliability &amp; Hardening</h3>
+      <p>Managing X.509 Certificate Decoding configurations within automated cloud native clusters requires robust deployment practices:</p>
+      <ul>
+        <li><strong>Zero-Trust Ingress Enforcement:</strong> Protect service boundaries with strict ingress controller timeout policies, TLS termination standards, and mutual TLS (mTLS) authentication across inter-service meshes.</li>
+        <li><strong>Declarative Manifest Validation:</strong> Automate schema validation and syntax linting inside CI/CD pipelines before applying infrastructure configuration units to staging and production clusters.</li>
+        <li><strong>Liveness Probes &amp; Graceful Termination:</strong> Configure proper termination grace intervals (SIGTERM traps) and decouple health check probes from heavy backend dependencies to prevent cascading reboot loops.</li>
+      </ul>
+
+      <section class="faq-section">
+        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
+        <div class="faq-item">
+          <h3>Why are Common Name (CN) attributes deprecated in favor of Subject Alternative Names (SAN)?</h3>
+          <p>RFC 6125 and the CA/Browser Forum formally deprecated Common Name matching because CN only accommodates single hostnames and lacks strict type parsing. Modern browsers require domain identities in the SAN extension.</p>
+        </div>
+        <div class="faq-item">
+          <h3>What causes 'SSL Certificate Problem: unable to get local issuer certificate'?</h3>
+          <p>The server failed to provide the intermediate CA certificate in its TLS handshake bundle (incomplete certificate chain). Web servers must serve the full certificate chain (<code>fullchain.pem</code>), not just the leaf certificate.</p>
+        </div>
+      </section>
+
+      <h3>Official Standards &amp; Technical References</h3>
+      <ul>
+        <li><a href="https://datatracker.ietf.org/doc/html/rfc5280" target="_blank" rel="noopener noreferrer">IETF RFC 5280: X.509 Certificate and CRL Profile</a></li>
+        <li><a href="https://cabforum.org/baseline-requirements-documents/" target="_blank" rel="noopener noreferrer">CA/Browser Forum Baseline Requirements for SSL/TLS</a></li>
+      </ul>
+    </article>
+
     <section class="related-tools" style="margin-top:2rem;">
       <h3>🛠️ Related DevOps & Security Tools</h3>
       <div class="related-grid">
@@ -131,59 +223,7 @@
     </section>
 
     <!-- SEO Technical Article (EEAT & RFC Compliant) -->
-    <article class="seo-article">
-      
-        <h2>Public Key Infrastructure (PKI) and X.509 Certificate Standards</h2>
-        <p>X.509 is the universal ITU-T standard defining public key certificates for TLS/SSL internet security. Digital certificates bind a public key to an authenticated organization or domain identity signed by a trusted Certificate Authority (CA).</p>
-
-        <h3>1. ASN.1 Structures and PEM Base64 Encoding</h3>
-        <p>X.509 certificate data structures are defined in Abstract Syntax Notation One (ASN.1) and serialized into binary DER format. PEM (Privacy-Enhanced Mail) encoding wraps binary DER data in Base64 lines bordered by <code>-----BEGIN CERTIFICATE-----</code> and <code>-----END CERTIFICATE-----</code> headers.</p>
-
-        <h3>2. Subject Alternative Name (SAN) Multi-Domain Extensions</h3>
-        <p>Modern web browsers ignore legacy <code>CommonName</code> (CN) fields in favor of Subject Alternative Name (SAN) extension fields, allowing a single SSL certificate to secure multiple fully qualified domain names (FQDNs) and wildcard domains.</p>
-        
-
-      <h3>Specifications and Operating Boundaries</h3>
-      <ul>
-        <li><strong>Primary Protocols & Specifications:</strong> X.509 Certificate Decoder, PEM Certificate Inspector, Subject Alternative Name SAN, PKI Chain of Trust, ASN.1 DER Structure, TLS Expiration Check</li>
-        <li><strong>Execution Environment:</strong> 100% Client-Side In-Memory JavaScript / WebCrypto Engine (Zero Remote Telemetry).</li>
-        <li><strong>Memory Safety Limit:</strong> 2MB Maximum Payload Safeguard against browser thread blocking.</li>
-      </ul>
-
-      <h3>Implementation Code Example</h3>
-      <p>Here is a reference implementation demonstrating how to parse or handle this protocol programmatically in modern JavaScript / Node.js:</p>
-
-      <pre><code>// Programmatic Implementation Reference (ssl-certificate-decoder.html)
-function parseDevOpsPayload(input) {
-  if (!input || input.length > 2097152) {
-    throw new Error("Payload size exceeds 2MB safety threshold.");
-  }
-  // Normalize line endings and trim whitespace
-  const sanitized = input.trim();
-  console.log("Processing payload against RFC 5280 / ITU-T X.509 spec...");
-  return sanitized;
-}</code></pre>
-
-      <h3>Frequently Asked Questions (FAQ)</h3>
-      <div class="faq-item">
-        <h4>Q: Does this tool send any server configuration or IP payload to remote servers?</h4>
-        <p>A: No. All parsing, validation, calculation, and generation occur exclusively within your browser's local V8/JavaScript execution context. No network requests are initiated.</p>
-      </div>
-      <div class="faq-item">
-        <h4>Q: How does this tool prevent browser freezes on large log files or configurations?</h4>
-        <p>A: The tool features a 2MB input safeguard and non-blocking DOM rendering routines, ensuring smooth response times even during intensive parsing operations.</p>
-      </div>
-
-      <!-- EEAT Institutional Trust Badge -->
-      <div class="eeat-badge">
-        <div class="badge-icon">🛡️</div>
-        <div class="badge-content">
-          <h4>Verified Technical Documentation</h4>
-          <p>Audited for compliance with RFC 5280 / ITU-T X.509 specifications, WebCrypto standards, and OWASP security guidelines. Maintained by QuickDevBox Engineering.</p>
-        </div>
-      </div>
-    </article>
-  </main>
+        </main>
 
     <footer>
     <div class="footer-container" style="max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem; text-align: center; color: var(--text-muted); font-size: 0.85rem; border-top: 1px solid var(--bg-card-border);">

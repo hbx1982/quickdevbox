@@ -47,7 +47,31 @@
     }
 }
   </script>
-<!-- Google tag (gtag.js) -->
+  <script type="application/ld+json">
+  {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Why is standard HSL flawed for generating accessible UI color palettes?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Standard HSL ignores human eye sensitivity; OKLCH maintains consistent perceptual lightness across all hues."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the 60-30-10 UI color balancing rule?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The 60-30-10 rule balances 60% neutral background, 30% structural surfaces, and 10% high-contrast accent focal points."
+      }
+    }
+  ]
+}
+  </script>
+  <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -142,33 +166,70 @@
       </div>
     </div>
 
-    <article class="seo-article" style="margin-top: 3rem; border-top: 1px solid var(--bg-card-border); padding-top: 2rem;">
-      <h2>Specification Guide: Understanding Monochromatic & Complementary Color Palette Generator</h2>
-      <p>Generate harmonious color palettes (Monochromatic, Complementary, Triadic, Analogous) with Hex, RGB, HSL codes and CSS variables. Modern web design demands precision, accessibility, and high-performance layout rendering across high-DPI screens and mobile devices.</p>
-      
-      <h3>Key Engineering Advantages &amp; Best Practices</h3>
-      <ul>
-        <li><strong>Sub-Millisecond Rendering:</strong> 100% in-browser calculation with zero network latency.</li>
-        <li><strong>W3C / WHATWG Standard Compliance:</strong> Follows official W3C CSS specifications for maximum cross-browser rendering accuracy.</li>
-        <li><strong>Zero Data Exposure:</strong> All color, vector, and layout computations stay entirely within your local browser memory space.</li>
-      </ul>
+                    <article class="seo-article">
+      <h2>Color Palette Theory: OKLCH Color Space, Complementary Harmonies & Contrast</h2>
+      <p>Color palette generation applies color theory geometry (monochromatic, complementary, triadic, analogous) to create harmonious UI design tokens. Utilizing perceptually uniform color spaces (OKLCH) ensures predictable lightness across all hues.</p>
 
-      <h3>CSS Integration Code Example</h3>
-      <pre><code>/* Example Production CSS Rules */
-.target-element {
-  box-sizing: border-box;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}</code></pre>
-
-      <div class="author-box" style="margin-top: 2.5rem; padding: 1.25rem; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid var(--bg-card-border); display: flex; align-items: center; gap: 1rem;">
-        <div style="font-size: 2rem;">🛡️</div>
-        <div>
-          <div style="font-weight: 700; color: var(--text-heading);">Verified Technical Documentation</div>
-          <div style="font-size: 0.85rem; color: var(--text-muted);">Maintained by the QuickDevBox Web Engineering &amp; CSS Standards Team. Verified against W3C CSS specifications.</div>
+      <div class="tech-specs">
+        <div class="spec-card">
+          <strong>Color Models</strong>
+          <span>sRGB, HSL (Hue, Saturation, Lightness), OKLCH (Perceptually Uniform Gamut)</span>
+        </div>
+        <div class="spec-card">
+          <strong>Harmonic Relations</strong>
+          <span>Complementary (180 deg), Triadic (120 deg), Analogous (30 deg)</span>
+        </div>
+        <div class="spec-card">
+          <strong>Design Token Scales</strong>
+          <span>50 to 950 tonal steps (Tailwind / Radix UI standard scales)</span>
+        </div>
+        <div class="spec-card">
+          <strong>Standard</strong>
+          <span>W3C CSS Color Module Level 4 & Level 5</span>
         </div>
       </div>
+
+      <h3>Implementation &amp; Code Examples</h3>
+      <h4>CSS Design Token Custom Properties</h4>
+      <pre><code>:root {
+  /* Primary brand palette generated with perceptually uniform lightness */
+  --brand-50: oklch(97% 0.02 260);
+  --brand-500: oklch(58% 0.22 260);
+  --brand-900: oklch(24% 0.15 260);
+}</code></pre>
+      <h4>JavaScript Complementary Hue Calculation</h4>
+      <pre><code>function getComplementary(hueDegrees) {
+  return (hueDegrees + 180) % 360;
+}
+console.log("Complementary to 210deg:", getComplementary(210));</code></pre>
+
+      <h3>Browser Rendering Performance &amp; Hardware Compositing</h3>
+      <p>Executing Color Palette Theory in modern web applications requires optimizing layout rendering across the browser rendering pipeline:</p>
+      <ul>
+        <li><strong>GPU Compositor Promotion:</strong> Restrict high-frequency dynamic transitions to compositor-only CSS properties (<code>transform</code> and <code>opacity</code>) to avoid triggering costly CPU layout reflows and repaints.</li>
+        <li><strong>Layout Thrashing Prevention:</strong> Decouple DOM geometry measurements from subsequent style write operations to eliminate forced synchronous reflow cycles and preserve 60 FPS scrolling.</li>
+        <li><strong>Subpixel Antialiasing:</strong> Design visual components with hardware-accelerated vector units and clamp scaling boundaries to eliminate visual pixel rounding jitter on high-DPI displays.</li>
+      </ul>
+
+      <section class="faq-section">
+        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
+        <div class="faq-item">
+          <h3>Why is standard HSL flawed for generating accessible UI color palettes?</h3>
+          <p>In standard HSL, pure blue (hue 240) and pure yellow (hue 60) both have lightness 50%, yet human eyes perceive yellow as much brighter than blue. OKLCH fixes this with mathematically uniform perceptual lightness.</p>
+        </div>
+        <div class="faq-item">
+          <h3>What is the 60-30-10 UI color balancing rule?</h3>
+          <p>A foundational interior and graphic design principle: 60% of the interface consists of a dominant neutral color (backgrounds), 30% is a secondary structure color (cards, sidebars), and 10% is an accent color (buttons, badges).</p>
+        </div>
+      </section>
+
+      <h3>Official Standards &amp; Technical References</h3>
+      <ul>
+        <li><a href="https://www.w3.org/TR/css-color-4/" target="_blank" rel="noopener noreferrer">W3C CSS Color Module Level 4</a></li>
+        <li><a href="https://bottosson.github.io/posts/oklab/" target="_blank" rel="noopener noreferrer">Bjorn Ottosson: A Perceptual Color Space for Image Processing (Oklab/Oklch)</a></li>
+      </ul>
     </article>
-  
+
     <section class="related-tools" style="margin-top: 3rem; border-top: 1px solid var(--bg-card-border); padding-top: 2rem;">
       <h3 style="margin-bottom: 1rem; color: var(--text-heading);">🛠️ Related Utility Tools</h3>
       <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem;">

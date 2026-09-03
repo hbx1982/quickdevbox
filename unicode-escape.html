@@ -48,7 +48,31 @@
     }
 }
   </script>
-<!-- Google tag (gtag.js) -->
+  <script type="application/ld+json">
+  {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Why do emojis require two \\uXXXX escape sequences instead of one?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Emojis exceeding 16-bit limits require two UTF-16 surrogate pair escapes (\\uD83D\\uDE80 for rocket)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the advantage of ES6 \\u{XXXXX} syntax over surrogate pairs?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ES6 curly-brace syntax (\\u{1F680}) specifies 21-bit Unicode code points directly without surrogate pair math."
+      }
+    }
+  ]
+}
+  </script>
+  <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -103,9 +127,9 @@
         </div>
 
         <div class="tool-controls" style="margin-top:0.8rem; display:flex; gap:0.5rem;">
-          <button class="btn btn-primary" onclick="processTool('encode');">Encode Unicode</button>
+          <button class="btn btn-primary" onclick="processTool('encode');">Encode Unicode (Ctrl+Enter)</button>
           <button class="btn btn-primary" onclick="processTool('decode');" style="background:#10b981;">Decode Unicode</button>
-          <button class="btn btn-secondary" onclick="document.getElementById('toolInput').value='Hello 🌍 World! 测试'; updateCounter(); processTool('encode');" style="font-size:0.8rem;">💡 Sample</button>
+          <button class="btn btn-secondary" onclick="document.getElementById('toolInput').value='Hello 🌍 World! Test'; updateCounter(); processTool('encode');" style="font-size:0.8rem;">💡 Sample</button>
           <button class="btn btn-secondary" onclick="document.getElementById('toolInput').value=''; document.getElementById('toolOutput').value=''; updateCounter();" style="color:var(--danger); font-size:0.8rem;">🗑️ Clear</button>
         </div>
 
@@ -117,35 +141,77 @@
       </div>
 
       <!-- SEO Technical Article Section -->
-      <article class="seo-article" style="margin-top:2rem; line-height:1.7; color:var(--text-main);">
-        <h2 style="color:var(--primary); font-size:1.4rem;">Unicode Encoding in Web Systems: Code Points, UTF-16 Surrogate Pairs, and \uXXXX String Literals</h2>
-        
-        <p>In modern computer security and data architecture, <strong>Unicode Escape & Unescape Converter</strong> serves a critical role in data confidentiality, integrity verification, and protocol compliance. Adhering to standards such as <code>Unicode 15.0 / ECMA-262</code>, this online suite operates entirely within your local browser sandbox, providing sub-millisecond execution without transmitting sensitive credentials over external networks.</p>
-
-        <h3 style="color:var(--text-muted); font-size:1.15rem; margin-top:1.2rem;">Core Algorithmic Mechanics & Specifications</h3>
-        <p>Unicode escape sequences represent characters outside standard ASCII using four hexadecimal digits (e.g. \u00A9 for ©). Characters above U+FFFF require UTF-16 surrogate pairs (high surrogate \uD83C, low surrogate \uDF0D for 🌍).</p>
-
-        <h3 style="color:var(--text-muted); font-size:1.15rem; margin-top:1.2rem;">Key Technical Highlights & Standards</h3>
-        <ul style="margin-left:1.5rem; margin-bottom:1rem;">
-          <li><strong>Standard Compliance:</strong> Built against official specs including <code>Unicode 15.0 / ECMA-262</code>.</li>
-          <li><strong>Zero Network Footprint:</strong> 100% JavaScript / WebCrypto execution ensures data privacy and GDPR alignment.</li>
-          <li><strong>Primary Keywords & Topics:</strong> Unicode Escape, UTF-16 Surrogate Pairs, Code Points, ASCII Translation, ECMAScript Spec, Character Encoding.</li>
-          <li><strong>Performance Optimization:</strong> Designed to process inputs without blocking the main thread.</li>
-        </ul>
-
-        <h3 style="color:var(--text-muted); font-size:1.15rem; margin-top:1.2rem;">Security Considerations & Best Practices</h3>
-        <p>When implementing cryptographic algorithms in production systems, always ensure proper initialization vector (IV) uniqueness, adequate key entropy, and safe salt generation. Avoid weak legacy ciphers in high-risk environments and always prefer authenticated encryption modes like GCM or CCM where applicable.</p>
-
-        <!-- E-E-A-T Verified Author Box -->
-        <div class="author-box" style="margin-top: 2rem; padding: 1.5rem; background: rgba(255,255,255,0.02); border-left: 4px solid var(--primary-color); border-radius: 8px; color: var(--text-muted); font-size: 0.95rem; line-height: 1.6;">
-            <strong>🛡️ Verified Technical Documentation</strong><br>
-            <em>Written & Technical Review by QuickDevBox Engineering Team</em><br>
-            <span style="font-size: 0.85rem; opacity: 0.8;">This documentation adheres strictly to E-E-A-T (Experience, Expertise, Authoritativeness, and Trustworthiness) standards. Content is algorithmically and cryptographically verified for accuracy.</span>
-        </div>
-      </article>
-
       <!-- Related Tools Section -->
-      <section class="related-tools" style="margin-top:2.5rem; padding-top:1.5rem; border-top:1px solid var(--bg-card-border);">
+                          <article class="seo-article">
+      <h2>Unicode Escape Sequences: \uXXXX UTF-16 Code Units & ES6 Surrogate Pairs</h2>
+      <p>Unicode escaping converts non-ASCII characters into 6-character escape sequences (\uXXXX) or ES6 code point braces (\u{XXXXX}). This ensures strings traverse 7-bit ASCII transmission pipelines without encoding corruption.</p>
+
+      <div class="tech-specs">
+        <div class="spec-card">
+          <strong>Escape Syntax</strong>
+          <span>\uXXXX (16-bit BMP) and \u{XXXXX} (ES6 21-bit Extended Code Points)</span>
+        </div>
+        <div class="spec-card">
+          <strong>Surrogate Pair Range</strong>
+          <span>High surrogates (0xD800 to 0xDBFF) + Low surrogates (0xDC00 to 0xDFFF)</span>
+        </div>
+        <div class="spec-card">
+          <strong>Byte Encoding</strong>
+          <span>UTF-16 code unit representation of Unicode Consortium code points</span>
+        </div>
+        <div class="spec-card">
+          <strong>Standard</strong>
+          <span>The Unicode Standard Version 15.0 & ECMA-262 § Unicode Escape Sequences</span>
+        </div>
+      </div>
+
+      <h3>Implementation &amp; Code Examples</h3>
+      <h4>JavaScript Unicode Escape / Unescape</h4>
+      <pre><code>function unicodeEscape(str) {
+  return str.split('').map(char => {
+    const code = char.charCodeAt(0);
+    return code > 127 ? '\\u' + code.toString(16).padStart(4, '0') : char;
+  }).join('');
+}
+
+function unicodeUnescape(escapedStr) {
+  return escapedStr.replace(/\\u([0-9a-fA-F]{4})/g, (_, hex) => 
+    String.fromCharCode(parseInt(hex, 16))
+  );
+}</code></pre>
+      <h4>Python 3 (raw-unicode-escape)</h4>
+      <pre><code>text = "QuickDevBox 🚀"
+escaped = text.encode('unicode-escape').decode('ascii')
+print("Escaped:", escaped)</code></pre>
+
+      <h3>Architectural Design &amp; High-Throughput Pipeline Optimization</h3>
+      <p>Integrating Unicode Escape Sequences into continuous delivery pipelines requires balancing lexical analysis latency with memory consumption:</p>
+      <ul>
+        <li><strong>Stream-Based Tokenization:</strong> For large data buffers exceeding 1MB, avoid synchronous in-memory string parsing on the main event thread. Stream input tokens through chunked pipelines to prevent event-loop thread starvation.</li>
+        <li><strong>Defensive Parsing &amp; Exception Isolation:</strong> Always wrap syntax transformations inside structured exception handlers to isolate malformed inputs, truncated payloads, and illegal control characters from crashing downstream microservices.</li>
+        <li><strong>Character Encoding Verification:</strong> Enforce strict UTF-8 input normalization at API gateways to prevent byte-order mark (BOM) anomalies, truncated multi-byte sequences, and surrogate pair deserialization errors.</li>
+      </ul>
+
+      <section class="faq-section">
+        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
+        <div class="faq-item">
+          <h3>Why do emojis require two \uXXXX escape sequences instead of one?</h3>
+          <p>Characters with code points above <code>0xFFFF</code> (like emojis 🚀 U+1F680) exceed 16 bits and cannot fit in a single <code>\uXXXX</code> sequence. UTF-16 encodes them as a surrogate pair: <code>\uD83D\uDE80</code>.</p>
+        </div>
+        <div class="faq-item">
+          <h3>What is the advantage of ES6 \u{XXXXX} syntax over surrogate pairs?</h3>
+          <p>ES6 introduced curly-brace code point escapes (e.g. <code>\u{1F680}</code>), allowing any 21-bit Unicode code point to be expressed cleanly without manually calculating surrogate pairs.</p>
+        </div>
+      </section>
+
+      <h3>Official Standards &amp; Technical References</h3>
+      <ul>
+        <li><a href="https://home.unicode.org/" target="_blank" rel="noopener noreferrer">The Unicode Consortium: The Unicode Standard</a></li>
+        <li><a href="https://tc39.es/ecma262/#sec-source-text" target="_blank" rel="noopener noreferrer">ECMA-262 ECMAScript Unicode Escape Sequences</a></li>
+      </ul>
+    </article>
+
+    <section class="related-tools" style="margin-top:2.5rem; padding-top:1.5rem; border-top:1px solid var(--bg-card-border);">
         <h3 style="font-size:1.1rem; color:var(--text-main); margin-bottom:1rem;">Related Security & Crypto Tools</h3>
         <div style="display:flex; gap:0.8rem; flex-wrap:wrap;">
           <a href="/hash-generator" class="btn btn-secondary" style="font-size:0.8rem;">Hash Generator (MD5/SHA)</a>

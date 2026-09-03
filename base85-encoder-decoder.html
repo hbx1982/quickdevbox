@@ -48,7 +48,31 @@
     }
 }
   </script>
-<!-- Google tag (gtag.js) -->
+  <script type="application/ld+json">
+  {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Why does Base85 achieve higher space efficiency than Base64?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Base85 encodes 4 bytes into 5 characters, reducing expansion overhead to 25% compared to Base64's 33%."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the RFC 1924 Base85 alphabet used in IPv6 addresses?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "RFC 1924 maps 128-bit IPv6 addresses into exactly 20 Base85 characters for compact configuration storage."
+      }
+    }
+  ]
+}
+  </script>
+  <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -103,7 +127,7 @@
         </div>
 
         <div class="tool-controls" style="margin-top:0.8rem;">
-          <button class="btn btn-primary" id="execBtn" onclick="processTool();">⚡ Encode (Ctrl+E)</button>
+          <button class="btn btn-primary" id="execBtn" onclick="processTool();">⚡ Encode (Ctrl+Enter)</button>
           <button class="btn btn-primary" id="decodeBtn" onclick="decodeTool();">🔓 Decode (Ctrl+D)</button>
           <button class="btn btn-secondary" onclick="document.getElementById('toolInput').value='QuickDevBox Base85 Encoding Payload'; updateCounter(); processTool();" style="font-size:0.8rem; padding:0.4rem 0.8rem; margin-left:0.5rem;">💡 Fill Sample Data</button>
           <button class="btn btn-secondary" onclick="document.getElementById('toolInput').value=''; document.getElementById('toolOutput').value=''; updateCounter();" style="color:var(--danger); font-size:0.8rem; padding:0.4rem 0.8rem; margin-left:0.5rem;">🗑️ Clear</button>
@@ -117,35 +141,79 @@
       </div>
 
       <!-- SEO Technical Article Section -->
-      <article class="seo-article" style="margin-top:2rem; line-height:1.7; color:var(--text-main);">
-        <h2 style="color:var(--primary); font-size:1.4rem;">Base85 (Ascii85) Encoding: Byte Compression Ratios, Adobe PostScript RFC 1924 Specifications, and ASCII Efficiency</h2>
-        
-        <p>In modern computer security and data architecture, <strong>Base85 / Ascii85 Encoder & Decoder</strong> serves a critical role in data confidentiality, integrity verification, and protocol compliance. Adhering to standards such as <code>RFC 1924 / Adobe PostScript Language Reference</code>, this online suite operates entirely within your local browser sandbox, providing sub-millisecond execution without transmitting sensitive credentials over external networks.</p>
-
-        <h3 style="color:var(--text-muted); font-size:1.15rem; margin-top:1.2rem;">Core Algorithmic Mechanics & Specifications</h3>
-        <p>Base85 (also called Ascii85) is an ASCII-printed binary encoding format designed by Paul E. Rutter for the Adobe PostScript language. It encodes 4 bytes of binary data into 5 ASCII characters, achieving a 25% size expansion compared to Base64's 33% expansion.</p>
-
-        <h3 style="color:var(--text-muted); font-size:1.15rem; margin-top:1.2rem;">Key Technical Highlights & Standards</h3>
-        <ul style="margin-left:1.5rem; margin-bottom:1rem;">
-          <li><strong>Standard Compliance:</strong> Built against official specs including <code>RFC 1924 / Adobe PostScript Language Reference</code>.</li>
-          <li><strong>Zero Network Footprint:</strong> 100% JavaScript / WebCrypto execution ensures data privacy and GDPR alignment.</li>
-          <li><strong>Primary Keywords & Topics:</strong> Ascii85, Base85, Adobe PostScript, RFC 1924, Binary Encoding, Data Compression Ratio.</li>
-          <li><strong>Performance Optimization:</strong> Designed to process inputs without blocking the main thread.</li>
-        </ul>
-
-        <h3 style="color:var(--text-muted); font-size:1.15rem; margin-top:1.2rem;">Security Considerations & Best Practices</h3>
-        <p>When implementing cryptographic algorithms in production systems, always ensure proper initialization vector (IV) uniqueness, adequate key entropy, and safe salt generation. Avoid weak legacy ciphers in high-risk environments and always prefer authenticated encryption modes like GCM or CCM where applicable.</p>
-
-        <!-- E-E-A-T Verified Author Box -->
-        <div class="author-box" style="margin-top: 2rem; padding: 1.5rem; background: rgba(255,255,255,0.02); border-left: 4px solid var(--primary-color); border-radius: 8px; color: var(--text-muted); font-size: 0.95rem; line-height: 1.6;">
-            <strong>🛡️ Verified Technical Documentation</strong><br>
-            <em>Written & Technical Review by QuickDevBox Engineering Team</em><br>
-            <span style="font-size: 0.85rem; opacity: 0.8;">This documentation adheres strictly to E-E-A-T (Experience, Expertise, Authoritativeness, and Trustworthiness) standards. Content is algorithmically and cryptographically verified for accuracy.</span>
-        </div>
-      </article>
-
       <!-- Related Tools Section -->
-      <section class="related-tools" style="margin-top:2.5rem; padding-top:1.5rem; border-top:1px solid var(--bg-card-border);">
+                              <article class="seo-article">
+      <h2>Base85 & Ascii85 Encoding: RFC 1924, PDF Compression & Git Binary Diffs</h2>
+      <p>Base85 (Ascii85) encodes 4-byte binary words into 5 ASCII characters (85^5 > 2^32), producing a low overhead of only 25% (compared to Base64's 33.3%). It is widely deployed across Adobe PostScript/PDF streams and Git binary diff patches.</p>
+
+      <div class="tech-specs">
+        <div class="spec-card">
+          <strong>Payload Overhead</strong>
+          <span>+25% size expansion (5 ASCII chars per 4 binary bytes)</span>
+        </div>
+        <div class="spec-card">
+          <strong>Core Standards</strong>
+          <span>RFC 1924 (IPv6 Compact Base85) / Adobe PostScript Ascii85</span>
+        </div>
+        <div class="spec-card">
+          <strong>Special Shorthand</strong>
+          <span>Character 'z' represents an all-zero 4-byte block in PostScript</span>
+        </div>
+        <div class="spec-card">
+          <strong>Delimiters</strong>
+          <span>Adobe Ascii85 streams use <~ and ~> boundary tags</span>
+        </div>
+      </div>
+
+      <h3>Implementation &amp; Code Examples</h3>
+      <h4>Python 3 (base64.b85encode)</h4>
+      <pre><code>import base64
+
+binary_data = b"Arbitrary binary file stream"
+# RFC 1924 / Git Base85
+b85_str = base64.b85encode(binary_data).decode('ascii')
+# Adobe Ascii85
+a85_str = base64.a85encode(binary_data).decode('ascii')
+print("Base85:", b85_str)</code></pre>
+      <h4>Node.js (Buffer / Base85 Algorithm)</h4>
+      <pre><code>// 32-bit big-endian integer to 5-char radix 85 transformation
+function encodeWord85(uint32) {
+  let chars = '';
+  for (let i = 0; i < 5; i++) {
+    chars = String.fromCharCode((uint32 % 85) + 33) + chars;
+    uint32 = Math.floor(uint32 / 85);
+  }
+  return chars;
+}</code></pre>
+
+      <h3>Cryptographic Architecture &amp; Production Security Considerations</h3>
+      <p>Deploying Base85 & Ascii85 Encoding across cloud backends demands strict adherence to industry-standard defense-in-depth security principles:</p>
+      <ul>
+        <li><strong>Side-Channel Timing Resistance:</strong> Always evaluate cryptographic hashes, HMAC signatures, and authentication tokens using constant-time comparison algorithms (like <code>crypto.timingSafeEqual</code>) to eliminate microsecond side-channel timing leaks.</li>
+        <li><strong>Entropy Sourcing &amp; Nonce Generation:</strong> Ensure all cryptographic nonces, initialization vectors, and salts are derived from cryptographically secure pseudo-random number generators (CSPRNG) like <code>window.crypto.getRandomValues</code> or <code>/dev/urandom</code>.</li>
+        <li><strong>Key Hygiene &amp; Memory Deallocation:</strong> Zero out sensitive key buffers and decrypted payloads in memory immediately following transformation routines to limit memory dump exposure risks.</li>
+      </ul>
+
+      <section class="faq-section">
+        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
+        <div class="faq-item">
+          <h3>Why does Base85 achieve higher space efficiency than Base64?</h3>
+          <p>Base64 slices data into 6-bit chunks (64 symbols), expanding 3 bytes into 4 chars (+33.3%). Base85 evaluates 32-bit words across an 85-symbol alphabet, packing 4 bytes into 5 chars (+25%), saving 8.3% bandwidth.</p>
+        </div>
+        <div class="faq-item">
+          <h3>What is the RFC 1924 Base85 alphabet used in IPv6 addresses?</h3>
+          <p>RFC 1924 defines a compact Base85 representation for 128-bit IPv6 addresses, utilizing digits 0-9, letters A-Z, a-z, and special characters (!#$%&()*+-;<=>?@^_`{|}~).</p>
+        </div>
+      </section>
+
+      <h3>Official Standards &amp; Technical References</h3>
+      <ul>
+        <li><a href="https://datatracker.ietf.org/doc/html/rfc1924" target="_blank" rel="noopener noreferrer">IETF RFC 1924: A Compact Representation of IPv6 Addresses</a></li>
+        <li><a href="https://www.adobe.com/products/postscript/pdfs/PLRM.pdf" target="_blank" rel="noopener noreferrer">Adobe PostScript Language Reference Manual (Ascii85 Filter)</a></li>
+      </ul>
+    </article>
+
+    <section class="related-tools" style="margin-top:2.5rem; padding-top:1.5rem; border-top:1px solid var(--bg-card-border);">
         <h3 style="font-size:1.1rem; color:var(--text-main); margin-bottom:1rem;">Related Security & Crypto Tools</h3>
         <div style="display:flex; gap:0.8rem; flex-wrap:wrap;">
           <a href="/hash-generator" class="btn btn-secondary" style="font-size:0.8rem;">Hash Generator (MD5/SHA)</a>

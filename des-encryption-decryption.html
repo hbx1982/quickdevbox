@@ -48,7 +48,31 @@
     }
 }
   </script>
-<!-- Google tag (gtag.js) -->
+  <script type="application/ld+json">
+  {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Why can a 56-bit DES key be cracked in minutes on commodity hardware?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The 56-bit keyspace of DES is trivially exhaustible via modern GPU and ASIC hardware within minutes."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the Sweet32 birthday attack on 64-bit block ciphers?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Sweet32 exploits 64-bit block birthday collisions after 32GB of data transfer, decrypting session cookies."
+      }
+    }
+  ]
+}
+  </script>
+  <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -107,8 +131,9 @@
         </div>
 
         <div class="tool-controls" style="margin-top:0.8rem; display:flex; gap:0.5rem;">
-          <button class="btn btn-primary" onclick="processTool('encrypt');">🔒 Encrypt 3DES</button>
+          <button class="btn btn-primary" onclick="processTool('encrypt');">🔒 Encrypt 3DES (Ctrl+Enter)</button>
           <button class="btn btn-primary" onclick="processTool('decrypt');" style="background:#10b981;">🔓 Decrypt 3DES</button>
+          <button class="btn btn-secondary" onclick="document.getElementById('toolInput').value='Legacy System Payload Test'; updateCounter(); processTool('encrypt');" style="font-size:0.8rem;">💡 Sample Data</button>
           <button class="btn btn-secondary" onclick="document.getElementById('toolInput').value=''; document.getElementById('toolOutput').value=''; updateCounter();" style="color:var(--danger);">🗑️ Clear</button>
         </div>
 
@@ -120,35 +145,69 @@
       </div>
 
       <!-- SEO Technical Article Section -->
-      <article class="seo-article" style="margin-top:2rem; line-height:1.7; color:var(--text-main);">
-        <h2 style="color:var(--primary); font-size:1.4rem;">Data Encryption Standard (DES) and Triple-DES (3DES): Cryptographic History, Weakness, and Modern Legacy Uses</h2>
-        
-        <p>In modern computer security and data architecture, <strong>DES & Triple-DES (3DES) Encryption Tool</strong> serves a critical role in data confidentiality, integrity verification, and protocol compliance. Adhering to standards such as <code>FIPS 46-3 / NIST SP 800-67</code>, this online suite operates entirely within your local browser sandbox, providing sub-millisecond execution without transmitting sensitive credentials over external networks.</p>
-
-        <h3 style="color:var(--text-muted); font-size:1.15rem; margin-top:1.2rem;">Core Algorithmic Mechanics & Specifications</h3>
-        <p>The Data Encryption Standard (DES) is a 64-bit block cipher utilizing a 56-bit key through a 16-round Feistel structure. Due to brute-force vulnerability against 56-bit keys, Triple-DES (3DES) applies the DES algorithm three times (Encrypt-Decrypt-Encrypt) using two or three distinct 56-bit keys, yielding an effective security level of 112 or 168 bits.</p>
-
-        <h3 style="color:var(--text-muted); font-size:1.15rem; margin-top:1.2rem;">Key Technical Highlights & Standards</h3>
-        <ul style="margin-left:1.5rem; margin-bottom:1rem;">
-          <li><strong>Standard Compliance:</strong> Built against official specs including <code>FIPS 46-3 / NIST SP 800-67</code>.</li>
-          <li><strong>Zero Network Footprint:</strong> 100% JavaScript / WebCrypto execution ensures data privacy and GDPR alignment.</li>
-          <li><strong>Primary Keywords & Topics:</strong> Triple-DES, TDEA, Feistel Cipher, Meet-in-the-Middle Attack, NIST Deprecation, S-Box Permutation.</li>
-          <li><strong>Performance Optimization:</strong> Designed to process inputs without blocking the main thread.</li>
-        </ul>
-
-        <h3 style="color:var(--text-muted); font-size:1.15rem; margin-top:1.2rem;">Security Considerations & Best Practices</h3>
-        <p>When implementing cryptographic algorithms in production systems, always ensure proper initialization vector (IV) uniqueness, adequate key entropy, and safe salt generation. Avoid weak legacy ciphers in high-risk environments and always prefer authenticated encryption modes like GCM or CCM where applicable.</p>
-
-        <!-- E-E-A-T Verified Author Box -->
-        <div class="author-box" style="margin-top: 2rem; padding: 1.5rem; background: rgba(255,255,255,0.02); border-left: 4px solid var(--primary-color); border-radius: 8px; color: var(--text-muted); font-size: 0.95rem; line-height: 1.6;">
-            <strong>🛡️ Verified Technical Documentation</strong><br>
-            <em>Written & Technical Review by QuickDevBox Engineering Team</em><br>
-            <span style="font-size: 0.85rem; opacity: 0.8;">This documentation adheres strictly to E-E-A-T (Experience, Expertise, Authoritativeness, and Trustworthiness) standards. Content is algorithmically and cryptographically verified for accuracy.</span>
-        </div>
-      </article>
-
       <!-- Related Tools Section -->
-      <section class="related-tools" style="margin-top:2.5rem; padding-top:1.5rem; border-top:1px solid var(--bg-card-border);">
+                              <article class="seo-article">
+      <h2>DES & Triple DES: Feistel Networks, 56-bit Key Obsolescence & NIST SP 800-67</h2>
+      <p>The Data Encryption Standard (DES, FIPS 46) is a legacy 16-round Feistel cipher with a 56-bit effective key length. Triple DES (3DES / TDEA) applies Encrypt-Decrypt-Encrypt operations. NIST SP 800-67 formally deprecated 3DES due to Sweet32 collision vulnerabilities.</p>
+
+      <div class="tech-specs">
+        <div class="spec-card">
+          <strong>Block Size</strong>
+          <span>64 bits (8 bytes / susceptible to Sweet32 collision attacks)</span>
+        </div>
+        <div class="spec-card">
+          <strong>Effective Key Length</strong>
+          <span>56 bits (DES, trivially brute-forced) / 112 or 168 bits (3DES)</span>
+        </div>
+        <div class="spec-card">
+          <strong>NIST Status</strong>
+          <span>Formally deprecated by NIST SP 800-67 Rev. 2 (Disallowed after 2023)</span>
+        </div>
+        <div class="spec-card">
+          <strong>Cryptographic Structure</strong>
+          <span>16-round Feistel network with 8 Substitution Boxes (S-Boxes)</span>
+        </div>
+      </div>
+
+      <h3>Implementation &amp; Code Examples</h3>
+      <h4>Python 3 Legacy 3DES Inspection</h4>
+      <pre><code>from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+import os
+
+key = os.urandom(24) # 192-bit 3DES key
+iv = os.urandom(8)   # 64-bit IV
+cipher = Cipher(algorithms.TripleDES(key), modes.CBC(iv))
+encryptor = cipher.encryptor()
+# Note: Migrate legacy systems to AES-256-GCM!</code></pre>
+
+      <h3>Cryptographic Architecture &amp; Production Security Considerations</h3>
+      <p>Deploying DES & Triple DES across cloud backends demands strict adherence to industry-standard defense-in-depth security principles:</p>
+      <ul>
+        <li><strong>Side-Channel Timing Resistance:</strong> Always evaluate cryptographic hashes, HMAC signatures, and authentication tokens using constant-time comparison algorithms (like <code>crypto.timingSafeEqual</code>) to eliminate microsecond side-channel timing leaks.</li>
+        <li><strong>Entropy Sourcing &amp; Nonce Generation:</strong> Ensure all cryptographic nonces, initialization vectors, and salts are derived from cryptographically secure pseudo-random number generators (CSPRNG) like <code>window.crypto.getRandomValues</code> or <code>/dev/urandom</code>.</li>
+        <li><strong>Key Hygiene &amp; Memory Deallocation:</strong> Zero out sensitive key buffers and decrypted payloads in memory immediately following transformation routines to limit memory dump exposure risks.</li>
+      </ul>
+
+      <section class="faq-section">
+        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
+        <div class="faq-item">
+          <h3>Why can a 56-bit DES key be cracked in minutes on commodity hardware?</h3>
+          <p>A 56-bit key has only 2^56 (approx 7.2 * 10^16) possible combinations. Custom FPGA cracking clusters (like EFF DES Cracker) and modern GPU rigs brute-force the entire DES keyspace within minutes.</p>
+        </div>
+        <div class="faq-item">
+          <h3>What is the Sweet32 birthday attack on 64-bit block ciphers?</h3>
+          <p>In ciphers with 64-bit block sizes (DES, 3DES, Blowfish), sending ~32GB of data under the same key produces birthday paradox block collisions in CBC mode, enabling plaintext recovery via MITM eavesdropping.</p>
+        </div>
+      </section>
+
+      <h3>Official Standards &amp; Technical References</h3>
+      <ul>
+        <li><a href="https://csrc.nist.gov/publications/detail/sp/800-67/rev-2/final" target="_blank" rel="noopener noreferrer">NIST SP 800-67 Rev. 2: Recommendation for the Triple Data Encryption Algorithm (TDEA) Block Cipher</a></li>
+        <li><a href="https://sweet32.info/" target="_blank" rel="noopener noreferrer">Sweet32 Birthday Attacks on 64-bit Block Ciphers</a></li>
+      </ul>
+    </article>
+
+    <section class="related-tools" style="margin-top:2.5rem; padding-top:1.5rem; border-top:1px solid var(--bg-card-border);">
         <h3 style="font-size:1.1rem; color:var(--text-main); margin-bottom:1rem;">Related Security & Crypto Tools</h3>
         <div style="display:flex; gap:0.8rem; flex-wrap:wrap;">
           <a href="/hash-generator" class="btn btn-secondary" style="font-size:0.8rem;">Hash Generator (MD5/SHA)</a>
@@ -188,6 +247,7 @@
       const key = document.getElementById('desKey').value;
       const output = document.getElementById('toolOutput');
       if (!input || !key) { alert("Please enter both input and key."); return; }
+      if (input.length > 2097152) { alert("Payload exceeds 2MB limit."); return; }
       try {
         if (action === 'encrypt') {
             const encrypted = CryptoJS.TripleDES.encrypt(input, key).toString();

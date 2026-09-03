@@ -47,7 +47,31 @@
     }
 }
   </script>
-<!-- Google tag (gtag.js) -->
+  <script type="application/ld+json">
+  {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How did developers maintain aspect ratios prior to the CSS aspect-ratio property?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Developers used percentage padding-top (56.25% for 16:9) before modern CSS aspect-ratio was standardized."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What happens if both width, height, and aspect-ratio are specified simultaneously?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Explicit width and height declarations override the aspect-ratio property."
+      }
+    }
+  ]
+}
+  </script>
+  <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -145,33 +169,70 @@
       </div>
     </div>
 
-    <article class="seo-article" style="margin-top: 3rem; border-top: 1px solid var(--bg-card-border); padding-top: 2rem;">
-      <h2>Specification Guide: Understanding Aspect Ratio Calculator & CSS aspect-ratio Generator</h2>
-      <p>Calculate video, image, and screen aspect ratios (16:9, 4:3, 21:9, 1:1) and generate modern CSS aspect-ratio property code. Modern web design demands precision, accessibility, and high-performance layout rendering across high-DPI screens and mobile devices.</p>
-      
-      <h3>Key Engineering Advantages &amp; Best Practices</h3>
-      <ul>
-        <li><strong>Sub-Millisecond Rendering:</strong> 100% in-browser calculation with zero network latency.</li>
-        <li><strong>W3C / WHATWG Standard Compliance:</strong> Follows official W3C CSS specifications for maximum cross-browser rendering accuracy.</li>
-        <li><strong>Zero Data Exposure:</strong> All color, vector, and layout computations stay entirely within your local browser memory space.</li>
-      </ul>
+                    <article class="seo-article">
+      <h2>Aspect Ratio Calculator: CSS aspect-ratio Property & CLS Elimination</h2>
+      <p>Aspect ratio defines the proportional relationship between an element's width and height (W:H). The modern CSS aspect-ratio property reserves layout space before images and media load, eliminating Cumulative Layout Shift (CLS).</p>
 
-      <h3>CSS Integration Code Example</h3>
-      <pre><code>/* Example Production CSS Rules */
-.target-element {
-  box-sizing: border-box;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}</code></pre>
-
-      <div class="author-box" style="margin-top: 2.5rem; padding: 1.25rem; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid var(--bg-card-border); display: flex; align-items: center; gap: 1rem;">
-        <div style="font-size: 2rem;">🛡️</div>
-        <div>
-          <div style="font-weight: 700; color: var(--text-heading);">Verified Technical Documentation</div>
-          <div style="font-size: 0.85rem; color: var(--text-muted);">Maintained by the QuickDevBox Web Engineering &amp; CSS Standards Team. Verified against W3C CSS specifications.</div>
+      <div class="tech-specs">
+        <div class="spec-card">
+          <strong>CSS Property</strong>
+          <span>aspect-ratio: <ratio> (e.g., 16 / 9, 4 / 3, 1 / 1)</span>
+        </div>
+        <div class="spec-card">
+          <strong>Web Vitals Impact</strong>
+          <span>Eliminates Cumulative Layout Shift (CLS) by establishing intrinsic dimensions</span>
+        </div>
+        <div class="spec-card">
+          <strong>Common Presets</strong>
+          <span>16:9 (HD Video), 4:3 (Legacy Display), 1:1 (Square), 21:9 (Ultrawide), 9:16 (Vertical)</span>
+        </div>
+        <div class="spec-card">
+          <strong>Standard</strong>
+          <span>W3C CSS Box Sizing Module Level 4 § aspect-ratio</span>
         </div>
       </div>
+
+      <h3>Implementation &amp; Code Examples</h3>
+      <h4>Responsive Video Container with Zero Layout Shift</h4>
+      <pre><code>.video-container {
+  width: 100%;
+  max-width: 800px;
+  /* Reserves 16:9 space immediately before video or iframe streams begin */
+  aspect-ratio: 16 / 9;
+  background: #0f172a;
+}
+.video-container iframe {
+  width: 100%;
+  height: 100%;
+}</code></pre>
+
+      <h3>Browser Rendering Performance &amp; Hardware Compositing</h3>
+      <p>Executing Aspect Ratio Calculator in modern web applications requires optimizing layout rendering across the browser rendering pipeline:</p>
+      <ul>
+        <li><strong>GPU Compositor Promotion:</strong> Restrict high-frequency dynamic transitions to compositor-only CSS properties (<code>transform</code> and <code>opacity</code>) to avoid triggering costly CPU layout reflows and repaints.</li>
+        <li><strong>Layout Thrashing Prevention:</strong> Decouple DOM geometry measurements from subsequent style write operations to eliminate forced synchronous reflow cycles and preserve 60 FPS scrolling.</li>
+        <li><strong>Subpixel Antialiasing:</strong> Design visual components with hardware-accelerated vector units and clamp scaling boundaries to eliminate visual pixel rounding jitter on high-DPI displays.</li>
+      </ul>
+
+      <section class="faq-section">
+        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
+        <div class="faq-item">
+          <h3>How did developers maintain aspect ratios prior to the CSS aspect-ratio property?</h3>
+          <p>Legacy designs used the 'padding hack': a container with <code>height: 0</code> and percentage padding-top (e.g. <code>padding-top: 56.25%</code> for 16:9, since vertical padding percentages resolve relative to container width).</p>
+        </div>
+        <div class="faq-item">
+          <h3>What happens if both width, height, and aspect-ratio are specified simultaneously?</h3>
+          <p>If both width and height are explicitly defined, the browser respects the explicit dimensions, completely ignoring the <code>aspect-ratio</code> property.</p>
+        </div>
+      </section>
+
+      <h3>Official Standards &amp; Technical References</h3>
+      <ul>
+        <li><a href="https://www.w3.org/TR/css-sizing-4/#aspect-ratio" target="_blank" rel="noopener noreferrer">W3C CSS Box Sizing Module Level 4 § The aspect-ratio property</a></li>
+        <li><a href="https://web.dev/cls/" target="_blank" rel="noopener noreferrer">Google Web Vitals: Optimize Cumulative Layout Shift (CLS)</a></li>
+      </ul>
     </article>
-  
+
     <section class="related-tools" style="margin-top: 3rem; border-top: 1px solid var(--bg-card-border); padding-top: 2rem;">
       <h3 style="margin-bottom: 1rem; color: var(--text-heading);">🛠️ Related Utility Tools</h3>
       <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem;">

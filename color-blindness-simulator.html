@@ -47,7 +47,31 @@
     }
 }
   </script>
-<!-- Google tag (gtag.js) -->
+  <script type="application/ld+json">
+  {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Why is using green for 'success' and red for 'error' dangerous for CVD users?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Red-green deficiencies make red and green appear identical; combine colors with icons and text indicators."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between an 'anomaly' (e.g. Deuteranomaly) and an 'opia' (e.g. Deuteranopia)?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Anomalies indicate mutated cone pigments (partial deficiency); opias indicate complete absence of a cone type."
+      }
+    }
+  ]
+}
+  </script>
+  <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -125,26 +149,77 @@
       <div id="statusMessage" class="status-box" style="display: none;"></div>
     </div>
 
-    <article class="seo-article" style="margin-top: 3rem; border-top: 1px solid var(--bg-card-border); padding-top: 2rem;">
-      <h2>Specification Guide: Understanding Color Blindness Vision Simulator & Accessibility Checker</h2>
-      <p>Simulate how images and UI designs appear to people with Protanopia, Deuteranopia, Tritanopia, and Achromatopsia color vision deficiencies. Handling image graphics and vector assets client-side ensures zero network bandwidth overhead, ultra-fast rendering, and absolute privacy protection.</p>
-      
-      <h3>Key Technical Advantages &amp; Security Principles</h3>
-      <ul>
-        <li><strong>HTML5 Canvas &amp; File API:</strong> Processes binary blobs directly in browser memory without sending data across network sockets.</li>
-        <li><strong>Privacy Protection:</strong> Sensitive photos, ID graphics, or corporate assets never leave your local machine.</li>
-        <li><strong>High Efficiency:</strong> Instant real-time preview and export capability across modern mobile and desktop browsers.</li>
-      </ul>
+                    <article class="seo-article">
+      <h2>Color Vision Deficiency (CVD): Brettel & Machado LMS Color Matrices</h2>
+      <p>Simulating Color Vision Deficiency (CVD) transforms sRGB colors into LMS cone space (Long, Medium, Short wavelengths) to simulate Protanopia, Deuteranopia, Tritanopia, and Achromatopsia, ensuring accessible UI state signifiers.</p>
 
-      <div class="author-box" style="margin-top: 2.5rem; padding: 1.25rem; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid var(--bg-card-border); display: flex; align-items: center; gap: 1rem;">
-        <div style="font-size: 2rem;">🛡️</div>
-        <div>
-          <div style="font-weight: 700; color: var(--text-heading);">Verified Technical Documentation</div>
-          <div style="font-size: 0.85rem; color: var(--text-muted);">Maintained by the QuickDevBox Media Engineering Team. Verified against W3C Canvas &amp; File API standards.</div>
+      <div class="tech-specs">
+        <div class="spec-card">
+          <strong>Deficiency Types</strong>
+          <span>Protanopia (Red-blind), Deuteranopia (Green-blind), Tritanopia (Blue-blind), Achromatopsia (Monochrome)</span>
+        </div>
+        <div class="spec-card">
+          <strong>Mathematical Model</strong>
+          <span>Brettel (1997) & Machado (2009) LMS Cone Response Transformation Matrices</span>
+        </div>
+        <div class="spec-card">
+          <strong>Prevalence Baseline</strong>
+          <span>~8% of males and ~0.5% of females have some form of inherited CVD</span>
+        </div>
+        <div class="spec-card">
+          <strong>Accessibility Rule</strong>
+          <span>WCAG 2.1 § 1.4.1: Color must not be used as the sole visual means of conveying information</span>
         </div>
       </div>
+
+      <h3>Implementation &amp; Code Examples</h3>
+      <h4>SVG Color Matrix CVD Filter Definition</h4>
+      <pre><code><!-- SVG Color Matrix Filter for Protanopia (Red Cone Deficiency) -->
+<svg style="display: none;">
+  <filter id="protanopia-filter">
+    <feColorMatrix type="matrix" values="
+      0.567, 0.433, 0.000, 0, 0
+      0.558, 0.442, 0.000, 0, 0
+      0.000, 0.242, 0.758, 0, 0
+      0.000, 0.000, 0.000, 1, 0" />
+  </filter>
+</svg>
+
+<div style="filter: url(#protanopia-filter);">
+  <!-- UI preview rendered under red-blind simulation -->
+</div></code></pre>
+      <h4>CSS Application</h4>
+      <pre><code>.cvd-deuteranopia {
+  filter: url('#deuteranopia-filter');
+}</code></pre>
+
+      <h3>Memory Management &amp; Client-Side Buffer Handling</h3>
+      <p>Processing Color Vision Deficiency (CVD) directly in browser client memory demands proactive memory cleanup and resource limits:</p>
+      <ul>
+        <li><strong>Blob Lifecycle Cleanup:</strong> Always invoke <code>URL.revokeObjectURL()</code> once binary image blobs finish loading to release allocated texture memory and prevent browser tab memory exhaustion.</li>
+        <li><strong>Offscreen Canvas Workers:</strong> Offload CPU-heavy pixel matrix loops and color quantization algorithms to background Web Workers using <code>OffscreenCanvas</code> to keep user interactions smooth.</li>
+        <li><strong>Texture Dimension Clamping:</strong> Verify source image dimensions prior to canvas allocation to prevent mobile browser crashes caused by device-specific maximum canvas texture limits.</li>
+      </ul>
+
+      <section class="faq-section">
+        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
+        <div class="faq-item">
+          <h3>Why is using green for 'success' and red for 'error' dangerous for CVD users?</h3>
+          <p>Protanopia and Deuteranopia (red-green color blindness) affect the vast majority of color-blind individuals, making red and green appear as identical shades of yellowish-brown. Always accompany color cues with icons (checkmark / warning triangle) or text labels.</p>
+        </div>
+        <div class="faq-item">
+          <h3>What is the difference between an 'anomaly' (e.g. Deuteranomaly) and an 'opia' (e.g. Deuteranopia)?</h3>
+          <p>Anomalous trichromacy means one cone pigment is shifted in wavelength sensitivity (partial deficiency). Dichromacy (ending in 'opia') means the cone type is completely missing from the retina.</p>
+        </div>
+      </section>
+
+      <h3>Official Standards &amp; Technical References</h3>
+      <ul>
+        <li><a href="https://www.w3.org/TR/WCAG21/#use-of-color" target="_blank" rel="noopener noreferrer">W3C WCAG 2.1 Guideline 1.4.1: Use of Color</a></li>
+        <li><a href="https://pubmed.ncbi.nlm.nih.gov/9332158/" target="_blank" rel="noopener noreferrer">Brettel et al.: Computerized simulation of color appearance for dichromats (1997)</a></li>
+      </ul>
     </article>
-  
+
     <section class="related-tools" style="margin-top: 3rem; border-top: 1px solid var(--bg-card-border); padding-top: 2rem;">
       <h3 style="margin-bottom: 1rem; color: var(--text-heading);">🛠️ Related Utility Tools</h3>
       <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem;">
@@ -225,6 +300,10 @@
       const val = document.getElementById('mediaInput').value.trim();
       if (!val) {
         showStatus("Please input an image data URI or SVG.", true);
+        return;
+      }
+      if (val.length > 2097152) {
+        showStatus("Payload exceeds 2MB limit.", true);
         return;
       }
       

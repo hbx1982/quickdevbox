@@ -37,7 +37,31 @@
     "browserRequirements": "Requires JavaScript. Requires HTML5."
   }
   </script>
-<!-- Google tag (gtag.js) -->
+  <script type="application/ld+json">
+  {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What happens when a container exceeds its memory limit in Kubernetes?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Exceeding container memory limits triggers the Linux OOM killer (exit code 137), forcing Pod restart."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why should you specify both requests and limits for CPU and memory?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Requests guarantee minimum scheduler capacity; limits prevent noisy neighbors from exhausting host node resources."
+      }
+    }
+  ]
+}
+  </script>
+  <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -110,6 +134,94 @@
     </section>
 
     <!-- Related Tools Internal Link Building -->
+                    <article class="seo-article">
+      <h2>Kubernetes Manifests: Declarative Pod Specs, Services & Ingress Standards</h2>
+      <p>Kubernetes manifests declare desired cluster state across the Kubernetes API. Manifests structure Pod specs, Deployment replicas, Service networking, and resource requests/limits following the declarative CNCF schema.</p>
+
+      <div class="tech-specs">
+        <div class="spec-card">
+          <strong>API Specification</strong>
+          <span>Kubernetes OpenAPI v3 / CNCF Declarative Schema</span>
+        </div>
+        <div class="spec-card">
+          <strong>Workload Controllers</strong>
+          <span>Deployment, StatefulSet, DaemonSet, Job, CronJob</span>
+        </div>
+        <div class="spec-card">
+          <strong>Networking Model</strong>
+          <span>ClusterIP, NodePort, LoadBalancer, and Ingress routing</span>
+        </div>
+        <div class="spec-card">
+          <strong>Resource Enforcement</strong>
+          <span>requests (scheduling guarantee) vs limits (cgroup throttle/OOM)</span>
+        </div>
+      </div>
+
+      <h3>Implementation &amp; Code Examples</h3>
+      <h4>Production Kubernetes Deployment Manifest</h4>
+      <pre><code>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-service
+  labels:
+    app: web-service
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: web-service
+  template:
+    metadata:
+      labels:
+        app: web-service
+    spec:
+      containers:
+      - name: app
+        image: quickdevbox/service:1.0.0
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080</code></pre>
+      <h4>kubectl Validation Command</h4>
+      <pre><code># Validate manifest against cluster schema without applying
+kubectl apply --dry-run=client -f deployment.yaml</code></pre>
+
+      <h3>Production Infrastructure Reliability &amp; Hardening</h3>
+      <p>Managing Kubernetes Manifests configurations within automated cloud native clusters requires robust deployment practices:</p>
+      <ul>
+        <li><strong>Zero-Trust Ingress Enforcement:</strong> Protect service boundaries with strict ingress controller timeout policies, TLS termination standards, and mutual TLS (mTLS) authentication across inter-service meshes.</li>
+        <li><strong>Declarative Manifest Validation:</strong> Automate schema validation and syntax linting inside CI/CD pipelines before applying infrastructure configuration units to staging and production clusters.</li>
+        <li><strong>Liveness Probes &amp; Graceful Termination:</strong> Configure proper termination grace intervals (SIGTERM traps) and decouple health check probes from heavy backend dependencies to prevent cascading reboot loops.</li>
+      </ul>
+
+      <section class="faq-section">
+        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
+        <div class="faq-item">
+          <h3>What happens when a container exceeds its memory limit in Kubernetes?</h3>
+          <p>The Linux kernel cgroup OOM (Out Of Memory) killer immediately terminates the container process with exit code 137 (SIGKILL). Kubernetes restarts the Pod and marks it with <code>OOMKilled</code> status.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Why should you specify both requests and limits for CPU and memory?</h3>
+          <p>The scheduler uses <code>requests</code> to place Pods on nodes with sufficient capacity. <code>limits</code> prevent a runaway memory leak in one Pod from starving neighboring workloads on the same worker node.</p>
+        </div>
+      </section>
+
+      <h3>Official Standards &amp; Technical References</h3>
+      <ul>
+        <li><a href="https://kubernetes.io/docs/reference/kubernetes-api/" target="_blank" rel="noopener noreferrer">Kubernetes API Reference Documentation</a></li>
+        <li><a href="https://landscape.cncf.io/" target="_blank" rel="noopener noreferrer">CNCF Cloud Native Interactive Landscape</a></li>
+      </ul>
+    </article>
+
     <section class="related-tools" style="margin-top:2rem;">
       <h3>🛠️ Related DevOps & Security Tools</h3>
       <div class="related-grid">
@@ -133,62 +245,7 @@
     </section>
 
     <!-- SEO Technical Article (EEAT & RFC Compliant) -->
-    <article class="seo-article">
-      
-        <h2>Declarative Infrastructure with Kubernetes Resources</h2>
-        <p>Kubernetes orchestrates containerized applications across cluster nodes by maintaining desired operational state declared in YAML manifest files submitted to the Kubernetes API server.</p>
-
-        <h3>1. Anatomy of a Kubernetes Deployment Spec</h3>
-        <p>A Deployment manifest controls Pod replica counts, container image references, environment variables, and rolling update strategies. Pod specifications must define resource requests (baseline guaranteed allocation) and resource limits (maximum boundary before OOMKilled termination).</p>
-
-        <h3>2. Probes: Liveness vs. Readiness</h3>
-        <ul>
-          <li><strong>Readiness Probe:</strong> Determines if the container is ready to accept incoming network traffic. If failing, the pod IP is removed from Kubernetes Service endpoints.</li>
-          <li><strong>Liveness Probe:</strong> Determines if the container application is alive. If failing, kubelet restarts the container.</li>
-        </ul>
-        
-
-      <h3>Specifications and Operating Boundaries</h3>
-      <ul>
-        <li><strong>Primary Protocols & Specifications:</strong> Kubernetes Manifest Generator, K8s Deployment YAML, Kubernetes Service Ingress, Pod Resource Limits, Readiness Liveness Probes, Declarative Infrastructure</li>
-        <li><strong>Execution Environment:</strong> 100% Client-Side In-Memory JavaScript / WebCrypto Engine (Zero Remote Telemetry).</li>
-        <li><strong>Memory Safety Limit:</strong> 2MB Maximum Payload Safeguard against browser thread blocking.</li>
-      </ul>
-
-      <h3>Implementation Code Example</h3>
-      <p>Here is a reference implementation demonstrating how to parse or handle this protocol programmatically in modern JavaScript / Node.js:</p>
-
-      <pre><code>// Programmatic Implementation Reference (yaml-to-k8s-manifest.html)
-function parseDevOpsPayload(input) {
-  if (!input || input.length > 2097152) {
-    throw new Error("Payload size exceeds 2MB safety threshold.");
-  }
-  // Normalize line endings and trim whitespace
-  const sanitized = input.trim();
-  console.log("Processing payload against Kubernetes API v1 Spec spec...");
-  return sanitized;
-}</code></pre>
-
-      <h3>Frequently Asked Questions (FAQ)</h3>
-      <div class="faq-item">
-        <h4>Q: Does this tool send any server configuration or IP payload to remote servers?</h4>
-        <p>A: No. All parsing, validation, calculation, and generation occur exclusively within your browser's local V8/JavaScript execution context. No network requests are initiated.</p>
-      </div>
-      <div class="faq-item">
-        <h4>Q: How does this tool prevent browser freezes on large log files or configurations?</h4>
-        <p>A: The tool features a 2MB input safeguard and non-blocking DOM rendering routines, ensuring smooth response times even during intensive parsing operations.</p>
-      </div>
-
-      <!-- EEAT Institutional Trust Badge -->
-      <div class="eeat-badge">
-        <div class="badge-icon">🛡️</div>
-        <div class="badge-content">
-          <h4>Verified Technical Documentation</h4>
-          <p>Audited for compliance with Kubernetes API v1 Spec specifications, WebCrypto standards, and OWASP security guidelines. Maintained by QuickDevBox Engineering.</p>
-        </div>
-      </div>
-    </article>
-  </main>
+        </main>
 
     <footer>
     <div class="footer-container" style="max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem; text-align: center; color: var(--text-muted); font-size: 0.85rem; border-top: 1px solid var(--bg-card-border);">

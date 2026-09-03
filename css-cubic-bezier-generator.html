@@ -47,7 +47,31 @@
     }
 }
   </script>
-<!-- Google tag (gtag.js) -->
+  <script type="application/ld+json">
+  {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Why does the CSS parser reject cubic-bezier values with x-coordinates outside [0, 1]?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The X-axis represents elapsed time and must remain within [0, 1] to prevent illegal backward time travel."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do you achieve realistic elastic overshoot using cubic-bezier?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Configuring y2 values greater than 1.0 creates a physics-based spring overshoot before settling."
+      }
+    }
+  ]
+}
+  </script>
+  <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -156,33 +180,70 @@
       </div>
     </div>
 
-    <article class="seo-article" style="margin-top: 3rem; border-top: 1px solid var(--bg-card-border); padding-top: 2rem;">
-      <h2>Specification Guide: Understanding CSS cubic-bezier() Easing Curve Generator</h2>
-      <p>Design custom cubic-bezier timing functions for CSS transitions and animations with interactive control points and animated ball comparison. Modern web design demands precision, accessibility, and high-performance layout rendering across high-DPI screens and mobile devices.</p>
-      
-      <h3>Key Engineering Advantages &amp; Best Practices</h3>
-      <ul>
-        <li><strong>Sub-Millisecond Rendering:</strong> 100% in-browser calculation with zero network latency.</li>
-        <li><strong>W3C / WHATWG Standard Compliance:</strong> Follows official W3C CSS specifications for maximum cross-browser rendering accuracy.</li>
-        <li><strong>Zero Data Exposure:</strong> All color, vector, and layout computations stay entirely within your local browser memory space.</li>
-      </ul>
+                    <article class="seo-article">
+      <h2>CSS Cubic Bezier Curves: Acceleration Curves, Splines & Spring Transitions</h2>
+      <p>Cubic Bezier curves define smooth easing transitions in CSS using four control points: P0(0,0), P1(x1,y1), P2(x2,y2), and P3(1,1). Setting y-coordinates above 1.0 or below 0.0 simulates physical spring and bounce easing.</p>
 
-      <h3>CSS Integration Code Example</h3>
-      <pre><code>/* Example Production CSS Rules */
-.target-element {
-  box-sizing: border-box;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}</code></pre>
-
-      <div class="author-box" style="margin-top: 2.5rem; padding: 1.25rem; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid var(--bg-card-border); display: flex; align-items: center; gap: 1rem;">
-        <div style="font-size: 2rem;">🛡️</div>
-        <div>
-          <div style="font-weight: 700; color: var(--text-heading);">Verified Technical Documentation</div>
-          <div style="font-size: 0.85rem; color: var(--text-muted);">Maintained by the QuickDevBox Web Engineering &amp; CSS Standards Team. Verified against W3C CSS specifications.</div>
+      <div class="tech-specs">
+        <div class="spec-card">
+          <strong>Mathematical Formula</strong>
+          <span>B(t) = (1-t)^3*P0 + 3(1-t)^2*t*P1 + 3(1-t)*t^2*P2 + t^3*P3, where 0 <= t <= 1</span>
+        </div>
+        <div class="spec-card">
+          <strong>Coordinate Boundaries</strong>
+          <span>x1 and x2 MUST be within [0, 1]; y1 and y2 can exceed [0, 1] for bounce</span>
+        </div>
+        <div class="spec-card">
+          <strong>Standard Keyword Curves</strong>
+          <span>ease (0.25, 0.1, 0.25, 1), ease-in (0.42, 0, 1, 1), ease-out (0, 0, 0.58, 1)</span>
+        </div>
+        <div class="spec-card">
+          <strong>Standard</strong>
+          <span>W3C CSS Easing Functions Level 1</span>
         </div>
       </div>
+
+      <h3>Implementation &amp; Code Examples</h3>
+      <h4>Elastic Spring Bounce Easing</h4>
+      <pre><code>.modal-popup {
+  /* y2 = 1.4 creates an overshoot bounce effect before settling at 1.0 */
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform: scale(1);
+}
+.modal-hidden {
+  transform: scale(0.7);
+}</code></pre>
+      <h4>Smooth Material Design Deceleration</h4>
+      <pre><code>.drawer-slide {
+  transition: transform 0.35s cubic-bezier(0.0, 0.0, 0.2, 1);
+}</code></pre>
+
+      <h3>Browser Rendering Performance &amp; Hardware Compositing</h3>
+      <p>Executing CSS Cubic Bezier Curves in modern web applications requires optimizing layout rendering across the browser rendering pipeline:</p>
+      <ul>
+        <li><strong>GPU Compositor Promotion:</strong> Restrict high-frequency dynamic transitions to compositor-only CSS properties (<code>transform</code> and <code>opacity</code>) to avoid triggering costly CPU layout reflows and repaints.</li>
+        <li><strong>Layout Thrashing Prevention:</strong> Decouple DOM geometry measurements from subsequent style write operations to eliminate forced synchronous reflow cycles and preserve 60 FPS scrolling.</li>
+        <li><strong>Subpixel Antialiasing:</strong> Design visual components with hardware-accelerated vector units and clamp scaling boundaries to eliminate visual pixel rounding jitter on high-DPI displays.</li>
+      </ul>
+
+      <section class="faq-section">
+        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
+        <div class="faq-item">
+          <h3>Why does the CSS parser reject cubic-bezier values with x-coordinates outside [0, 1]?</h3>
+          <p>In animation timing functions, the X-axis represents progression in time. Time cannot flow backwards; therefore, x1 and x2 must remain strictly between 0 and 1 to prevent non-functional time loops.</p>
+        </div>
+        <div class="faq-item">
+          <h3>How do you achieve realistic elastic overshoot using cubic-bezier?</h3>
+          <p>Set y2 above 1.0 (e.g. <code>cubic-bezier(0.175, 0.885, 0.32, 1.275)</code>). The animation will accelerate past its target value and snap back, simulating spring physics.</p>
+        </div>
+      </section>
+
+      <h3>Official Standards &amp; Technical References</h3>
+      <ul>
+        <li><a href="https://www.w3.org/TR/css-easing-1/#cubic-bezier-easing-functions" target="_blank" rel="noopener noreferrer">W3C CSS Easing Functions Level 1 § Cubic Bezier Easing Functions</a></li>
+      </ul>
     </article>
-  
+
     <section class="related-tools" style="margin-top: 3rem; border-top: 1px solid var(--bg-card-border); padding-top: 2rem;">
       <h3 style="margin-bottom: 1rem; color: var(--text-heading);">🛠️ Related Utility Tools</h3>
       <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem;">

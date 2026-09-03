@@ -47,7 +47,31 @@
     }
 }
   </script>
-<!-- Google tag (gtag.js) -->
+  <script type="application/ld+json">
+  {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Why does text-shadow lack the spread-radius parameter found in box-shadow?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Vector glyph contour inflation is computationally heavy; text-shadow restricts parameters to x/y offsets and blur."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do you create a 3D isometric extruded text effect with text-shadow?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Stack 1px incremental shadow offsets with zero blur to create 3D isometric extruded typography."
+      }
+    }
+  ]
+}
+  </script>
+  <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -154,33 +178,72 @@
       </div>
     </div>
 
-    <article class="seo-article" style="margin-top: 3rem; border-top: 1px solid var(--bg-card-border); padding-top: 2rem;">
-      <h2>Specification Guide: Understanding CSS Text Shadow & Neon Glow Generator</h2>
-      <p>Create layered CSS text-shadow effects, 3D text extrusions, and neon glow effects with live editable typography preview. Modern web design demands precision, accessibility, and high-performance layout rendering across high-DPI screens and mobile devices.</p>
-      
-      <h3>Key Engineering Advantages &amp; Best Practices</h3>
-      <ul>
-        <li><strong>Sub-Millisecond Rendering:</strong> 100% in-browser calculation with zero network latency.</li>
-        <li><strong>W3C / WHATWG Standard Compliance:</strong> Follows official W3C CSS specifications for maximum cross-browser rendering accuracy.</li>
-        <li><strong>Zero Data Exposure:</strong> All color, vector, and layout computations stay entirely within your local browser memory space.</li>
-      </ul>
+                    <article class="seo-article">
+      <h2>CSS Text Shadow: Multiple Shadow Offsets, Blur Radii & Neon Glow Effects</h2>
+      <p>CSS text-shadow renders one or more shadow effects beneath text typography. By stacking multiple blurred text-shadow declarations, developers can simulate ambient neon glows, retro 3D extrusions, and accessible text contrast over busy background photography.</p>
 
-      <h3>CSS Integration Code Example</h3>
-      <pre><code>/* Example Production CSS Rules */
-.target-element {
-  box-sizing: border-box;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}</code></pre>
-
-      <div class="author-box" style="margin-top: 2.5rem; padding: 1.25rem; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid var(--bg-card-border); display: flex; align-items: center; gap: 1rem;">
-        <div style="font-size: 2rem;">🛡️</div>
-        <div>
-          <div style="font-weight: 700; color: var(--text-heading);">Verified Technical Documentation</div>
-          <div style="font-size: 0.85rem; color: var(--text-muted);">Maintained by the QuickDevBox Web Engineering &amp; CSS Standards Team. Verified against W3C CSS specifications.</div>
+      <div class="tech-specs">
+        <div class="spec-card">
+          <strong>CSS Syntax</strong>
+          <span>text-shadow: <offset-x> <offset-y> <blur-radius> <color></span>
+        </div>
+        <div class="spec-card">
+          <strong>Multiple Shadows</strong>
+          <span>Stack comma-separated shadows evaluated front-to-back</span>
+        </div>
+        <div class="spec-card">
+          <strong>No Spread Parameter</strong>
+          <span>Unlike box-shadow, text-shadow does not support a spread-radius parameter</span>
+        </div>
+        <div class="spec-card">
+          <strong>Standard</strong>
+          <span>W3C CSS Text Decoration Module Level 3 § text-shadow</span>
         </div>
       </div>
+
+      <h3>Implementation &amp; Code Examples</h3>
+      <h4>Cyberpunk Neon Glow Effect</h4>
+      <pre><code>.neon-text {
+  color: #fff;
+  text-shadow:
+    0 0 5px #06b6d4,
+    0 0 10px #06b6d4,
+    0 0 20px #0891b2,
+    0 0 40px #0e7490;
+}</code></pre>
+      <h4>Legibility Shadow Over Photos</h4>
+      <pre><code>.photo-caption {
+  color: #fff;
+  /* Subtle dark shadow ensures readability over any light or dark background photo */
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.75);
+}</code></pre>
+
+      <h3>Browser Rendering Performance &amp; Hardware Compositing</h3>
+      <p>Executing CSS Text Shadow in modern web applications requires optimizing layout rendering across the browser rendering pipeline:</p>
+      <ul>
+        <li><strong>GPU Compositor Promotion:</strong> Restrict high-frequency dynamic transitions to compositor-only CSS properties (<code>transform</code> and <code>opacity</code>) to avoid triggering costly CPU layout reflows and repaints.</li>
+        <li><strong>Layout Thrashing Prevention:</strong> Decouple DOM geometry measurements from subsequent style write operations to eliminate forced synchronous reflow cycles and preserve 60 FPS scrolling.</li>
+        <li><strong>Subpixel Antialiasing:</strong> Design visual components with hardware-accelerated vector units and clamp scaling boundaries to eliminate visual pixel rounding jitter on high-DPI displays.</li>
+      </ul>
+
+      <section class="faq-section">
+        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
+        <div class="faq-item">
+          <h3>Why does text-shadow lack the spread-radius parameter found in box-shadow?</h3>
+          <p>Expanding vector glyph outlines uniformly in all directions requires complex vector offsetting algorithms that are too computationally expensive to compute in real time across arbitrary font contours.</p>
+        </div>
+        <div class="faq-item">
+          <h3>How do you create a 3D isometric extruded text effect with text-shadow?</h3>
+          <p>Layer multiple text-shadows with 1px incremental offsets and zero blur radius: <code>text-shadow: 1px 1px 0 #94a3b8, 2px 2px 0 #64748b, 3px 3px 0 #475569;</code>.</p>
+        </div>
+      </section>
+
+      <h3>Official Standards &amp; Technical References</h3>
+      <ul>
+        <li><a href="https://www.w3.org/TR/css-text-decor-3/#text-shadow-property" target="_blank" rel="noopener noreferrer">W3C CSS Text Decoration Module Level 3 § text-shadow</a></li>
+      </ul>
     </article>
-  
+
     <section class="related-tools" style="margin-top: 3rem; border-top: 1px solid var(--bg-card-border); padding-top: 2rem;">
       <h3 style="margin-bottom: 1rem; color: var(--text-heading);">🛠️ Related Utility Tools</h3>
       <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem;">

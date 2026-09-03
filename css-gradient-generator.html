@@ -47,7 +47,31 @@
     }
 }
   </script>
-<!-- Google tag (gtag.js) -->
+  <script type="application/ld+json">
+  {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the 'gray dead zone' in CSS gradients and how does OKLCH fix it?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "sRGB produces muddy midpoints; CSS Color 4's in oklch interpolation preserves vibrant perceptual hue transitions."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can CSS gradients be animated with CSS transitions?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Use @property typed variables to smoothly animate CSS gradient color stops."
+      }
+    }
+  ]
+}
+  </script>
+  <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -137,33 +161,68 @@
       <div id="statusMessage" class="status-box" style="display: none;"></div>
     </div>
 
-    <article class="seo-article" style="margin-top: 3rem; border-top: 1px solid var(--bg-card-border); padding-top: 2rem;">
-      <h2>Specification Guide: Understanding CSS Gradient Generator (Linear, Radial & Conic)</h2>
-      <p>Design modern CSS linear, radial, and conic gradients with live preview, color stops, angle controls, and instant CSS code output. Modern web design demands precision, accessibility, and high-performance layout rendering across high-DPI screens and mobile devices.</p>
-      
-      <h3>Key Engineering Advantages &amp; Best Practices</h3>
-      <ul>
-        <li><strong>Sub-Millisecond Rendering:</strong> 100% in-browser calculation with zero network latency.</li>
-        <li><strong>W3C / WHATWG Standard Compliance:</strong> Follows official W3C CSS specifications for maximum cross-browser rendering accuracy.</li>
-        <li><strong>Zero Data Exposure:</strong> All color, vector, and layout computations stay entirely within your local browser memory space.</li>
-      </ul>
+                    <article class="seo-article">
+      <h2>CSS Gradients: Linear, Radial & Conic Color Stops & Oklch Color Spaces</h2>
+      <p>CSS gradients generate smooth mathematical transitions between colors without bitmap image bandwidth. Modern CSS supports linear gradients along angle vectors, radial circular transitions, and conic 360-degree angle sweeps in wide-gamut color spaces.</p>
 
-      <h3>CSS Integration Code Example</h3>
-      <pre><code>/* Example Production CSS Rules */
-.target-element {
-  box-sizing: border-box;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}</code></pre>
-
-      <div class="author-box" style="margin-top: 2.5rem; padding: 1.25rem; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid var(--bg-card-border); display: flex; align-items: center; gap: 1rem;">
-        <div style="font-size: 2rem;">🛡️</div>
-        <div>
-          <div style="font-weight: 700; color: var(--text-heading);">Verified Technical Documentation</div>
-          <div style="font-size: 0.85rem; color: var(--text-muted);">Maintained by the QuickDevBox Web Engineering &amp; CSS Standards Team. Verified against W3C CSS specifications.</div>
+      <div class="tech-specs">
+        <div class="spec-card">
+          <strong>Functions</strong>
+          <span>linear-gradient(), radial-gradient(), conic-gradient(), repeating-linear-gradient()</span>
+        </div>
+        <div class="spec-card">
+          <strong>Interpolation Modes</strong>
+          <span>in oklch, in srgb, in oklab (CSS Color Module Level 4)</span>
+        </div>
+        <div class="spec-card">
+          <strong>Angle Syntax</strong>
+          <span>deg, rad, turn, to top/right/bottom/left</span>
+        </div>
+        <div class="spec-card">
+          <strong>Standard</strong>
+          <span>W3C CSS Images Module Level 3 & Level 4</span>
         </div>
       </div>
+
+      <h3>Implementation &amp; Code Examples</h3>
+      <h4>Modern Wide-Gamut Linear Gradient</h4>
+      <pre><code>.hero-banner {
+  /* Linear gradient using modern OKLCH color interpolation to prevent gray dead zones */
+  background: linear-gradient(135deg in oklch, #6366f1, #ec4899);
+}</code></pre>
+      <h4>Conic Color Wheel Sweep</h4>
+      <pre><code>.pie-chart {
+  background: conic-gradient(#3b82f6 0% 35%, #10b981 35% 70%, #f59e0b 70% 100%);
+  border-radius: 50%;
+}</code></pre>
+
+      <h3>Browser Rendering Performance &amp; Hardware Compositing</h3>
+      <p>Executing CSS Gradients in modern web applications requires optimizing layout rendering across the browser rendering pipeline:</p>
+      <ul>
+        <li><strong>GPU Compositor Promotion:</strong> Restrict high-frequency dynamic transitions to compositor-only CSS properties (<code>transform</code> and <code>opacity</code>) to avoid triggering costly CPU layout reflows and repaints.</li>
+        <li><strong>Layout Thrashing Prevention:</strong> Decouple DOM geometry measurements from subsequent style write operations to eliminate forced synchronous reflow cycles and preserve 60 FPS scrolling.</li>
+        <li><strong>Subpixel Antialiasing:</strong> Design visual components with hardware-accelerated vector units and clamp scaling boundaries to eliminate visual pixel rounding jitter on high-DPI displays.</li>
+      </ul>
+
+      <section class="faq-section">
+        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
+        <div class="faq-item">
+          <h3>What is the 'gray dead zone' in CSS gradients and how does OKLCH fix it?</h3>
+          <p>Standard sRGB interpolation creates a muddy, desaturated gray band in the midpoint between complementary colors (e.g. blue and yellow). Specifying <code>in oklch</code> interpolates through uniform perceptual lightness, keeping colors vibrant.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Can CSS gradients be animated with CSS transitions?</h3>
+          <p>Historically, browser engines cannot interpolate between background-image gradient functions. Modern CSS solves this using <code>@property</code> to declare typed custom properties (like <code>&lt;color&gt;</code> or <code>&lt;percentage&gt;</code>) that animate smoothly.</p>
+        </div>
+      </section>
+
+      <h3>Official Standards &amp; Technical References</h3>
+      <ul>
+        <li><a href="https://www.w3.org/TR/css-images-4/" target="_blank" rel="noopener noreferrer">W3C CSS Image Values and Replaced Content Module Level 4</a></li>
+        <li><a href="https://www.w3.org/TR/css-color-4/#interpolation" target="_blank" rel="noopener noreferrer">W3C CSS Color Module Level 4: Color Interpolation</a></li>
+      </ul>
     </article>
-  
+
     <section class="related-tools" style="margin-top: 3rem; border-top: 1px solid var(--bg-card-border); padding-top: 2rem;">
       <h3 style="margin-bottom: 1rem; color: var(--text-heading);">🛠️ Related Utility Tools</h3>
       <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem;">
