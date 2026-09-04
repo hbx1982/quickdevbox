@@ -1,0 +1,7 @@
+# QuickDevBox Security Policy (RFC 9116)
+Contact: mailto:support@quickdevbox.com
+Expires: 2027-09-01T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://quickdevbox.com/.well-known/security.txt
+Policy: https://quickdevbox.com/about
+Acknowledgments: https://github.com/hbx1982/quickdevbox

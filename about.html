@@ -61,17 +61,25 @@
 
       <h3>Our Core Engineering Principles</h3>
       <ul>
-        <li><strong>Privacy First:</strong> Execution runs 100% inside your browser environment.</li>
-        <li><strong>Sub-Millisecond Speed:</strong> Built using clean HTML5, pure CSS3, and modern vanilla JavaScript.</li>
-        <li><strong>Free & Accessible:</strong> No mandatory accounts or hidden tier limits.</li>
+        <li><strong>Privacy First:</strong> Execution runs 100% inside your browser environment. Your keys, hashes, tokens, and payloads never touch a remote server or telemetry socket.</li>
+        <li><strong>Sub-Millisecond Speed:</strong> Built using clean HTML5, modern CSS3, and high-performance vanilla JavaScript with zero third-party tracking scripts.</li>
+        <li><strong>Free &amp; Open Source:</strong> No mandatory accounts, no premium paywalls, and no hidden limitations.</li>
       </ul>
 
-      <h3>Open Source &amp; Community Contributions</h3>
-      <p>QuickDevBox is fully open source under the MIT License. The entire project source code, client-side algorithms, and offline utilities are publicly hosted on GitHub. Developers are welcome to audit the code, verify our zero-data-collection privacy guarantees, report issues, or contribute new utilities:</p>
+      <h3>Cryptographic Architecture &amp; Security Standards</h3>
+      <p>QuickDevBox does not rely on obscure or unverified proprietary cryptographic libraries. All cryptographic, hashing, and key-generation utilities strictly implement standardized algorithms audited by the global security community:</p>
+      <ul>
+        <li><strong>Native W3C Web Cryptography API:</strong> Operations such as AES-GCM/CBC, RSA-OAEP/PSS, SHA-256/512, HMAC, and PBKDF2 are executed directly by your browser engine's native cryptographic primitives (Google Chromium's BoringSSL, Apple WebKit's CoreCrypto, or Mozilla Firefox's NSS).</li>
+        <li><strong>Cryptographic Randomness (CSPRNG):</strong> All salts, initialization vectors (IV), and nonces are generated via <code>window.crypto.getRandomValues()</code> to ensure high-entropy unpredictability.</li>
+        <li><strong>Industry Standards Adherence:</strong> Tools comply with official standards including RFC 7519 (JWT), RFC 8017 (PKCS #1), RFC 2898 (PBKDF2), and FIPS 180-4 (Secure Hash Standard).</li>
+      </ul>
+
+      <h3>Open Source &amp; Code Auditability</h3>
+      <p>QuickDevBox is fully open source under the MIT License. The entire project codebase, algorithm implementations, and utility logic are publicly available on GitHub for transparency and independent security audits:</p>
       <p><a href="https://github.com/hbx1982/quickdevbox" target="_blank" rel="noopener noreferrer">👉 Official GitHub Repository (github.com/hbx1982/quickdevbox)</a></p>
 
-      <h3>Contact &amp; Support</h3>
-      <p>Have feature requests, security disclosures, or found a bug? Reach out to the maintainer via email at <code>support@quickdevbox.com</code> or file an issue on GitHub.</p>
+      <h3>Vulnerability Reporting &amp; Security Policy</h3>
+      <p>We maintain an active security disclosure process adhering to RFC 9116. Security researchers and developers can review our security policy at <a href="/.well-known/security.txt"><code>/.well-known/security.txt</code></a> or report potential vulnerabilities directly to <code>support@quickdevbox.com</code>.</p>
     </article>
   </main>
 
