@@ -37,30 +37,6 @@
     "browserRequirements": "Requires JavaScript. Requires HTML5."
   }
   </script>
-  <script type="application/ld+json">
-  {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "What happens when a container exceeds its memory limit in Kubernetes?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Exceeding container memory limits triggers the Linux OOM killer (exit code 137), forcing Pod restart."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Why should you specify both requests and limits for CPU and memory?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Requests guarantee minimum scheduler capacity; limits prevent noisy neighbors from exhausting host node resources."
-      }
-    }
-  ]
-}
-  </script>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
@@ -134,30 +110,32 @@
     </section>
 
     <!-- Related Tools Internal Link Building -->
-                    <article class="seo-article">
+                                        <article class="seo-article">
       <h2>Kubernetes Manifests: Declarative Pod Specs, Services & Ingress Standards</h2>
       <p>Kubernetes manifests declare desired cluster state across the Kubernetes API. Manifests structure Pod specs, Deployment replicas, Service networking, and resource requests/limits following the declarative CNCF schema.</p>
 
-      <div class="tech-specs">
-        <div class="spec-card">
-          <strong>API Specification</strong>
-          <span>Kubernetes OpenAPI v3 / CNCF Declarative Schema</span>
-        </div>
-        <div class="spec-card">
-          <strong>Workload Controllers</strong>
-          <span>Deployment, StatefulSet, DaemonSet, Job, CronJob</span>
-        </div>
-        <div class="spec-card">
-          <strong>Networking Model</strong>
-          <span>ClusterIP, NodePort, LoadBalancer, and Ingress routing</span>
-        </div>
-        <div class="spec-card">
-          <strong>Resource Enforcement</strong>
-          <span>requests (scheduling guarantee) vs limits (cgroup throttle/OOM)</span>
-        </div>
-      </div>
+      <h3>Infrastructure Parameters &amp; Protocol Matrix</h3>
+      <table>
+        <thead>
+          <tr><th>Directive / Configuration Key</th><th>Production Bound &amp; Recommended Setting</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>API Specification</strong></td><td>Kubernetes OpenAPI v3 / CNCF Declarative Schema</td></tr>
+          <tr><td><strong>Workload Controllers</strong></td><td>Deployment, StatefulSet, DaemonSet, Job, CronJob</td></tr>
+          <tr><td><strong>Networking Model</strong></td><td>ClusterIP, NodePort, LoadBalancer, and Ingress routing</td></tr>
+          <tr><td><strong>Resource Enforcement</strong></td><td>requests (scheduling guarantee) vs limits (cgroup throttle/OOM)</td></tr>
+        </tbody>
+      </table>
 
-      <h3>Implementation &amp; Code Examples</h3>
+      <h3>Production Deployment &amp; Reliability Checklist</h3>
+      <ul>
+        <li><strong>Configuration Idempotency:</strong> Validate declarative manifests with dry-run flags (e.g. <code>--dry-run=client</code>) before applying changes to live cloud infrastructure.</li>
+        <li><strong>Boundary &amp; Subnet Isolation:</strong> Enforce strict CIDR subnet masking and port isolation to prevent unintended exposure of internal management ports.</li>
+        <li><strong>Graceful Shutdown &amp; Signal Trapping:</strong> Configure container runtimes with appropriate termination grace periods (SIGTERM traps) to allow active TCP connections to drain cleanly.</li>
+        <li><strong>Strict Schema &amp; Type Contracts:</strong> Establish automated serialization contract testing between producer and consumer services to prevent breaking structural changes during schema migrations.</li>
+      </ul>
+
+      <h3>Infrastructure Configuration &amp; Command Examples</h3>
       <h4>Production Kubernetes Deployment Manifest</h4>
       <pre><code>apiVersion: apps/v1
 kind: Deployment
@@ -195,27 +173,10 @@ spec:
       <pre><code># Validate manifest against cluster schema without applying
 kubectl apply --dry-run=client -f deployment.yaml</code></pre>
 
-      <h3>Production Infrastructure Reliability &amp; Hardening</h3>
-      <p>Managing Kubernetes Manifests configurations within automated cloud native clusters requires robust deployment practices:</p>
-      <ul>
-        <li><strong>Zero-Trust Ingress Enforcement:</strong> Protect service boundaries with strict ingress controller timeout policies, TLS termination standards, and mutual TLS (mTLS) authentication across inter-service meshes.</li>
-        <li><strong>Declarative Manifest Validation:</strong> Automate schema validation and syntax linting inside CI/CD pipelines before applying infrastructure configuration units to staging and production clusters.</li>
-        <li><strong>Liveness Probes &amp; Graceful Termination:</strong> Configure proper termination grace intervals (SIGTERM traps) and decouple health check probes from heavy backend dependencies to prevent cascading reboot loops.</li>
-      </ul>
+      <h3>Production Pipeline Automation &amp; Configuration Hygiene</h3>
+      <p>Managing modern infrastructure manifests requires automated linting, schema validation, and strict environment parity across development, staging, and production clusters. Integrate declarative validation utilities (such as <code>yamllint</code>, <code>kubeconform</code>, or <code>shellcheck</code>) directly into CI/CD pipelines to intercept syntax regressions before provisioning cloud resources. Never commit static authentication credentials into repository manifests; leverage dynamic secret injection, scoped service accounts, and GitOps synchronization controllers to guarantee immutable delivery. Establish automated canary deployments with metric-based auto-rollback triggers to prevent faulty infrastructure rollouts.</p>
 
-      <section class="faq-section">
-        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
-        <div class="faq-item">
-          <h3>What happens when a container exceeds its memory limit in Kubernetes?</h3>
-          <p>The Linux kernel cgroup OOM (Out Of Memory) killer immediately terminates the container process with exit code 137 (SIGKILL). Kubernetes restarts the Pod and marks it with <code>OOMKilled</code> status.</p>
-        </div>
-        <div class="faq-item">
-          <h3>Why should you specify both requests and limits for CPU and memory?</h3>
-          <p>The scheduler uses <code>requests</code> to place Pods on nodes with sufficient capacity. <code>limits</code> prevent a runaway memory leak in one Pod from starving neighboring workloads on the same worker node.</p>
-        </div>
-      </section>
-
-      <h3>Official Standards &amp; Technical References</h3>
+      <h3>Official IETF RFCs &amp; Systems Standards</h3>
       <ul>
         <li><a href="https://kubernetes.io/docs/reference/kubernetes-api/" target="_blank" rel="noopener noreferrer">Kubernetes API Reference Documentation</a></li>
         <li><a href="https://landscape.cncf.io/" target="_blank" rel="noopener noreferrer">CNCF Cloud Native Interactive Landscape</a></li>

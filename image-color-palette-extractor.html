@@ -47,30 +47,6 @@
     }
 }
   </script>
-  <script type="application/ld+json">
-  {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "Why is Euclidean distance in RGB color space flawed for color clustering?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "RGB Euclidean distance ignores human eye sensitivity; clustering in CIE Lab color space yields superior perceptual accuracy."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "How do design systems use image palette extraction in dynamic UI themes?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Dynamic UI theming extracts dominant cover art colors to generate matching ambient background gradients."
-      }
-    }
-  ]
-}
-  </script>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
@@ -144,30 +120,32 @@
       <div id="statusMessage" class="status-box" style="display: none;"></div>
     </div>
 
-                    <article class="seo-article">
+                                        <article class="seo-article">
       <h2>Dominant Color Extraction: K-Means Clustering & Color Quantization Math</h2>
       <p>Extracting dominant color palettes from photographs applies color quantization algorithms (such as K-Means clustering or Median Cut) across the image's 3D RGB pixel point cloud. Pixels are grouped into centroids to determine primary, secondary, and accent colors.</p>
 
-      <div class="tech-specs">
-        <div class="spec-card">
-          <strong>Clustering Algorithms</strong>
-          <span>K-Means Clustering, Modified Median Cut Quantization (MMCQ)</span>
-        </div>
-        <div class="spec-card">
-          <strong>Color Distance Metric</strong>
-          <span>Euclidean distance in RGB space or Delta E (CIE76 / CIEDE2000) in Lab space</span>
-        </div>
-        <div class="spec-card">
-          <strong>Downsampling Step</strong>
-          <span>Downsamples image to 100x100 pixels before clustering to reduce CPU overhead</span>
-        </div>
-        <div class="spec-card">
-          <strong>Output Formats</strong>
-          <span>Hex palette list sorted by color frequency and visual prominence</span>
-        </div>
+      <h3>Format Specifications &amp; Syntax Reference</h3>
+      <table>
+        <thead>
+          <tr><th>Specification Parameter</th><th>Standard Value / Parsing Behavior</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Clustering Algorithms</strong></td><td>K-Means Clustering, Modified Median Cut Quantization (MMCQ)</td></tr>
+          <tr><td><strong>Color Distance Metric</strong></td><td>Euclidean distance in RGB space or Delta E (CIE76 / CIEDE2000) in Lab space</td></tr>
+          <tr><td><strong>Downsampling Step</strong></td><td>Downsamples image to 100x100 pixels before clustering to reduce CPU overhead</td></tr>
+          <tr><td><strong>Output Formats</strong></td><td>Hex palette list sorted by color frequency and visual prominence</td></tr>
+        </tbody>
+      </table>
+
+      <div class="edge-cases-box">
+        <h4>⚠️ Common Engineering Edge Cases &amp; Gotchas</h4>
+        <ul>
+        <li><strong>Why is Euclidean distance in RGB color space flawed for color clustering:</strong> Human visual perception does not perceive Euclidean distances in RGB as uniform (our eyes are significantly more sensitive to green than to blue). Converting RGB to CIE Lab space before clustering produces palettes that better match human perception.</li>
+        <li><strong>How do design systems use image palette extraction in dynamic UI themes:</strong> Music and media players (like Spotify or Apple Music) extract the dominant color from album artwork and dynamically tint background gradients and navigation controls to match the media.</li>
+        </ul>
       </div>
 
-      <h3>Implementation &amp; Code Examples</h3>
+      <h3>Production Implementation Examples</h3>
       <h4>JavaScript Canvas Color Downsampling & Extraction</h4>
       <pre><code>function extractDominantColors(canvas, colorCount = 5) {
   const ctx = canvas.getContext('2d');
@@ -190,27 +168,10 @@ palette = color_thief.get_palette(color_count=6)
 print("Dominant RGB:", dominant_color)
 print("Palette:", palette)</code></pre>
 
-      <h3>Memory Management &amp; Client-Side Buffer Handling</h3>
-      <p>Processing Dominant Color Extraction directly in browser client memory demands proactive memory cleanup and resource limits:</p>
-      <ul>
-        <li><strong>Blob Lifecycle Cleanup:</strong> Always invoke <code>URL.revokeObjectURL()</code> once binary image blobs finish loading to release allocated texture memory and prevent browser tab memory exhaustion.</li>
-        <li><strong>Offscreen Canvas Workers:</strong> Offload CPU-heavy pixel matrix loops and color quantization algorithms to background Web Workers using <code>OffscreenCanvas</code> to keep user interactions smooth.</li>
-        <li><strong>Texture Dimension Clamping:</strong> Verify source image dimensions prior to canvas allocation to prevent mobile browser crashes caused by device-specific maximum canvas texture limits.</li>
-      </ul>
+      <h3>High-Throughput Processing &amp; Memory Safety Bounds</h3>
+      <p>Client-side parsing and data transformation operates against browser V8 memory limits. When manipulating large documents or high-volume datasets approaching the 2MB boundary, synchronous operations can block the main execution thread. Production web applications should delegate heavy serialization and formatting jobs to background Web Workers or leverage streaming parsers (such as the WHATWG <code>TransformStream</code> interface) to maintain interface responsiveness during heavy data ingestion. Ensure robust UTF-8 multi-byte sequence validation to prevent surrogate pair slicing and payload corruption. Incorporate automated benchmark assertions into build pipelines to intercept algorithmic complexity regressions before production release.</p>
 
-      <section class="faq-section">
-        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
-        <div class="faq-item">
-          <h3>Why is Euclidean distance in RGB color space flawed for color clustering?</h3>
-          <p>Human visual perception does not perceive Euclidean distances in RGB as uniform (our eyes are significantly more sensitive to green than to blue). Converting RGB to CIE Lab space before clustering produces palettes that better match human perception.</p>
-        </div>
-        <div class="faq-item">
-          <h3>How do design systems use image palette extraction in dynamic UI themes?</h3>
-          <p>Music and media players (like Spotify or Apple Music) extract the dominant color from album artwork and dynamically tint background gradients and navigation controls to match the media.</p>
-        </div>
-      </section>
-
-      <h3>Official Standards &amp; Technical References</h3>
+      <h3>Official Standards &amp; Format Specifications</h3>
       <ul>
         <li><a href="https://cie.co.at/publications/colorimetry-4th-edition" target="_blank" rel="noopener noreferrer">CIE Technical Report: Colorimetry (CIE 015:2018)</a></li>
       </ul>

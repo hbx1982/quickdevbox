@@ -48,30 +48,6 @@
     }
 }
   </script>
-  <script type="application/ld+json">
-  {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "How does CSS Color 4 handle 8-digit hexadecimal colors with alpha channels?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "The trailing two characters in 8-digit hex (#RRGGBBAA) denote alpha opacity from 00 (transparent) to FF (opaque)."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "What happens if RGB values outside 0-255 are passed to the converter?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "RGB values outside 0-255 are automatically clamped to 8-bit limits to prevent bitwise arithmetic overflow."
-      }
-    }
-  ]
-}
-  </script>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
@@ -142,30 +118,32 @@
     </section>
 
   
-                        <article class="seo-article">
+                                            <article class="seo-article">
       <h2>RGB to HEX Color Translation: 8-bit Channels, Bitwise Shifting & Alpha Syntax</h2>
       <p>Converting RGB color coordinates (0-255 per red, green, blue channel) to Hexadecimal format computes a 6-digit or 8-digit hex triplet (#RRGGBB[AA]). The conversion uses bitwise left-shifts to pack three 8-bit bytes into a 24-bit integer.</p>
 
-      <div class="tech-specs">
-        <div class="spec-card">
-          <strong>Color Space</strong>
-          <span>sRGB Color Space (IEC 61966-2-1:1999)</span>
-        </div>
-        <div class="spec-card">
-          <strong>Bit Depth</strong>
-          <span>8 bits per channel (256 discrete levels: 0 to 255 / 0x00 to 0xFF)</span>
-        </div>
-        <div class="spec-card">
-          <strong>Hex Formats</strong>
-          <span>#RRGGBB (24-bit color) and #RRGGBBAA (32-bit color with alpha channel)</span>
-        </div>
-        <div class="spec-card">
-          <strong>Standard</strong>
-          <span>W3C CSS Color Module Level 4 § Hexadecimal Color Notation</span>
-        </div>
+      <h3>Format Specifications &amp; Syntax Reference</h3>
+      <table>
+        <thead>
+          <tr><th>Specification Parameter</th><th>Standard Value / Parsing Behavior</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Color Space</strong></td><td>sRGB Color Space (IEC 61966-2-1:1999)</td></tr>
+          <tr><td><strong>Bit Depth</strong></td><td>8 bits per channel (256 discrete levels: 0 to 255 / 0x00 to 0xFF)</td></tr>
+          <tr><td><strong>Hex Formats</strong></td><td>#RRGGBB (24-bit color) and #RRGGBBAA (32-bit color with alpha channel)</td></tr>
+          <tr><td><strong>Standard</strong></td><td>W3C CSS Color Module Level 4 § Hexadecimal Color Notation</td></tr>
+        </tbody>
+      </table>
+
+      <div class="edge-cases-box">
+        <h4>⚠️ Common Engineering Edge Cases &amp; Gotchas</h4>
+        <ul>
+        <li><strong>How does CSS Color 4 handle 8-digit hexadecimal colors with alpha channels:</strong> In 8-digit hex colors (<code>#3b82f680</code>), the last two characters represent alpha transparency from <code>00</code> (0% fully transparent) to <code>FF</code> (100% fully opaque). <code>80</code> represents 50% opacity.</li>
+        <li><strong>What happens if RGB values outside 0-255 are passed to the converter:</strong> Standard sRGB channels are strictly 8-bit. Values below 0 are clamped to 0; values above 255 are clamped to 255 to prevent bitwise overflow errors in integer math.</li>
+        </ul>
       </div>
 
-      <h3>Implementation &amp; Code Examples</h3>
+      <h3>Production Implementation Examples</h3>
       <h4>JavaScript Bitwise RGB to Hex Converter</h4>
       <pre><code>function rgbToHex(r, g, b, a = 1) {
   const clamp = v => Math.min(255, Math.max(0, Math.round(v)));
@@ -184,27 +162,10 @@ console.log(rgbToHex(59, 130, 246, 0.8)); // '#3b82f6cc'</code></pre>
     return f"#{r:02x}{g:02x}{b:02x}"
 print(rgb_to_hex_py(99, 102, 241))</code></pre>
 
-      <h3>Architectural Design &amp; High-Throughput Pipeline Optimization</h3>
-      <p>Integrating RGB to HEX Color Translation into continuous delivery pipelines requires balancing lexical analysis latency with memory consumption:</p>
-      <ul>
-        <li><strong>Stream-Based Tokenization:</strong> For large data buffers exceeding 1MB, avoid synchronous in-memory string parsing on the main event thread. Stream input tokens through chunked pipelines to prevent event-loop thread starvation.</li>
-        <li><strong>Defensive Parsing &amp; Exception Isolation:</strong> Always wrap syntax transformations inside structured exception handlers to isolate malformed inputs, truncated payloads, and illegal control characters from crashing downstream microservices.</li>
-        <li><strong>Character Encoding Verification:</strong> Enforce strict UTF-8 input normalization at API gateways to prevent byte-order mark (BOM) anomalies, truncated multi-byte sequences, and surrogate pair deserialization errors.</li>
-      </ul>
+      <h3>High-Throughput Processing &amp; Memory Safety Bounds</h3>
+      <p>Client-side parsing and data transformation operates against browser V8 memory limits. When manipulating large documents or high-volume datasets approaching the 2MB boundary, synchronous operations can block the main execution thread. Production web applications should delegate heavy serialization and formatting jobs to background Web Workers or leverage streaming parsers (such as the WHATWG <code>TransformStream</code> interface) to maintain interface responsiveness during heavy data ingestion. Ensure robust UTF-8 multi-byte sequence validation to prevent surrogate pair slicing and payload corruption. Incorporate automated benchmark assertions into build pipelines to intercept algorithmic complexity regressions before production release.</p>
 
-      <section class="faq-section">
-        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
-        <div class="faq-item">
-          <h3>How does CSS Color 4 handle 8-digit hexadecimal colors with alpha channels?</h3>
-          <p>In 8-digit hex colors (<code>#3b82f680</code>), the last two characters represent alpha transparency from <code>00</code> (0% fully transparent) to <code>FF</code> (100% fully opaque). <code>80</code> represents 50% opacity.</p>
-        </div>
-        <div class="faq-item">
-          <h3>What happens if RGB values outside 0-255 are passed to the converter?</h3>
-          <p>Standard sRGB channels are strictly 8-bit. Values below 0 are clamped to 0; values above 255 are clamped to 255 to prevent bitwise overflow errors in integer math.</p>
-        </div>
-      </section>
-
-      <h3>Official Standards &amp; Technical References</h3>
+      <h3>Official Standards &amp; Format Specifications</h3>
       <ul>
         <li><a href="https://www.w3.org/TR/css-color-4/#hex-notation" target="_blank" rel="noopener noreferrer">W3C CSS Color Module Level 4 § Hex Colors</a></li>
       </ul>

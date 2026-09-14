@@ -48,30 +48,6 @@
     }
 }
   </script>
-  <script type="application/ld+json">
-  {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "Why is using 'element.innerHTML = str; return element.innerText' dangerous for unescaping?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Using innerHTML for decoding executes embedded scripts. Use DOMParser parseFromString safely."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "What is a double-unescaping vulnerability?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Double-unescaping allows malicious payloads disguised as secondary entities to bypass input validation filters."
-      }
-    }
-  ]
-}
-  </script>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
@@ -141,30 +117,32 @@
 
       <!-- SEO Technical Article Section -->
       <!-- Related Tools Section -->
-                          <article class="seo-article">
+                                              <article class="seo-article">
       <h2>HTML Entity Decoding: Unescaping Named Entities & Double-Unescape Security</h2>
       <p>HTML entity unescaping decodes named (&amp;, &lt;, &gt;) and numeric (&#XXXX;) character entities back into plain Unicode strings. Safe decoders avoid vulnerable DOM innerHTML patterns to prevent script injection.</p>
 
-      <div class="tech-specs">
-        <div class="spec-card">
-          <strong>Entity Classification</strong>
-          <span>Named Entities (W3C HTML5 list of 2,125 entities) and Numeric Unicodes</span>
-        </div>
-        <div class="spec-card">
-          <strong>Security Vulnerability</strong>
-          <span>Double-unescaping attacks (parsing untrusted decoded output back into the DOM)</span>
-        </div>
-        <div class="spec-card">
-          <strong>Safe Execution Pattern</strong>
-          <span>DOMParser with textContent extraction or lookup dictionaries</span>
-        </div>
-        <div class="spec-card">
-          <strong>Standard</strong>
-          <span>WHATWG HTML Living Standard § Parsing HTML fragments</span>
-        </div>
+      <h3>Format Specifications &amp; Syntax Reference</h3>
+      <table>
+        <thead>
+          <tr><th>Specification Parameter</th><th>Standard Value / Parsing Behavior</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Entity Classification</strong></td><td>Named Entities (W3C HTML5 list of 2,125 entities) and Numeric Unicodes</td></tr>
+          <tr><td><strong>Security Vulnerability</strong></td><td>Double-unescaping attacks (parsing untrusted decoded output back into the DOM)</td></tr>
+          <tr><td><strong>Safe Execution Pattern</strong></td><td>DOMParser with textContent extraction or lookup dictionaries</td></tr>
+          <tr><td><strong>Standard</strong></td><td>WHATWG HTML Living Standard § Parsing HTML fragments</td></tr>
+        </tbody>
+      </table>
+
+      <div class="edge-cases-box">
+        <h4>⚠️ Common Engineering Edge Cases &amp; Gotchas</h4>
+        <ul>
+        <li><strong>Why is using 'element.innerHTML = str; return element.innerText' dangerous for unescaping:</strong> Assigning unsanitized input to <code>innerHTML</code> triggers browser DOM parsing. If the input contains payload strings like <code>&lt;img src=x onerror=alert(1)&gt;</code>, the script executes immediately. Always use <code>DOMParser</code>.</li>
+        <li><strong>What is a double-unescaping vulnerability:</strong> If an application unescapes a string once for validation, and then passes it through a second decoding layer before rendering, an attacker can submit <code>&amp;lt;script&gt;</code> which passes the first filter and executes on the second.</li>
+        </ul>
       </div>
 
-      <h3>Implementation &amp; Code Examples</h3>
+      <h3>Production Implementation Examples</h3>
       <h4>JavaScript Safe Entity Unescaper</h4>
       <pre><code>function unescapeHtml(htmlStr) {
   const doc = new DOMParser().parseFromString(htmlStr, 'text/html');
@@ -178,27 +156,10 @@ encoded = "&lt;span&gt;Price &pound;50 &amp;euro;60&lt;/span&gt;"
 decoded = html.unescape(encoded)
 print("Decoded:", decoded)</code></pre>
 
-      <h3>Architectural Design &amp; High-Throughput Pipeline Optimization</h3>
-      <p>Integrating HTML Entity Decoding into continuous delivery pipelines requires balancing lexical analysis latency with memory consumption:</p>
-      <ul>
-        <li><strong>Stream-Based Tokenization:</strong> For large data buffers exceeding 1MB, avoid synchronous in-memory string parsing on the main event thread. Stream input tokens through chunked pipelines to prevent event-loop thread starvation.</li>
-        <li><strong>Defensive Parsing &amp; Exception Isolation:</strong> Always wrap syntax transformations inside structured exception handlers to isolate malformed inputs, truncated payloads, and illegal control characters from crashing downstream microservices.</li>
-        <li><strong>Character Encoding Verification:</strong> Enforce strict UTF-8 input normalization at API gateways to prevent byte-order mark (BOM) anomalies, truncated multi-byte sequences, and surrogate pair deserialization errors.</li>
-      </ul>
+      <h3>High-Throughput Processing &amp; Memory Safety Bounds</h3>
+      <p>Client-side parsing and data transformation operates against browser V8 memory limits. When manipulating large documents or high-volume datasets approaching the 2MB boundary, synchronous operations can block the main execution thread. Production web applications should delegate heavy serialization and formatting jobs to background Web Workers or leverage streaming parsers (such as the WHATWG <code>TransformStream</code> interface) to maintain interface responsiveness during heavy data ingestion. Ensure robust UTF-8 multi-byte sequence validation to prevent surrogate pair slicing and payload corruption. Incorporate automated benchmark assertions into build pipelines to intercept algorithmic complexity regressions before production release.</p>
 
-      <section class="faq-section">
-        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
-        <div class="faq-item">
-          <h3>Why is using 'element.innerHTML = str; return element.innerText' dangerous for unescaping?</h3>
-          <p>Assigning unsanitized input to <code>innerHTML</code> triggers browser DOM parsing. If the input contains payload strings like <code>&lt;img src=x onerror=alert(1)&gt;</code>, the script executes immediately. Always use <code>DOMParser</code>.</p>
-        </div>
-        <div class="faq-item">
-          <h3>What is a double-unescaping vulnerability?</h3>
-          <p>If an application unescapes a string once for validation, and then passes it through a second decoding layer before rendering, an attacker can submit <code>&amp;lt;script&gt;</code> which passes the first filter and executes on the second.</p>
-        </div>
-      </section>
-
-      <h3>Official Standards &amp; Technical References</h3>
+      <h3>Official Standards &amp; Format Specifications</h3>
       <ul>
         <li><a href="https://html.spec.whatwg.org/multipage/named-characters.html" target="_blank" rel="noopener noreferrer">WHATWG HTML Living Standard: Named Characters</a></li>
         <li><a href="https://cwe.mitre.org/data/definitions/116.html" target="_blank" rel="noopener noreferrer">CWE-116: Improper Encoding or Escaping of Output</a></li>

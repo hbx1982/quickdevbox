@@ -48,30 +48,6 @@
     }
 }
   </script>
-  <script type="application/ld+json">
-  {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "Why is MD5 completely banned for password storage and digital certificates?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Practical collision attacks allow forging distinct files with identical MD5 digests within seconds."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Where is MD5 still legitimately used in modern software engineering?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "MD5 is valid for non-adversarial cache key generation and accidental bit-rot integrity checks."
-      }
-    }
-  ]
-}
-  </script>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
@@ -142,30 +118,34 @@
 
       <!-- SEO Technical Article Section -->
       <!-- Related Tools Section -->
-                          <article class="seo-article">
+                                              <article class="seo-article">
       <h2>MD5 Hash Checksum: RFC 1321 Mechanics & Non-Cryptographic Checksumming</h2>
       <p>The MD5 message-digest algorithm (RFC 1321) produces a 128-bit (16-byte) hash value expressed as a 32-digit hexadecimal string. Due to practical chosen-prefix collision attacks, MD5 is strictly restricted to legacy checksums and non-cryptographic integrity checks.</p>
 
-      <div class="tech-specs">
-        <div class="spec-card">
-          <strong>Designer & Year</strong>
-          <span>Ronald Rivest (MIT, 1991)</span>
-        </div>
-        <div class="spec-card">
-          <strong>Digest Length</strong>
-          <span>128 bits (16 bytes / 32 hex characters)</span>
-        </div>
-        <div class="spec-card">
-          <strong>Block Size</strong>
-          <span>512 bits (64 bytes) divided into sixteen 32-bit words</span>
-        </div>
-        <div class="spec-card">
-          <strong>Cryptographic Status</strong>
-          <span>Cryptographically Broken (Prohibited for Digital Signatures & Passwords)</span>
-        </div>
+      <div class="security-advisory">
+        <h4>🔒 Cryptographic Security &amp; Memory Defense Advisory</h4>
+        <p>Client-side cryptographic operations require defensive programming to protect sensitive keys and data from runtime introspection:</p>
+        <ul>
+          <li><strong>CSPRNG Nonce Generation:</strong> Always use <code>window.crypto.getRandomValues()</code> for IVs, salts, and nonces. Never use pseudo-random generators like <code>Math.random()</code> for key derivation or stream initialization.</li>
+          <li><strong>Timing Attack Mitigation:</strong> Evaluate authentication digests and HMAC tags using constant-time comparison (e.g. <code>crypto.timingSafeEqual</code>) to prevent microsecond side-channel timing leaks.</li>
+          <li><strong>Key Hygiene &amp; GC Deallocation:</strong> Overwrite sensitive plaintext buffers and key material in memory immediately after cipher execution to minimize memory dump exposure windows.</li>
+        </ul>
       </div>
 
-      <h3>Implementation &amp; Code Examples</h3>
+      <h3>Cryptographic Parameter Matrix &amp; Specifications</h3>
+      <table>
+        <thead>
+          <tr><th>Cryptographic Attribute</th><th>Standard Requirement / Security Bound</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Designer & Year</strong></td><td>Ronald Rivest (MIT, 1991)</td></tr>
+          <tr><td><strong>Digest Length</strong></td><td>128 bits (16 bytes / 32 hex characters)</td></tr>
+          <tr><td><strong>Block Size</strong></td><td>512 bits (64 bytes) divided into sixteen 32-bit words</td></tr>
+          <tr><td><strong>Cryptographic Status</strong></td><td>Cryptographically Broken (Prohibited for Digital Signatures & Passwords)</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Audited Cryptographic Implementation Code</h3>
       <h4>Node.js (Legacy File Checksum)</h4>
       <pre><code>import crypto from 'crypto';
 
@@ -180,27 +160,10 @@ console.log("MD5:", computeMd5Checksum("File buffer"));</code></pre>
 checksum = hashlib.md5(b"cache-key-object").hexdigest()
 print("Cache Bucket Key:", checksum)</code></pre>
 
-      <h3>Cryptographic Architecture &amp; Production Security Considerations</h3>
-      <p>Deploying MD5 Hash Checksum across cloud backends demands strict adherence to industry-standard defense-in-depth security principles:</p>
-      <ul>
-        <li><strong>Side-Channel Timing Resistance:</strong> Always evaluate cryptographic hashes, HMAC signatures, and authentication tokens using constant-time comparison algorithms (like <code>crypto.timingSafeEqual</code>) to eliminate microsecond side-channel timing leaks.</li>
-        <li><strong>Entropy Sourcing &amp; Nonce Generation:</strong> Ensure all cryptographic nonces, initialization vectors, and salts are derived from cryptographically secure pseudo-random number generators (CSPRNG) like <code>window.crypto.getRandomValues</code> or <code>/dev/urandom</code>.</li>
-        <li><strong>Key Hygiene &amp; Memory Deallocation:</strong> Zero out sensitive key buffers and decrypted payloads in memory immediately following transformation routines to limit memory dump exposure risks.</li>
-      </ul>
+      <h3>Zero-Knowledge Architecture &amp; Key Lifecycle Governance</h3>
+      <p>All cryptographic operations execute exclusively within your client browser memory using the native Web Cryptography API (W3C WebCrypto). Unencrypted plaintext payloads, private key pairs, and secret parameters are never transmitted across the network, stored in cookies, or written to disk. When implementing cryptographic modules in backend environments, enforce strict secret isolation, rotate master encryption keys using hardware-backed KMS solutions, and zero out plaintext byte buffers immediately following block cipher operations. Adhere to FIPS 140-3 guidelines for validated cryptographic boundary controls and secure entropy source verification.</p>
 
-      <section class="faq-section">
-        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
-        <div class="faq-item">
-          <h3>Why is MD5 completely banned for password storage and digital certificates?</h3>
-          <p>Chosen-prefix collision attacks (first demonstrated practically in 2005) allow attackers to generate two entirely different files with identical MD5 checksums within seconds. Attackers can forge SSL certificates or rogue software binaries.</p>
-        </div>
-        <div class="faq-item">
-          <h3>Where is MD5 still legitimately used in modern software engineering?</h3>
-          <p>MD5 remains widely utilized for non-adversarial tasks: generating cache keys (Memcached/Redis), verifying ISO download checksums against accidental bit corruption, and partitioning keys in distributed hash tables.</p>
-        </div>
-      </section>
-
-      <h3>Official Standards &amp; Technical References</h3>
+      <h3>Official Security Standards &amp; RFC References</h3>
       <ul>
         <li><a href="https://datatracker.ietf.org/doc/html/rfc1321" target="_blank" rel="noopener noreferrer">IETF RFC 1321: The MD5 Message-Digest Algorithm</a></li>
         <li><a href="https://www.kb.cert.org/vuls/id/836068" target="_blank" rel="noopener noreferrer">Carnegie Mellon CERT Vulnerability Note VU#836068 (MD5 Vulnerabilities)</a></li>

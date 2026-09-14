@@ -47,30 +47,6 @@
     }
 }
   </script>
-  <script type="application/ld+json">
-  {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "Why does stripping EXIF orientation metadata cause smartphone photos to appear rotated?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Smartphones store orientation in EXIF tags. Apply visual canvas rotation before stripping metadata."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "What sensitive personal data is leaked by smartphone camera EXIF headers?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Smartphone EXIF embeds precise GPS coordinates, device identifiers, and exact timestamps."
-      }
-    }
-  ]
-}
-  </script>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
@@ -142,30 +118,32 @@
       <div id="statusMessage" class="status-box" style="display: none;"></div>
     </div>
 
-                    <article class="seo-article">
+                                        <article class="seo-article">
       <h2>EXIF Metadata Stripping: JPEG APP1 Markers, GPS Coordinates & Privacy Audits</h2>
       <p>Digital cameras and smartphones embed Exchangeable Image File Format (EXIF) metadata inside JPEG APP1 segments (marker 0xFFE1). Stripping metadata removes sensitive GPS coordinates, camera serial numbers, and timestamps prior to web publication.</p>
 
-      <div class="tech-specs">
-        <div class="spec-card">
-          <strong>EXIF Standard</strong>
-          <span>JEITA CP-3451E: Exchangeable Image File Format for Digital Still Cameras</span>
-        </div>
-        <div class="spec-card">
-          <strong>Marker Identifier</strong>
-          <span>JPEG APP1 Marker (0xFFE1) containing 6-byte header 'Exif\0\0'</span>
-        </div>
-        <div class="spec-card">
-          <strong>Privacy Risks</strong>
-          <span>GPS latitude/longitude, altitude, exact timestamp, device model, owner name</span>
-        </div>
-        <div class="spec-card">
-          <strong>Sanitization Method</strong>
-          <span>Re-encoding via HTML5 Canvas or raw byte segment pruning</span>
-        </div>
+      <h3>Format Specifications &amp; Syntax Reference</h3>
+      <table>
+        <thead>
+          <tr><th>Specification Parameter</th><th>Standard Value / Parsing Behavior</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>EXIF Standard</strong></td><td>JEITA CP-3451E: Exchangeable Image File Format for Digital Still Cameras</td></tr>
+          <tr><td><strong>Marker Identifier</strong></td><td>JPEG APP1 Marker (0xFFE1) containing 6-byte header 'Exif\0\0'</td></tr>
+          <tr><td><strong>Privacy Risks</strong></td><td>GPS latitude/longitude, altitude, exact timestamp, device model, owner name</td></tr>
+          <tr><td><strong>Sanitization Method</strong></td><td>Re-encoding via HTML5 Canvas or raw byte segment pruning</td></tr>
+        </tbody>
+      </table>
+
+      <div class="edge-cases-box">
+        <h4>⚠️ Common Engineering Edge Cases &amp; Gotchas</h4>
+        <ul>
+        <li><strong>Why does stripping EXIF orientation metadata cause smartphone photos to appear rotated:</strong> Smartphones record photos in raw camera sensor orientation and save a numeric EXIF tag (Orientation 1 through 8) signaling the viewing angle. Stripping EXIF without applying the rotation turns photos upside down or sideways.</li>
+        <li><strong>What sensitive personal data is leaked by smartphone camera EXIF headers:</strong> Photos taken on iPhones and Android devices typically include exact GPS coordinates down to a few meters, timestamp of capture, camera serial number, lens parameters, and operating system build version.</li>
+        </ul>
       </div>
 
-      <h3>Implementation &amp; Code Examples</h3>
+      <h3>Production Implementation Examples</h3>
       <h4>Canvas Re-Encoding Metadata Stripping</h4>
       <pre><code>function stripExifViaCanvas(imgElement) {
   const canvas = document.createElement('canvas');
@@ -187,27 +165,10 @@ def strip_metadata(source_path, clean_path):
         clean_img.putdata(data)
         clean_img.save(clean_path)</code></pre>
 
-      <h3>Memory Management &amp; Client-Side Buffer Handling</h3>
-      <p>Processing EXIF Metadata Stripping directly in browser client memory demands proactive memory cleanup and resource limits:</p>
-      <ul>
-        <li><strong>Blob Lifecycle Cleanup:</strong> Always invoke <code>URL.revokeObjectURL()</code> once binary image blobs finish loading to release allocated texture memory and prevent browser tab memory exhaustion.</li>
-        <li><strong>Offscreen Canvas Workers:</strong> Offload CPU-heavy pixel matrix loops and color quantization algorithms to background Web Workers using <code>OffscreenCanvas</code> to keep user interactions smooth.</li>
-        <li><strong>Texture Dimension Clamping:</strong> Verify source image dimensions prior to canvas allocation to prevent mobile browser crashes caused by device-specific maximum canvas texture limits.</li>
-      </ul>
+      <h3>High-Throughput Processing &amp; Memory Safety Bounds</h3>
+      <p>Client-side parsing and data transformation operates against browser V8 memory limits. When manipulating large documents or high-volume datasets approaching the 2MB boundary, synchronous operations can block the main execution thread. Production web applications should delegate heavy serialization and formatting jobs to background Web Workers or leverage streaming parsers (such as the WHATWG <code>TransformStream</code> interface) to maintain interface responsiveness during heavy data ingestion. Ensure robust UTF-8 multi-byte sequence validation to prevent surrogate pair slicing and payload corruption. Incorporate automated benchmark assertions into build pipelines to intercept algorithmic complexity regressions before production release.</p>
 
-      <section class="faq-section">
-        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
-        <div class="faq-item">
-          <h3>Why does stripping EXIF orientation metadata cause smartphone photos to appear rotated?</h3>
-          <p>Smartphones record photos in raw camera sensor orientation and save a numeric EXIF tag (Orientation 1 through 8) signaling the viewing angle. Stripping EXIF without applying the rotation turns photos upside down or sideways.</p>
-        </div>
-        <div class="faq-item">
-          <h3>What sensitive personal data is leaked by smartphone camera EXIF headers?</h3>
-          <p>Photos taken on iPhones and Android devices typically include exact GPS coordinates down to a few meters, timestamp of capture, camera serial number, lens parameters, and operating system build version.</p>
-        </div>
-      </section>
-
-      <h3>Official Standards &amp; Technical References</h3>
+      <h3>Official Standards &amp; Format Specifications</h3>
       <ul>
         <li><a href="https://www.cipa.jp/std/documents/e/DC-X008-Translation-2019-E.pdf" target="_blank" rel="noopener noreferrer">JEITA EXIF 2.32 Standard Specification</a></li>
       </ul>

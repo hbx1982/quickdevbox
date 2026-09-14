@@ -48,30 +48,6 @@
     }
 }
   </script>
-  <script type="application/ld+json">
-  {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "Why is enforcing trailing semicolons in CSS properties essential?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Mandatory trailing semicolons prevent syntax parsing failures when appending new declarations during development."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "How does declaration property sorting improve gzip compression ratios?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Alphabetical property ordering increases recurring string patterns, improving gzip and brotli compression efficiency."
-      }
-    }
-  ]
-}
-  </script>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
@@ -149,30 +125,40 @@
 
     <!-- SEO Technical Article Section -->
             <!-- Related Tools Grid Section -->
-                    <article class="seo-article">
+                                        <article class="seo-article">
       <h2>CSS Formatter: Rule Block Indentation, Media Queries & Declaration Ordering</h2>
       <p>CSS Beautifier tokenizes stylesheet rules, applying standardized 2-space indentation, property semicolon enforcement, and formatted spacing around selectors and brackets across standard rules, keyframes, and nested media queries.</p>
 
-      <div class="tech-specs">
-        <div class="spec-card">
-          <strong>Token Parsing</strong>
-          <span>CSS Syntax Module Level 3 Component Value Grammar</span>
+      <h3>CSS Properties &amp; Syntax Reference</h3>
+      <table>
+        <thead>
+          <tr><th>CSS Rule / Parameter</th><th>Syntax Specification &amp; Compositor Behavior</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Token Parsing</strong></td><td>CSS Syntax Module Level 3 Component Value Grammar</td></tr>
+          <tr><td><strong>Formatting Rules</strong></td><td>1 property per line, mandatory trailing semicolon, single-space after colons</td></tr>
+          <tr><td><strong>At-Rule Formatting</strong></td><td>@media, @keyframes, @supports bracket and rule hierarchy alignment</td></tr>
+          <tr><td><strong>Standard</strong></td><td>W3C CSS Syntax Module Level 3</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Cross-Browser Rendering &amp; Compositor Engine Support</h3>
+      <div class="browser-support-matrix">
+        <div class="engine-card">
+          <strong>Chromium / Blink (Chrome, Edge)</strong>
+          <span>Full hardware-accelerated GPU compositing. Zero layout shifts when dimensions are clamped.</span>
         </div>
-        <div class="spec-card">
-          <strong>Formatting Rules</strong>
-          <span>1 property per line, mandatory trailing semicolon, single-space after colons</span>
+        <div class="engine-card">
+          <strong>WebKit (Safari, iOS)</strong>
+          <span>Requires vendor prefixes (<code>-webkit-</code>) for backdrop filters, clip paths, and text smoothing.</span>
         </div>
-        <div class="spec-card">
-          <strong>At-Rule Formatting</strong>
-          <span>@media, @keyframes, @supports bracket and rule hierarchy alignment</span>
-        </div>
-        <div class="spec-card">
-          <strong>Standard</strong>
-          <span>W3C CSS Syntax Module Level 3</span>
+        <div class="engine-card">
+          <strong>Gecko (Mozilla Firefox)</strong>
+          <span>Standard W3C compliance. Supports native hardware layer caching and subpixel rendering.</span>
         </div>
       </div>
 
-      <h3>Implementation &amp; Code Examples</h3>
+      <h3>Production CSS Recipes &amp; Snippets</h3>
       <h4>Formatted CSS Rule Example</h4>
       <pre><code>/* Clean formatted production CSS */
 .header-navigation {
@@ -191,27 +177,10 @@
   }
 }</code></pre>
 
-      <h3>Browser Rendering Performance &amp; Hardware Compositing</h3>
-      <p>Executing CSS Formatter in modern web applications requires optimizing layout rendering across the browser rendering pipeline:</p>
-      <ul>
-        <li><strong>GPU Compositor Promotion:</strong> Restrict high-frequency dynamic transitions to compositor-only CSS properties (<code>transform</code> and <code>opacity</code>) to avoid triggering costly CPU layout reflows and repaints.</li>
-        <li><strong>Layout Thrashing Prevention:</strong> Decouple DOM geometry measurements from subsequent style write operations to eliminate forced synchronous reflow cycles and preserve 60 FPS scrolling.</li>
-        <li><strong>Subpixel Antialiasing:</strong> Design visual components with hardware-accelerated vector units and clamp scaling boundaries to eliminate visual pixel rounding jitter on high-DPI displays.</li>
-      </ul>
+      <h3>GPU Compositing &amp; Layout Performance Tuning</h3>
+      <p>Modern browser rendering engines divide graphical updates into Style, Layout, Paint, and Composite stages. High-performance interfaces optimize execution by isolating dynamic animations to compositor-only CSS properties—specifically <code>transform</code> and <code>opacity</code>. Altering geometry properties like <code>width</code>, <code>margin</code>, or <code>top</code> forces full layout reflows and repaints, increasing CPU utilization and causing frame drops on lower-power mobile devices. Leverage hardware layer promotion strategically to preserve 60 FPS visual smoothness, and explicitly reserve component aspect ratios to ensure Cumulative Layout Shift (CLS) scores remain at zero. Profile paint timings under 4x CPU throttling in Chrome DevTools to eliminate paint invalidation bottlenecks.</p>
 
-      <section class="faq-section">
-        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
-        <div class="faq-item">
-          <h3>Why is enforcing trailing semicolons in CSS properties essential?</h3>
-          <p>While CSS allows omitting the semicolon on the last property of a rule block, adding a new property later without remembering to insert the semicolon breaks the entire rule declaration. Consistent semicolons prevent regressions.</p>
-        </div>
-        <div class="faq-item">
-          <h3>How does declaration property sorting improve gzip compression ratios?</h3>
-          <p>Sorting CSS properties alphabetically (e.g. background, color, display, margin, padding) groups identical property strings together across rules, enabling Gzip/Brotli LZ77 dictionaries to achieve higher compression ratios.</p>
-        </div>
-      </section>
-
-      <h3>Official Standards &amp; Technical References</h3>
+      <h3>W3C Standards &amp; Browser Engine Specifications</h3>
       <ul>
         <li><a href="https://www.w3.org/TR/css-syntax-3/" target="_blank" rel="noopener noreferrer">W3C CSS Syntax Module Level 3</a></li>
       </ul>

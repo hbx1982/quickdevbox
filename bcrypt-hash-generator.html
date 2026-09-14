@@ -49,46 +49,6 @@
     }
 }
   </script>
-  <script type="application/ld+json">
-  {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "Why does Bcrypt fail or become vulnerable with passwords longer than 72 bytes?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Bcrypt truncates passwords at 72 bytes. Fix this by pre-hashing long passwords with SHA-256 before passing them to the Bcrypt hashing function."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "What cost factor (rounds) should I choose in production in 2026?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "OWASP recommends cost 12, which takes approximately 250ms to 350ms on modern CPUs. Avoid setting it above 13 on shared web servers."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "What do the prefixes $2a$, $2b$, and $2y$ mean in a Bcrypt hash string?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "The prefix denotes the version of the algorithm. $2b$ is the current canonical standard, resolving legacy PHP 0x80 byte and OpenBSD buffer bugs."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Does Bcrypt protect against GPU and ASIC cracking farms?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Bcrypt's 4KB S-box memory requirement causes cache thrashing on GPUs with limited per-core L1 cache, neutralizing mass parallel cracking."
-      }
-    }
-  ]
-}
-  </script>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
@@ -162,30 +122,34 @@
     </section>
 
 
-                            <article class="seo-article">
+                                                <article class="seo-article">
       <h2>Bcrypt Password Hashing: Eksblowfish Key Schedule & Work Factor Sizing</h2>
       <p>Bcrypt is an adaptive, salted password hashing algorithm based on the Blowfish cipher. Its 4KB internal state (P-array and S-boxes) requires frequent L1 cache memory lookups, neutralizing hardware acceleration attacks on parallel GPU and ASIC clusters.</p>
 
-      <div class="tech-specs">
-        <div class="spec-card">
-          <strong>Cryptographic Primitive</strong>
-          <span>Eksblowfish (Expensive Key Schedule Blowfish)</span>
-        </div>
-        <div class="spec-card">
-          <strong>Salt Specification</strong>
-          <span>128-bit (16 bytes) Cryptographically Secure Random Salt</span>
-        </div>
-        <div class="spec-card">
-          <strong>Cost Work Factor</strong>
-          <span>Logarithmic: 2^cost rounds (OWASP 2026 Recommended: 12)</span>
-        </div>
-        <div class="spec-card">
-          <strong>Input Password Boundary</strong>
-          <span>Strict 72-byte max length limit (truncated if exceeded)</span>
-        </div>
+      <div class="security-advisory">
+        <h4>🔒 Cryptographic Security &amp; Memory Defense Advisory</h4>
+        <p>Client-side cryptographic operations require defensive programming to protect sensitive keys and data from runtime introspection:</p>
+        <ul>
+          <li><strong>CSPRNG Nonce Generation:</strong> Always use <code>window.crypto.getRandomValues()</code> for IVs, salts, and nonces. Never use pseudo-random generators like <code>Math.random()</code> for key derivation or stream initialization.</li>
+          <li><strong>Timing Attack Mitigation:</strong> Evaluate authentication digests and HMAC tags using constant-time comparison (e.g. <code>crypto.timingSafeEqual</code>) to prevent microsecond side-channel timing leaks.</li>
+          <li><strong>Key Hygiene &amp; GC Deallocation:</strong> Overwrite sensitive plaintext buffers and key material in memory immediately after cipher execution to minimize memory dump exposure windows.</li>
+        </ul>
       </div>
 
-      <h3>Implementation &amp; Code Examples</h3>
+      <h3>Cryptographic Parameter Matrix &amp; Specifications</h3>
+      <table>
+        <thead>
+          <tr><th>Cryptographic Attribute</th><th>Standard Requirement / Security Bound</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Cryptographic Primitive</strong></td><td>Eksblowfish (Expensive Key Schedule Blowfish)</td></tr>
+          <tr><td><strong>Salt Specification</strong></td><td>128-bit (16 bytes) Cryptographically Secure Random Salt</td></tr>
+          <tr><td><strong>Cost Work Factor</strong></td><td>Logarithmic: 2^cost rounds (OWASP 2026 Recommended: 12)</td></tr>
+          <tr><td><strong>Input Password Boundary</strong></td><td>Strict 72-byte max length limit (truncated if exceeded)</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Audited Cryptographic Implementation Code</h3>
       <h4>Node.js (bcrypt)</h4>
       <pre><code>const bcrypt = require('bcrypt');
 
@@ -233,35 +197,10 @@ func main() {
 	fmt.Printf("Match: %v | Hash: %s\n", err == nil, string(hash))
 }</code></pre>
 
-      <h3>Cryptographic Architecture &amp; Production Security Considerations</h3>
-      <p>Deploying Bcrypt Password Hashing across cloud backends demands strict adherence to industry-standard defense-in-depth security principles:</p>
-      <ul>
-        <li><strong>Side-Channel Timing Resistance:</strong> Always evaluate cryptographic hashes, HMAC signatures, and authentication tokens using constant-time comparison algorithms (like <code>crypto.timingSafeEqual</code>) to eliminate microsecond side-channel timing leaks.</li>
-        <li><strong>Entropy Sourcing &amp; Nonce Generation:</strong> Ensure all cryptographic nonces, initialization vectors, and salts are derived from cryptographically secure pseudo-random number generators (CSPRNG) like <code>window.crypto.getRandomValues</code> or <code>/dev/urandom</code>.</li>
-        <li><strong>Key Hygiene &amp; Memory Deallocation:</strong> Zero out sensitive key buffers and decrypted payloads in memory immediately following transformation routines to limit memory dump exposure risks.</li>
-      </ul>
+      <h3>Zero-Knowledge Architecture &amp; Key Lifecycle Governance</h3>
+      <p>All cryptographic operations execute exclusively within your client browser memory using the native Web Cryptography API (W3C WebCrypto). Unencrypted plaintext payloads, private key pairs, and secret parameters are never transmitted across the network, stored in cookies, or written to disk. When implementing cryptographic modules in backend environments, enforce strict secret isolation, rotate master encryption keys using hardware-backed KMS solutions, and zero out plaintext byte buffers immediately following block cipher operations. Adhere to FIPS 140-3 guidelines for validated cryptographic boundary controls and secure entropy source verification.</p>
 
-      <section class="faq-section">
-        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
-        <div class="faq-item">
-          <h3>Why does Bcrypt fail or become vulnerable with passwords longer than 72 bytes?</h3>
-          <p>The Eksblowfish key schedule strictly truncates inputs at 72 bytes. Any characters beyond byte 72 are completely ignored during hashing. An attacker providing the first 72 bytes correct can append arbitrary garbage and still log in. Fix: Pre-hash the password with SHA-256 before feeding it into Bcrypt, giving a deterministic 32-byte binary digest.</p>
-        </div>
-        <div class="faq-item">
-          <h3>What cost factor (rounds) should I choose in production in 2026?</h3>
-          <p>OWASP recommends a minimum cost of 12. On modern cloud CPUs, cost 10 takes ~75ms, cost 12 takes ~300ms, and cost 14 takes ~1.2 seconds. Target a verification time between 250ms and 500ms to resist offline brute-forcing while maintaining responsive web login endpoints.</p>
-        </div>
-        <div class="faq-item">
-          <h3>What do the prefixes $2a$, $2b$, and $2y$ mean in a Bcrypt hash string?</h3>
-          <p><code>$2a$</code> was the early specification that had an implementation bug handling passwords with 255-character high-bit bytes in PHP crypt. <code>$2y$</code> was a PHP-specific fix. <code>$2b$</code> is the modern canonical standard (OpenBSD 2014) that fixes length buffer handling.</p>
-        </div>
-        <div class="faq-item">
-          <h3>Does Bcrypt protect against GPU and ASIC cracking farms?</h3>
-          <p>Yes. Bcrypt forces pseudo-random reads and writes across 4KB of S-box memory for each password check. Because GPUs have limited fast L1 cache per CUDA core, running thousands of Bcrypt threads in parallel causes severe memory cache misses, making GPU cracking orders of magnitude slower than MD5 or SHA-256.</p>
-        </div>
-      </section>
-
-      <h3>Official Standards &amp; Technical References</h3>
+      <h3>Official Security Standards &amp; RFC References</h3>
       <ul>
         <li><a href="https://www.usenix.org/legacy/event/usenix99/provos/provos.pdf" target="_blank" rel="noopener noreferrer">USENIX: A Future-Adaptable Password Scheme (Provos & Mazieres 1999)</a></li>
         <li><a href="https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html" target="_blank" rel="noopener noreferrer">OWASP Password Storage Cheat Sheet (2026 Edition)</a></li>

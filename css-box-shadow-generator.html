@@ -48,30 +48,6 @@
     }
 }
   </script>
-  <script type="application/ld+json">
-  {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "Why do single-layer box-shadows look muddy and unnatural?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Natural light requires multi-layered low-opacity shadows to simulate ambient light reflection."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Does box-shadow trigger expensive browser layout reflows?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Box-shadow skips layout reflows but incurs rasterization costs during scroll animations."
-      }
-    }
-  ]
-}
-  </script>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
@@ -156,30 +132,40 @@
     </section>
 
 
-                            <article class="seo-article">
+                                                <article class="seo-article">
       <h2>CSS Box Shadow: Layered Elevation, Ambient Occlusion & Inset Shading</h2>
       <p>CSS box-shadow creates realistic depth and elevation in digital interfaces. Production design systems layer multiple subtle shadows (ambient occlusion + direct directional light) to simulate physical light physics without muddy borders.</p>
 
-      <div class="tech-specs">
-        <div class="spec-card">
-          <strong>CSS Syntax</strong>
-          <span>box-shadow: [inset] <offset-x> <offset-y> <blur-radius> <spread-radius> <color></span>
+      <h3>CSS Properties &amp; Syntax Reference</h3>
+      <table>
+        <thead>
+          <tr><th>CSS Rule / Parameter</th><th>Syntax Specification &amp; Compositor Behavior</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>CSS Syntax</strong></td><td>box-shadow: [inset] <offset-x> <offset-y> <blur-radius> <spread-radius> <color></td></tr>
+          <tr><td><strong>Rendering Impact</strong></td><td>Triggers paint phase; excessive blur radii increase GPU rasterization time</td></tr>
+          <tr><td><strong>Layering Technique</strong></td><td>Stack multiple comma-separated shadows for smooth natural falloff</td></tr>
+          <tr><td><strong>Standard</strong></td><td>W3C CSS Backgrounds and Borders Module Level 3</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Cross-Browser Rendering &amp; Compositor Engine Support</h3>
+      <div class="browser-support-matrix">
+        <div class="engine-card">
+          <strong>Chromium / Blink (Chrome, Edge)</strong>
+          <span>Full hardware-accelerated GPU compositing. Zero layout shifts when dimensions are clamped.</span>
         </div>
-        <div class="spec-card">
-          <strong>Rendering Impact</strong>
-          <span>Triggers paint phase; excessive blur radii increase GPU rasterization time</span>
+        <div class="engine-card">
+          <strong>WebKit (Safari, iOS)</strong>
+          <span>Requires vendor prefixes (<code>-webkit-</code>) for backdrop filters, clip paths, and text smoothing.</span>
         </div>
-        <div class="spec-card">
-          <strong>Layering Technique</strong>
-          <span>Stack multiple comma-separated shadows for smooth natural falloff</span>
-        </div>
-        <div class="spec-card">
-          <strong>Standard</strong>
-          <span>W3C CSS Backgrounds and Borders Module Level 3</span>
+        <div class="engine-card">
+          <strong>Gecko (Mozilla Firefox)</strong>
+          <span>Standard W3C compliance. Supports native hardware layer caching and subpixel rendering.</span>
         </div>
       </div>
 
-      <h3>Implementation &amp; Code Examples</h3>
+      <h3>Production CSS Recipes &amp; Snippets</h3>
       <h4>Layered Smooth Drop Shadow</h4>
       <pre><code>.elevation-card {
   /* Layer 1: Sharp contact shadow | Layer 2: Soft ambient ambient light */
@@ -194,27 +180,10 @@
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.25);
 }</code></pre>
 
-      <h3>Browser Rendering Performance &amp; Hardware Compositing</h3>
-      <p>Executing CSS Box Shadow in modern web applications requires optimizing layout rendering across the browser rendering pipeline:</p>
-      <ul>
-        <li><strong>GPU Compositor Promotion:</strong> Restrict high-frequency dynamic transitions to compositor-only CSS properties (<code>transform</code> and <code>opacity</code>) to avoid triggering costly CPU layout reflows and repaints.</li>
-        <li><strong>Layout Thrashing Prevention:</strong> Decouple DOM geometry measurements from subsequent style write operations to eliminate forced synchronous reflow cycles and preserve 60 FPS scrolling.</li>
-        <li><strong>Subpixel Antialiasing:</strong> Design visual components with hardware-accelerated vector units and clamp scaling boundaries to eliminate visual pixel rounding jitter on high-DPI displays.</li>
-      </ul>
+      <h3>GPU Compositing &amp; Layout Performance Tuning</h3>
+      <p>Modern browser rendering engines divide graphical updates into Style, Layout, Paint, and Composite stages. High-performance interfaces optimize execution by isolating dynamic animations to compositor-only CSS properties—specifically <code>transform</code> and <code>opacity</code>. Altering geometry properties like <code>width</code>, <code>margin</code>, or <code>top</code> forces full layout reflows and repaints, increasing CPU utilization and causing frame drops on lower-power mobile devices. Leverage hardware layer promotion strategically to preserve 60 FPS visual smoothness, and explicitly reserve component aspect ratios to ensure Cumulative Layout Shift (CLS) scores remain at zero. Profile paint timings under 4x CPU throttling in Chrome DevTools to eliminate paint invalidation bottlenecks.</p>
 
-      <section class="faq-section">
-        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
-        <div class="faq-item">
-          <h3>Why do single-layer box-shadows look muddy and unnatural?</h3>
-          <p>Physical sunlight generates both direct directional shadows and diffused ambient light bouncing off surrounding surfaces. Single dark shadows with large blur look artificial; stacking 3-4 low-opacity shadows creates photorealistic depth.</p>
-        </div>
-        <div class="faq-item">
-          <h3>Does box-shadow trigger expensive browser layout reflows?</h3>
-          <p>No. Modifying box-shadow triggers the Paint and Composite phases, avoiding geometry Reflow (layout recalculations). However, animating large blur radii on scroll can cause frame drops.</p>
-        </div>
-      </section>
-
-      <h3>Official Standards &amp; Technical References</h3>
+      <h3>W3C Standards &amp; Browser Engine Specifications</h3>
       <ul>
         <li><a href="https://www.w3.org/TR/css-backgrounds-3/#box-shadow" target="_blank" rel="noopener noreferrer">W3C CSS Backgrounds and Borders Module Level 3 § Box-Shadow</a></li>
       </ul>

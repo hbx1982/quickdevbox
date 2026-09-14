@@ -47,30 +47,6 @@
     }
 }
   </script>
-  <script type="application/ld+json">
-  {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "What is the difference between auto-fit and auto-fill in CSS Grid?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "auto-fill reserves empty tracks across remaining space; auto-fit collapses empty tracks to expand existing items."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "How does minmax(0, 1fr) prevent grid items from overflowing the screen?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Changing track minimums to minmax(0, 1fr) prevents wide nested children from expanding grid tracks beyond viewports."
-      }
-    }
-  ]
-}
-  </script>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
@@ -168,30 +144,40 @@
       </div>
     </div>
 
-                    <article class="seo-article">
+                                        <article class="seo-article">
       <h2>CSS Grid Layout: Two-Dimensional Tracks, minmax() & Named Grid Areas</h2>
       <p>CSS Grid is a two-dimensional layout system managing both columns and rows simultaneously. It provides fractional units (1fr), flexible track sizing (minmax()), auto-placement, and template area definitions.</p>
 
-      <div class="tech-specs">
-        <div class="spec-card">
-          <strong>Dimensionality</strong>
-          <span>Two-dimensional layout (Simultaneous Column and Row tracks)</span>
+      <h3>CSS Properties &amp; Syntax Reference</h3>
+      <table>
+        <thead>
+          <tr><th>CSS Rule / Parameter</th><th>Syntax Specification &amp; Compositor Behavior</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Dimensionality</strong></td><td>Two-dimensional layout (Simultaneous Column and Row tracks)</td></tr>
+          <tr><td><strong>Track Sizing</strong></td><td>fr (fractional unit), minmax(min, max), auto-fit, auto-fill</td></tr>
+          <tr><td><strong>Template Areas</strong></td><td>grid-template-areas with ASCII-art layout mapping</td></tr>
+          <tr><td><strong>Standard</strong></td><td>W3C CSS Grid Layout Module Level 2</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Cross-Browser Rendering &amp; Compositor Engine Support</h3>
+      <div class="browser-support-matrix">
+        <div class="engine-card">
+          <strong>Chromium / Blink (Chrome, Edge)</strong>
+          <span>Full hardware-accelerated GPU compositing. Zero layout shifts when dimensions are clamped.</span>
         </div>
-        <div class="spec-card">
-          <strong>Track Sizing</strong>
-          <span>fr (fractional unit), minmax(min, max), auto-fit, auto-fill</span>
+        <div class="engine-card">
+          <strong>WebKit (Safari, iOS)</strong>
+          <span>Requires vendor prefixes (<code>-webkit-</code>) for backdrop filters, clip paths, and text smoothing.</span>
         </div>
-        <div class="spec-card">
-          <strong>Template Areas</strong>
-          <span>grid-template-areas with ASCII-art layout mapping</span>
-        </div>
-        <div class="spec-card">
-          <strong>Standard</strong>
-          <span>W3C CSS Grid Layout Module Level 2</span>
+        <div class="engine-card">
+          <strong>Gecko (Mozilla Firefox)</strong>
+          <span>Standard W3C compliance. Supports native hardware layer caching and subpixel rendering.</span>
         </div>
       </div>
 
-      <h3>Implementation &amp; Code Examples</h3>
+      <h3>Production CSS Recipes &amp; Snippets</h3>
       <h4>Responsive Auto-Fitting Grid</h4>
       <pre><code>.dashboard-grid {
   display: grid;
@@ -210,27 +196,10 @@
   grid-template-rows: 60px 1fr 40px;
 }</code></pre>
 
-      <h3>Browser Rendering Performance &amp; Hardware Compositing</h3>
-      <p>Executing CSS Grid Layout in modern web applications requires optimizing layout rendering across the browser rendering pipeline:</p>
-      <ul>
-        <li><strong>GPU Compositor Promotion:</strong> Restrict high-frequency dynamic transitions to compositor-only CSS properties (<code>transform</code> and <code>opacity</code>) to avoid triggering costly CPU layout reflows and repaints.</li>
-        <li><strong>Layout Thrashing Prevention:</strong> Decouple DOM geometry measurements from subsequent style write operations to eliminate forced synchronous reflow cycles and preserve 60 FPS scrolling.</li>
-        <li><strong>Subpixel Antialiasing:</strong> Design visual components with hardware-accelerated vector units and clamp scaling boundaries to eliminate visual pixel rounding jitter on high-DPI displays.</li>
-      </ul>
+      <h3>GPU Compositing &amp; Layout Performance Tuning</h3>
+      <p>Modern browser rendering engines divide graphical updates into Style, Layout, Paint, and Composite stages. High-performance interfaces optimize execution by isolating dynamic animations to compositor-only CSS properties—specifically <code>transform</code> and <code>opacity</code>. Altering geometry properties like <code>width</code>, <code>margin</code>, or <code>top</code> forces full layout reflows and repaints, increasing CPU utilization and causing frame drops on lower-power mobile devices. Leverage hardware layer promotion strategically to preserve 60 FPS visual smoothness, and explicitly reserve component aspect ratios to ensure Cumulative Layout Shift (CLS) scores remain at zero. Profile paint timings under 4x CPU throttling in Chrome DevTools to eliminate paint invalidation bottlenecks.</p>
 
-      <section class="faq-section">
-        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
-        <div class="faq-item">
-          <h3>What is the difference between auto-fit and auto-fill in CSS Grid?</h3>
-          <p><code>auto-fill</code> creates empty columns as long as space permits, even if there are no elements to fill them. <code>auto-fit</code> collapses empty tracks to 0px, expanding existing items to fill the entire container.</p>
-        </div>
-        <div class="faq-item">
-          <h3>How does minmax(0, 1fr) prevent grid items from overflowing the screen?</h3>
-          <p>Grid tracks default to <code>minmax(auto, 1fr)</code>, which refuses to shrink smaller than child content width. Changing the minimum track to <code>minmax(0, 1fr)</code> prevents wide code blocks or tables from blowing out grid layouts.</p>
-        </div>
-      </section>
-
-      <h3>Official Standards &amp; Technical References</h3>
+      <h3>W3C Standards &amp; Browser Engine Specifications</h3>
       <ul>
         <li><a href="https://www.w3.org/TR/css-grid-2/" target="_blank" rel="noopener noreferrer">W3C CSS Grid Layout Module Level 2</a></li>
       </ul>

@@ -48,30 +48,6 @@
     }
 }
   </script>
-  <script type="application/ld+json">
-  {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "Why does 0px get minified to simply 0 without units in CSS?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Zero lengths in CSS are mathematically unitless; stripping px saves bytes without altering layout rendering."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "How does CSS minification handle calc() mathematical expressions safely?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Spaces around plus and minus signs inside calc() are syntactically mandatory and preserved by minifiers."
-      }
-    }
-  ]
-}
-  </script>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
@@ -147,30 +123,40 @@
 
     <!-- SEO Technical Article Section -->
             <!-- Related Tools Grid Section -->
-                    <article class="seo-article">
+                                        <article class="seo-article">
       <h2>CSS Minification: AST Optimization, Comment Stripping & Shorthand Merging</h2>
       <p>CSS minification reduces stylesheet payload sizes by stripping redundant whitespace, removing comments, collapsing duplicate rules, and converting verbose color hexes into short 3-character forms without altering computed cascade styles.</p>
 
-      <div class="tech-specs">
-        <div class="spec-card">
-          <strong>Minification Engine</strong>
-          <span>AST (Abstract Syntax Tree) rule and declaration compression</span>
+      <h3>CSS Properties &amp; Syntax Reference</h3>
+      <table>
+        <thead>
+          <tr><th>CSS Rule / Parameter</th><th>Syntax Specification &amp; Compositor Behavior</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Minification Engine</strong></td><td>AST (Abstract Syntax Tree) rule and declaration compression</td></tr>
+          <tr><td><strong>Optimizations</strong></td><td>Hex color compression (#ffffff -> #fff), zero unit removal (0px -> 0), margin shorthand</td></tr>
+          <tr><td><strong>License Preservation</strong></td><td>Special comments (/*! ... */) retained for open-source licenses</td></tr>
+          <tr><td><strong>Standard</strong></td><td>W3C CSS Cascading and Inheritance Level 4</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Cross-Browser Rendering &amp; Compositor Engine Support</h3>
+      <div class="browser-support-matrix">
+        <div class="engine-card">
+          <strong>Chromium / Blink (Chrome, Edge)</strong>
+          <span>Full hardware-accelerated GPU compositing. Zero layout shifts when dimensions are clamped.</span>
         </div>
-        <div class="spec-card">
-          <strong>Optimizations</strong>
-          <span>Hex color compression (#ffffff -> #fff), zero unit removal (0px -> 0), margin shorthand</span>
+        <div class="engine-card">
+          <strong>WebKit (Safari, iOS)</strong>
+          <span>Requires vendor prefixes (<code>-webkit-</code>) for backdrop filters, clip paths, and text smoothing.</span>
         </div>
-        <div class="spec-card">
-          <strong>License Preservation</strong>
-          <span>Special comments (/*! ... */) retained for open-source licenses</span>
-        </div>
-        <div class="spec-card">
-          <strong>Standard</strong>
-          <span>W3C CSS Cascading and Inheritance Level 4</span>
+        <div class="engine-card">
+          <strong>Gecko (Mozilla Firefox)</strong>
+          <span>Standard W3C compliance. Supports native hardware layer caching and subpixel rendering.</span>
         </div>
       </div>
 
-      <h3>Implementation &amp; Code Examples</h3>
+      <h3>Production CSS Recipes &amp; Snippets</h3>
       <h4>Node.js (clean-css)</h4>
       <pre><code>import CleanCSS from 'clean-css';
 
@@ -187,27 +173,10 @@ console.log("Minified CSS:", minified.styles);</code></pre>
       <h4>CLI Minification</h4>
       <pre><code>npx clean-css-cli -o styles.min.css styles.css</code></pre>
 
-      <h3>Browser Rendering Performance &amp; Hardware Compositing</h3>
-      <p>Executing CSS Minification in modern web applications requires optimizing layout rendering across the browser rendering pipeline:</p>
-      <ul>
-        <li><strong>GPU Compositor Promotion:</strong> Restrict high-frequency dynamic transitions to compositor-only CSS properties (<code>transform</code> and <code>opacity</code>) to avoid triggering costly CPU layout reflows and repaints.</li>
-        <li><strong>Layout Thrashing Prevention:</strong> Decouple DOM geometry measurements from subsequent style write operations to eliminate forced synchronous reflow cycles and preserve 60 FPS scrolling.</li>
-        <li><strong>Subpixel Antialiasing:</strong> Design visual components with hardware-accelerated vector units and clamp scaling boundaries to eliminate visual pixel rounding jitter on high-DPI displays.</li>
-      </ul>
+      <h3>GPU Compositing &amp; Layout Performance Tuning</h3>
+      <p>Modern browser rendering engines divide graphical updates into Style, Layout, Paint, and Composite stages. High-performance interfaces optimize execution by isolating dynamic animations to compositor-only CSS properties—specifically <code>transform</code> and <code>opacity</code>. Altering geometry properties like <code>width</code>, <code>margin</code>, or <code>top</code> forces full layout reflows and repaints, increasing CPU utilization and causing frame drops on lower-power mobile devices. Leverage hardware layer promotion strategically to preserve 60 FPS visual smoothness, and explicitly reserve component aspect ratios to ensure Cumulative Layout Shift (CLS) scores remain at zero. Profile paint timings under 4x CPU throttling in Chrome DevTools to eliminate paint invalidation bottlenecks.</p>
 
-      <section class="faq-section">
-        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
-        <div class="faq-item">
-          <h3>Why does 0px get minified to simply 0 without units in CSS?</h3>
-          <p>In CSS specification syntax, zero lengths are unitless. <code>0px</code>, <code>0rem</code>, and <code>0%</code> resolve to the exact same value (except inside <code>calc()</code> expressions where units may be required). Removing units saves bandwidth.</p>
-        </div>
-        <div class="faq-item">
-          <h3>How does CSS minification handle calc() mathematical expressions safely?</h3>
-          <p>Spaces around addition (<code>+</code>) and subtraction (<code>-</code>) operators inside <code>calc()</code> are syntactically mandatory in CSS to differentiate negative numbers. Minifiers strictly preserve spaces inside <code>calc()</code>.</p>
-        </div>
-      </section>
-
-      <h3>Official Standards &amp; Technical References</h3>
+      <h3>W3C Standards &amp; Browser Engine Specifications</h3>
       <ul>
         <li><a href="https://www.w3.org/TR/css-syntax-3/" target="_blank" rel="noopener noreferrer">W3C CSS Syntax Module Level 3</a></li>
       </ul>

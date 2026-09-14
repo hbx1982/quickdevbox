@@ -49,30 +49,6 @@
     }
 }
   </script>
-  <script type="application/ld+json">
-  {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "What is the difference between JavaScript minification and obfuscation?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Minification focuses strictly on byte size reduction; obfuscation actively complicates code structure to hinder analysis."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Why must global identifiers remain unmangled during minification?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Minifiers only mangle local scope variables, preserving global window references and export names."
-      }
-    }
-  ]
-}
-  </script>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
@@ -148,30 +124,32 @@
 
     <!-- SEO Technical Article Section -->
         <!-- Related Tools Grid Section -->
-                    <article class="seo-article">
+                                        <article class="seo-article">
       <h2>JavaScript Minification: Terser AST Mangling, Dead Code Removal & Scope Analysis</h2>
       <p>JavaScript minification parses ECMAScript into an AST, performs scope variable mangling (shortening identifiers to a, b, c), eliminates unreachable dead code, folds constants, and removes comments to minimize bundle size.</p>
 
-      <div class="tech-specs">
-        <div class="spec-card">
-          <strong>Minification Engine</strong>
-          <span>Terser / esbuild AST parser and scope analyzer</span>
-        </div>
-        <div class="spec-card">
-          <strong>Variable Mangling</strong>
-          <span>Compresses local variable and function parameter names to single characters</span>
-        </div>
-        <div class="spec-card">
-          <strong>Dead Code Elimination</strong>
-          <span>Removes unreachable branches (e.g. if (false) { ... })</span>
-        </div>
-        <div class="spec-card">
-          <strong>Standard</strong>
-          <span>ECMA-262 ECMAScript Language Specification</span>
-        </div>
+      <h3>Format Specifications &amp; Syntax Reference</h3>
+      <table>
+        <thead>
+          <tr><th>Specification Parameter</th><th>Standard Value / Parsing Behavior</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Minification Engine</strong></td><td>Terser / esbuild AST parser and scope analyzer</td></tr>
+          <tr><td><strong>Variable Mangling</strong></td><td>Compresses local variable and function parameter names to single characters</td></tr>
+          <tr><td><strong>Dead Code Elimination</strong></td><td>Removes unreachable branches (e.g. if (false) { ... })</td></tr>
+          <tr><td><strong>Standard</strong></td><td>ECMA-262 ECMAScript Language Specification</td></tr>
+        </tbody>
+      </table>
+
+      <div class="edge-cases-box">
+        <h4>⚠️ Common Engineering Edge Cases &amp; Gotchas</h4>
+        <ul>
+        <li><strong>What is the difference between JavaScript minification and obfuscation:</strong> Minification optimizes code for smallest byte size and execution efficiency without intentionally altering control flow. Obfuscation intentionally scrambles execution logic, encrypts strings, and injects dummy code to impede reverse engineering.</li>
+        <li><strong>Why must global identifiers remain unmangled during minification:</strong> Mangling global variable or function names breaks external scripts, window exports, and third-party APIs that rely on public names. Minifiers restrict identifier mangling strictly to isolated local lexical scopes.</li>
+        </ul>
       </div>
 
-      <h3>Implementation &amp; Code Examples</h3>
+      <h3>Production Implementation Examples</h3>
       <h4>Terser Programmatic Minification</h4>
       <pre><code>import { minify } from 'terser';
 
@@ -190,27 +168,10 @@ const result = await minify(code, {
 });
 console.log(result.code); // 'function calculateTotal(o,l){return o+o*l}console.log(calculateTotal(100,.08));'</code></pre>
 
-      <h3>Architectural Design &amp; High-Throughput Pipeline Optimization</h3>
-      <p>Integrating JavaScript Minification into continuous delivery pipelines requires balancing lexical analysis latency with memory consumption:</p>
-      <ul>
-        <li><strong>Stream-Based Tokenization:</strong> For large data buffers exceeding 1MB, avoid synchronous in-memory string parsing on the main event thread. Stream input tokens through chunked pipelines to prevent event-loop thread starvation.</li>
-        <li><strong>Defensive Parsing &amp; Exception Isolation:</strong> Always wrap syntax transformations inside structured exception handlers to isolate malformed inputs, truncated payloads, and illegal control characters from crashing downstream microservices.</li>
-        <li><strong>Character Encoding Verification:</strong> Enforce strict UTF-8 input normalization at API gateways to prevent byte-order mark (BOM) anomalies, truncated multi-byte sequences, and surrogate pair deserialization errors.</li>
-      </ul>
+      <h3>High-Throughput Processing &amp; Memory Safety Bounds</h3>
+      <p>Client-side parsing and data transformation operates against browser V8 memory limits. When manipulating large documents or high-volume datasets approaching the 2MB boundary, synchronous operations can block the main execution thread. Production web applications should delegate heavy serialization and formatting jobs to background Web Workers or leverage streaming parsers (such as the WHATWG <code>TransformStream</code> interface) to maintain interface responsiveness during heavy data ingestion. Ensure robust UTF-8 multi-byte sequence validation to prevent surrogate pair slicing and payload corruption. Incorporate automated benchmark assertions into build pipelines to intercept algorithmic complexity regressions before production release.</p>
 
-      <section class="faq-section">
-        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
-        <div class="faq-item">
-          <h3>What is the difference between JavaScript minification and obfuscation?</h3>
-          <p>Minification optimizes code for smallest byte size and execution efficiency without intentionally altering control flow. Obfuscation intentionally scrambles execution logic, encrypts strings, and injects dummy code to impede reverse engineering.</p>
-        </div>
-        <div class="faq-item">
-          <h3>Why must global identifiers remain unmangled during minification?</h3>
-          <p>Mangling global variable or function names breaks external scripts, window exports, and third-party APIs that rely on public names. Minifiers restrict identifier mangling strictly to isolated local lexical scopes.</p>
-        </div>
-      </section>
-
-      <h3>Official Standards &amp; Technical References</h3>
+      <h3>Official Standards &amp; Format Specifications</h3>
       <ul>
         <li><a href="https://terser.org/docs/api-reference" target="_blank" rel="noopener noreferrer">Terser JavaScript Minifier Documentation</a></li>
         <li><a href="https://tc39.es/ecma262/" target="_blank" rel="noopener noreferrer">TC39 ECMAScript Specification</a></li>

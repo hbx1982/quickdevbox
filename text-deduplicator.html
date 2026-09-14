@@ -48,30 +48,6 @@
     }
 }
   </script>
-  <script type="application/ld+json">
-  {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "Why does 'sort | uniq' in Linux alter the original line order?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Unix uniq requires sorted inputs; use awk '!seen[$0]++' to deduplicate while preserving original file ordering."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "How do you handle trailing carriage return (\\r) line endings from Windows files?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Split strings using /\\r?\\n/ to prevent Windows CRLF carriage returns from corrupting deduplication matches."
-      }
-    }
-  ]
-}
-  </script>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
@@ -145,30 +121,32 @@
     </section>
 
 
-                        <article class="seo-article">
+                                            <article class="seo-article">
       <h2>Text Line Deduplication: Hash Set Lookup, Case Normalization & Memory Scale</h2>
       <p>Text deduplication processes multi-line text files, removing redundant identical lines while preserving original insertion order. The algorithm operates in O(N) linear time using in-memory Set lookup tables.</p>
 
-      <div class="tech-specs">
-        <div class="spec-card">
-          <strong>Algorithm</strong>
-          <span>Single-pass in-memory Set lookup table (O(N) time complexity)</span>
-        </div>
-        <div class="spec-card">
-          <strong>Comparison Options</strong>
-          <span>Case-sensitive vs Case-insensitive, Whitespace Trimming, Empty Line Removal</span>
-        </div>
-        <div class="spec-card">
-          <strong>Order Preservation</strong>
-          <span>Preserves first appearance order of unique lines</span>
-        </div>
-        <div class="spec-card">
-          <strong>Memory Usage</strong>
-          <span>Linear O(K) memory where K is the number of distinct unique strings</span>
-        </div>
+      <h3>Format Specifications &amp; Syntax Reference</h3>
+      <table>
+        <thead>
+          <tr><th>Specification Parameter</th><th>Standard Value / Parsing Behavior</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Algorithm</strong></td><td>Single-pass in-memory Set lookup table (O(N) time complexity)</td></tr>
+          <tr><td><strong>Comparison Options</strong></td><td>Case-sensitive vs Case-insensitive, Whitespace Trimming, Empty Line Removal</td></tr>
+          <tr><td><strong>Order Preservation</strong></td><td>Preserves first appearance order of unique lines</td></tr>
+          <tr><td><strong>Memory Usage</strong></td><td>Linear O(K) memory where K is the number of distinct unique strings</td></tr>
+        </tbody>
+      </table>
+
+      <div class="edge-cases-box">
+        <h4>⚠️ Common Engineering Edge Cases &amp; Gotchas</h4>
+        <ul>
+        <li><strong>Why does 'sort | uniq' in Linux alter the original line order:</strong> The standard Unix <code>uniq</code> command only detects adjacent duplicate lines, requiring input to be pre-sorted alphabetically. To preserve original line ordering on the command line, use <code>awk '!seen[$0]++'</code>.</li>
+        <li><strong>How do you handle trailing carriage return (\r) line endings from Windows files:</strong> Windows text files use CRLF (<code>\r\n</code>) line breaks while Linux uses LF (<code>\n</code>). If not split with <code>/\r?\n/</code>, hidden <code>\r</code> characters prevent lines from matching cleanly.</li>
+        </ul>
       </div>
 
-      <h3>Implementation &amp; Code Examples</h3>
+      <h3>Production Implementation Examples</h3>
       <h4>JavaScript Order-Preserving Line Deduplication</h4>
       <pre><code>function deduplicateLines(rawText, caseInsensitive = false, trimLines = true) {
   const lines = rawText.split(/\r?\n/);
@@ -192,27 +170,10 @@ sort input.txt | uniq > output.txt
 # Preserve original insertion order (awk)
 awk '!seen[$0]++' input.txt > output.txt</code></pre>
 
-      <h3>Data Integrity &amp; Computational Complexity Bounds</h3>
-      <p>Processing structured text streams with Text Line Deduplication requires predictable runtime complexity and boundary guarantees:</p>
-      <ul>
-        <li><strong>Linear Complexity Enforcement:</strong> Structure text processing and token lookup logic to operate in O(N) linear time using hash sets and sliding windows, avoiding quadratic loop bottlenecks.</li>
-        <li><strong>Unicode Segmentation Standards:</strong> Rely on standards-compliant segmentation APIs (such as <code>Intl.Segmenter</code>) rather than naive whitespace splitting to correctly handle multi-byte grapheme clusters.</li>
-        <li><strong>Payload Size Defenses:</strong> Impose strict maximum payload size boundaries on incoming text streams to prevent malicious or accidental denial of service via memory exhaustion.</li>
-      </ul>
+      <h3>High-Throughput Processing &amp; Memory Safety Bounds</h3>
+      <p>Client-side parsing and data transformation operates against browser V8 memory limits. When manipulating large documents or high-volume datasets approaching the 2MB boundary, synchronous operations can block the main execution thread. Production web applications should delegate heavy serialization and formatting jobs to background Web Workers or leverage streaming parsers (such as the WHATWG <code>TransformStream</code> interface) to maintain interface responsiveness during heavy data ingestion. Ensure robust UTF-8 multi-byte sequence validation to prevent surrogate pair slicing and payload corruption. Incorporate automated benchmark assertions into build pipelines to intercept algorithmic complexity regressions before production release.</p>
 
-      <section class="faq-section">
-        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
-        <div class="faq-item">
-          <h3>Why does 'sort | uniq' in Linux alter the original line order?</h3>
-          <p>The standard Unix <code>uniq</code> command only detects adjacent duplicate lines, requiring input to be pre-sorted alphabetically. To preserve original line ordering on the command line, use <code>awk '!seen[$0]++'</code>.</p>
-        </div>
-        <div class="faq-item">
-          <h3>How do you handle trailing carriage return (\r) line endings from Windows files?</h3>
-          <p>Windows text files use CRLF (<code>\r\n</code>) line breaks while Linux uses LF (<code>\n</code>). If not split with <code>/\r?\n/</code>, hidden <code>\r</code> characters prevent lines from matching cleanly.</p>
-        </div>
-      </section>
-
-      <h3>Official Standards &amp; Technical References</h3>
+      <h3>Official Standards &amp; Format Specifications</h3>
       <ul>
         <li><a href="https://pubs.opengroup.org/onlinepubs/9699919799/utilities/uniq.html" target="_blank" rel="noopener noreferrer">IEEE POSIX.1-2017: uniq utility specification</a></li>
       </ul>

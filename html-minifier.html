@@ -48,30 +48,6 @@
     }
 }
   </script>
-  <script type="application/ld+json">
-  {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "Why does naive HTML whitespace stripping break inline typography?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Whitespace between inline tags is layout-significant; minifiers must collapse spaces rather than delete them."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Does minifying HTML improve Largest Contentful Paint (LCP) performance?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Smaller HTML payloads accelerate Time to First Byte and early asset discovery, boosting LCP performance."
-      }
-    }
-  ]
-}
-  </script>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
@@ -147,30 +123,32 @@
 
     <!-- SEO Technical Article Section -->
         <!-- Related Tools Grid Section -->
-                    <article class="seo-article">
+                                        <article class="seo-article">
       <h2>HTML Minification: Whitespace Collapse, Comment Stripping & Attribute Trimming</h2>
       <p>HTML Minifier compresses HTML documents by stripping unnecessary whitespace between block elements, stripping HTML comments, removing optional quotes on safe attributes, and minifying inline script and style tags. It reduces document transfer latency, speeds up initial browser DOM tree construction, and improves Google Core Web Vitals metrics across mobile networks.</p>
 
-      <div class="tech-specs">
-        <div class="spec-card">
-          <strong>Payload Savings</strong>
-          <span>Typical 15-30% file size reduction before Gzip compression</span>
-        </div>
-        <div class="spec-card">
-          <strong>Whitespace Handling</strong>
-          <span>Collapses consecutive whitespace sequences into single space characters</span>
-        </div>
-        <div class="spec-card">
-          <strong>Comment Stripping</strong>
-          <span>Removes <!-- ... --> comments while preserving conditional comments</span>
-        </div>
-        <div class="spec-card">
-          <strong>Standard</strong>
-          <span>W3C HTML5 Parsing Algorithm Specification</span>
-        </div>
+      <h3>Format Specifications &amp; Syntax Reference</h3>
+      <table>
+        <thead>
+          <tr><th>Specification Parameter</th><th>Standard Value / Parsing Behavior</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Payload Savings</strong></td><td>Typical 15-30% file size reduction before Gzip compression</td></tr>
+          <tr><td><strong>Whitespace Handling</strong></td><td>Collapses consecutive whitespace sequences into single space characters</td></tr>
+          <tr><td><strong>Comment Stripping</strong></td><td>Removes <!-- ... --> comments while preserving conditional comments</td></tr>
+          <tr><td><strong>Standard</strong></td><td>W3C HTML5 Parsing Algorithm Specification</td></tr>
+        </tbody>
+      </table>
+
+      <div class="edge-cases-box">
+        <h4>⚠️ Common Engineering Edge Cases &amp; Gotchas</h4>
+        <ul>
+        <li><strong>Why does naive HTML whitespace stripping break inline typography:</strong> Between inline elements (like <code>&lt;span&gt;Hello&lt;/span&gt; &lt;span&gt;World&lt;/span&gt;</code>), a single whitespace character is significant for text layout. Aggressively stripping it causes words to collide as 'HelloWorld'.</li>
+        <li><strong>Does minifying HTML improve Largest Contentful Paint (LCP) performance:</strong> Yes. Smaller initial HTML payloads mean web browsers download the document faster over slow mobile networks, unblocking HTML parser execution and initiating asset discovery earlier in the critical rendering path.</li>
+        </ul>
       </div>
 
-      <h3>Implementation &amp; Code Examples</h3>
+      <h3>Production Implementation Examples</h3>
       <h4>Node.js (html-minifier-terser)</h4>
       <pre><code>import { minify } from 'html-minifier-terser';
 
@@ -195,27 +173,10 @@ const minified = await minify(rawHtml, {
 });
 console.log(minified);</code></pre>
 
-      <h3>Architectural Design &amp; High-Throughput Pipeline Optimization</h3>
-      <p>Integrating HTML Minification into continuous delivery pipelines requires balancing lexical analysis latency with memory consumption:</p>
-      <ul>
-        <li><strong>Stream-Based Tokenization:</strong> For large data buffers exceeding 1MB, avoid synchronous in-memory string parsing on the main event thread. Stream input tokens through chunked pipelines to prevent event-loop thread starvation.</li>
-        <li><strong>Defensive Parsing &amp; Exception Isolation:</strong> Always wrap syntax transformations inside structured exception handlers to isolate malformed inputs, truncated payloads, and illegal control characters from crashing downstream microservices.</li>
-        <li><strong>Character Encoding Verification:</strong> Enforce strict UTF-8 input normalization at API gateways to prevent byte-order mark (BOM) anomalies, truncated multi-byte sequences, and surrogate pair deserialization errors.</li>
-      </ul>
+      <h3>High-Throughput Processing &amp; Memory Safety Bounds</h3>
+      <p>Client-side parsing and data transformation operates against browser V8 memory limits. When manipulating large documents or high-volume datasets approaching the 2MB boundary, synchronous operations can block the main execution thread. Production web applications should delegate heavy serialization and formatting jobs to background Web Workers or leverage streaming parsers (such as the WHATWG <code>TransformStream</code> interface) to maintain interface responsiveness during heavy data ingestion. Ensure robust UTF-8 multi-byte sequence validation to prevent surrogate pair slicing and payload corruption. Incorporate automated benchmark assertions into build pipelines to intercept algorithmic complexity regressions before production release.</p>
 
-      <section class="faq-section">
-        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
-        <div class="faq-item">
-          <h3>Why does naive HTML whitespace stripping break inline typography?</h3>
-          <p>Between inline elements (like <code>&lt;span&gt;Hello&lt;/span&gt; &lt;span&gt;World&lt;/span&gt;</code>), a single whitespace character is significant for text layout. Aggressively stripping it causes words to collide as 'HelloWorld'.</p>
-        </div>
-        <div class="faq-item">
-          <h3>Does minifying HTML improve Largest Contentful Paint (LCP) performance?</h3>
-          <p>Yes. Smaller initial HTML payloads mean web browsers download the document faster over slow mobile networks, unblocking HTML parser execution and initiating asset discovery earlier in the critical rendering path.</p>
-        </div>
-      </section>
-
-      <h3>Official Standards &amp; Technical References</h3>
+      <h3>Official Standards &amp; Format Specifications</h3>
       <ul>
         <li><a href="https://html.spec.whatwg.org/multipage/parsing.html#tokenization" target="_blank" rel="noopener noreferrer">WHATWG HTML Living Standard § Tokenization</a></li>
       </ul>

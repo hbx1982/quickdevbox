@@ -48,30 +48,6 @@
     }
 }
   </script>
-  <script type="application/ld+json">
-  {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "Why is naive hash(key + message) insecure compared to HMAC?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Length extension attacks break naive secret || message hashing; HMAC's nested double-hash design prevents it."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Why must HMAC verification use constant-time equality checks?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Variable-time string comparisons leak timing side-channels; crypto.timingSafeEqual evaluates in constant time."
-      }
-    }
-  ]
-}
-  </script>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
@@ -145,30 +121,34 @@
     </section>
 
 
-                        <article class="seo-article">
+                                            <article class="seo-article">
       <h2>HMAC Message Authentication: RFC 2104 Nested Hashing & Constant-Time Verification</h2>
       <p>Hash-based Message Authentication Code (HMAC, RFC 2104) combines a cryptographic hash function with a secret key: HMAC(K, m) = H((K' ^ opad) || H((K' ^ ipad) || m)). It guarantees data integrity and authenticity for API signatures and Webhooks.</p>
 
-      <div class="tech-specs">
-        <div class="spec-card">
-          <strong>Standard Specification</strong>
-          <span>IETF RFC 2104 & NIST FIPS 198-1: The Keyed-Hash Message Authentication Code</span>
-        </div>
-        <div class="spec-card">
-          <strong>Inner / Outer Padding</strong>
-          <span>ipad = 0x36 repeated to block size | opad = 0x5C repeated to block size</span>
-        </div>
-        <div class="spec-card">
-          <strong>Length Extension Defense</strong>
-          <span>Double-hash nesting mathematically eliminates length extension attacks</span>
-        </div>
-        <div class="spec-card">
-          <strong>Comparison Primitive</strong>
-          <span>Mandatory constant-time comparison to prevent timing side-channels</span>
-        </div>
+      <div class="security-advisory">
+        <h4>🔒 Cryptographic Security &amp; Memory Defense Advisory</h4>
+        <p>Client-side cryptographic operations require defensive programming to protect sensitive keys and data from runtime introspection:</p>
+        <ul>
+          <li><strong>CSPRNG Nonce Generation:</strong> Always use <code>window.crypto.getRandomValues()</code> for IVs, salts, and nonces. Never use pseudo-random generators like <code>Math.random()</code> for key derivation or stream initialization.</li>
+          <li><strong>Timing Attack Mitigation:</strong> Evaluate authentication digests and HMAC tags using constant-time comparison (e.g. <code>crypto.timingSafeEqual</code>) to prevent microsecond side-channel timing leaks.</li>
+          <li><strong>Key Hygiene &amp; GC Deallocation:</strong> Overwrite sensitive plaintext buffers and key material in memory immediately after cipher execution to minimize memory dump exposure windows.</li>
+        </ul>
       </div>
 
-      <h3>Implementation &amp; Code Examples</h3>
+      <h3>Cryptographic Parameter Matrix &amp; Specifications</h3>
+      <table>
+        <thead>
+          <tr><th>Cryptographic Attribute</th><th>Standard Requirement / Security Bound</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Standard Specification</strong></td><td>IETF RFC 2104 & NIST FIPS 198-1: The Keyed-Hash Message Authentication Code</td></tr>
+          <tr><td><strong>Inner / Outer Padding</strong></td><td>ipad = 0x36 repeated to block size | opad = 0x5C repeated to block size</td></tr>
+          <tr><td><strong>Length Extension Defense</strong></td><td>Double-hash nesting mathematically eliminates length extension attacks</td></tr>
+          <tr><td><strong>Comparison Primitive</strong></td><td>Mandatory constant-time comparison to prevent timing side-channels</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Audited Cryptographic Implementation Code</h3>
       <h4>Node.js (crypto.createHmac & timingSafeEqual)</h4>
       <pre><code>import crypto from 'crypto';
 
@@ -190,27 +170,10 @@ payload = b'{"event": "payment.completed", "amount": 100}'
 signature = hmac.new(secret, payload, hashlib.sha256).hexdigest()
 print("Stripe-Style Signature:", signature)</code></pre>
 
-      <h3>Cryptographic Architecture &amp; Production Security Considerations</h3>
-      <p>Deploying HMAC Message Authentication across cloud backends demands strict adherence to industry-standard defense-in-depth security principles:</p>
-      <ul>
-        <li><strong>Side-Channel Timing Resistance:</strong> Always evaluate cryptographic hashes, HMAC signatures, and authentication tokens using constant-time comparison algorithms (like <code>crypto.timingSafeEqual</code>) to eliminate microsecond side-channel timing leaks.</li>
-        <li><strong>Entropy Sourcing &amp; Nonce Generation:</strong> Ensure all cryptographic nonces, initialization vectors, and salts are derived from cryptographically secure pseudo-random number generators (CSPRNG) like <code>window.crypto.getRandomValues</code> or <code>/dev/urandom</code>.</li>
-        <li><strong>Key Hygiene &amp; Memory Deallocation:</strong> Zero out sensitive key buffers and decrypted payloads in memory immediately following transformation routines to limit memory dump exposure risks.</li>
-      </ul>
+      <h3>Zero-Knowledge Architecture &amp; Key Lifecycle Governance</h3>
+      <p>All cryptographic operations execute exclusively within your client browser memory using the native Web Cryptography API (W3C WebCrypto). Unencrypted plaintext payloads, private key pairs, and secret parameters are never transmitted across the network, stored in cookies, or written to disk. When implementing cryptographic modules in backend environments, enforce strict secret isolation, rotate master encryption keys using hardware-backed KMS solutions, and zero out plaintext byte buffers immediately following block cipher operations. Adhere to FIPS 140-3 guidelines for validated cryptographic boundary controls and secure entropy source verification.</p>
 
-      <section class="faq-section">
-        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
-        <div class="faq-item">
-          <h3>Why is naive hash(key + message) insecure compared to HMAC?</h3>
-          <p>In Merkle-Damgard hash functions (MD5, SHA-1, SHA-256), appending data to <code>hash(secret || message)</code> enables length extension attacks: attackers can calculate a valid hash for appended data without knowing the secret.</p>
-        </div>
-        <div class="faq-item">
-          <h3>Why must HMAC verification use constant-time equality checks?</h3>
-          <p>Standard string equality (<code>===</code> or <code>==</code>) terminates at the first mismatching byte. Attackers measuring sub-microsecond server response times can deduce the signature byte-by-byte.</p>
-        </div>
-      </section>
-
-      <h3>Official Standards &amp; Technical References</h3>
+      <h3>Official Security Standards &amp; RFC References</h3>
       <ul>
         <li><a href="https://datatracker.ietf.org/doc/html/rfc2104" target="_blank" rel="noopener noreferrer">IETF RFC 2104: HMAC: Keyed-Hashing for Message Authentication</a></li>
         <li><a href="https://csrc.nist.gov/publications/detail/fips/198/1/final" target="_blank" rel="noopener noreferrer">NIST FIPS 198-1: The Keyed-Hash Message Authentication Code</a></li>

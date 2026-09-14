@@ -47,30 +47,6 @@
     }
 }
   </script>
-  <script type="application/ld+json">
-  {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "What defines 'large text' under WCAG 2.1 guidelines?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Large text is at least 24px regular or 18.66px bold, requiring a 3:1 contrast ratio for Level AA."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Why does pure black on pure white cause eye strain for neurodivergent users?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Extreme 21:1 contrast causes visual glare; off-black text on off-white provides accessible reading comfort."
-      }
-    }
-  ]
-}
-  </script>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
@@ -153,30 +129,40 @@
       <div id="statusMessage" class="status-box" style="display: none;"></div>
     </div>
 
-                    <article class="seo-article">
+                                        <article class="seo-article">
       <h2>WCAG 2.1 Color Contrast: Relative Luminance Math & AA/AAA Compliance</h2>
       <p>Web Content Accessibility Guidelines (WCAG 2.1) require sufficient contrast ratios between text and background colors to ensure legibility for users with vision impairments or color vision deficiencies.</p>
 
-      <div class="tech-specs">
-        <div class="spec-card">
-          <strong>Contrast Formula</strong>
-          <span>(L1 + 0.05) / (L2 + 0.05), where L is relative luminance</span>
+      <h3>CSS Properties &amp; Syntax Reference</h3>
+      <table>
+        <thead>
+          <tr><th>CSS Rule / Parameter</th><th>Syntax Specification &amp; Compositor Behavior</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Contrast Formula</strong></td><td>(L1 + 0.05) / (L2 + 0.05), where L is relative luminance</td></tr>
+          <tr><td><strong>Level AA Minimum</strong></td><td>4.5:1 for normal body text | 3:1 for large text (>= 18pt / 24px)</td></tr>
+          <tr><td><strong>Level AAA Enhanced</strong></td><td>7:1 for normal body text | 4.5:1 for large text</td></tr>
+          <tr><td><strong>UI Component Requirement</strong></td><td>3:1 contrast for user interface controls and focus indicator rings</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Cross-Browser Rendering &amp; Compositor Engine Support</h3>
+      <div class="browser-support-matrix">
+        <div class="engine-card">
+          <strong>Chromium / Blink (Chrome, Edge)</strong>
+          <span>Full hardware-accelerated GPU compositing. Zero layout shifts when dimensions are clamped.</span>
         </div>
-        <div class="spec-card">
-          <strong>Level AA Minimum</strong>
-          <span>4.5:1 for normal body text | 3:1 for large text (>= 18pt / 24px)</span>
+        <div class="engine-card">
+          <strong>WebKit (Safari, iOS)</strong>
+          <span>Requires vendor prefixes (<code>-webkit-</code>) for backdrop filters, clip paths, and text smoothing.</span>
         </div>
-        <div class="spec-card">
-          <strong>Level AAA Enhanced</strong>
-          <span>7:1 for normal body text | 4.5:1 for large text</span>
-        </div>
-        <div class="spec-card">
-          <strong>UI Component Requirement</strong>
-          <span>3:1 contrast for user interface controls and focus indicator rings</span>
+        <div class="engine-card">
+          <strong>Gecko (Mozilla Firefox)</strong>
+          <span>Standard W3C compliance. Supports native hardware layer caching and subpixel rendering.</span>
         </div>
       </div>
 
-      <h3>Implementation &amp; Code Examples</h3>
+      <h3>Production CSS Recipes &amp; Snippets</h3>
       <h4>JavaScript Relative Luminance & Contrast Formula</h4>
       <pre><code>function getLuminance(r, g, b) {
   const [rs, gs, bs] = [r, g, b].map(c => {
@@ -197,27 +183,10 @@ function getContrastRatio(l1, l2) {
   color: #ffffff;      /* Luminance: 1.0 - Contrast Ratio: 9.2:1 (Passes AAA) */
 }</code></pre>
 
-      <h3>Browser Rendering Performance &amp; Hardware Compositing</h3>
-      <p>Executing WCAG 2.1 Color Contrast in modern web applications requires optimizing layout rendering across the browser rendering pipeline:</p>
-      <ul>
-        <li><strong>GPU Compositor Promotion:</strong> Restrict high-frequency dynamic transitions to compositor-only CSS properties (<code>transform</code> and <code>opacity</code>) to avoid triggering costly CPU layout reflows and repaints.</li>
-        <li><strong>Layout Thrashing Prevention:</strong> Decouple DOM geometry measurements from subsequent style write operations to eliminate forced synchronous reflow cycles and preserve 60 FPS scrolling.</li>
-        <li><strong>Subpixel Antialiasing:</strong> Design visual components with hardware-accelerated vector units and clamp scaling boundaries to eliminate visual pixel rounding jitter on high-DPI displays.</li>
-      </ul>
+      <h3>GPU Compositing &amp; Layout Performance Tuning</h3>
+      <p>Modern browser rendering engines divide graphical updates into Style, Layout, Paint, and Composite stages. High-performance interfaces optimize execution by isolating dynamic animations to compositor-only CSS properties—specifically <code>transform</code> and <code>opacity</code>. Altering geometry properties like <code>width</code>, <code>margin</code>, or <code>top</code> forces full layout reflows and repaints, increasing CPU utilization and causing frame drops on lower-power mobile devices. Leverage hardware layer promotion strategically to preserve 60 FPS visual smoothness, and explicitly reserve component aspect ratios to ensure Cumulative Layout Shift (CLS) scores remain at zero. Profile paint timings under 4x CPU throttling in Chrome DevTools to eliminate paint invalidation bottlenecks.</p>
 
-      <section class="faq-section">
-        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
-        <div class="faq-item">
-          <h3>What defines 'large text' under WCAG 2.1 guidelines?</h3>
-          <p>Large text is defined as at least 18pt (24px) regular weight, or at least 14pt (18.66px) with bold weight (700+). Large text requires a lower 3:1 contrast ratio to achieve Level AA compliance.</p>
-        </div>
-        <div class="faq-item">
-          <h3>Why does pure black on pure white cause eye strain for neurodivergent users?</h3>
-          <p>A maximum 21:1 contrast ratio (pure #000000 on pure #ffffff) can cause haloing, vibration, and visual fatigue for users with dyslexia or photophobia. Professional UI designers often use deep dark grays (like #0f172a) on off-white (#f8fafc).</p>
-        </div>
-      </section>
-
-      <h3>Official Standards &amp; Technical References</h3>
+      <h3>W3C Standards &amp; Browser Engine Specifications</h3>
       <ul>
         <li><a href="https://www.w3.org/TR/WCAG21/#contrast-minimum" target="_blank" rel="noopener noreferrer">W3C Web Content Accessibility Guidelines (WCAG) 2.1 § 1.4.3 Contrast (Minimum)</a></li>
         <li><a href="https://www.w3.org/TR/WCAG21/#dfn-relative-luminance" target="_blank" rel="noopener noreferrer">W3C Relative Luminance Definition</a></li>

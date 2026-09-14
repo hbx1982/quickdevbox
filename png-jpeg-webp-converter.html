@@ -47,30 +47,6 @@
     }
 }
   </script>
-  <script type="application/ld+json">
-  {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "Why does converting transparent PNG images to JPEG produce a black background?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "JPEG does not support alpha channels; transparent pixels default to black. Use WebP or PNG for transparency."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "What is the difference between WebP lossy and WebP lossless compression?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "WebP lossless beats PNG file sizes by 26%; WebP lossy compresses photos similarly to JPEG with smaller payloads."
-      }
-    }
-  ]
-}
-  </script>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
@@ -153,30 +129,32 @@
       <div id="statusMessage" class="status-box" style="display: none;"></div>
     </div>
 
-                    <article class="seo-article">
+                                        <article class="seo-article">
       <h2>Image Format Transcoding: PNG, JPEG, WebP & AVIF Compression Trade-offs</h2>
       <p>Transcoding raster graphics between PNG, JPEG, WebP, and AVIF formats balances visual fidelity against network transfer byte size. Converting lossless PNGs to lossy WebP achieves 60-80% file size reduction while preserving alpha transparency.</p>
 
-      <div class="tech-specs">
-        <div class="spec-card">
-          <strong>Format Matrix</strong>
-          <span>PNG (Lossless / Alpha), JPEG (Lossy DCT), WebP (VP8), AVIF (AV1 Intra)</span>
-        </div>
-        <div class="spec-card">
-          <strong>Client API</strong>
-          <span>HTMLCanvasElement.toBlob(callback, type, quality)</span>
-        </div>
-        <div class="spec-card">
-          <strong>Bandwidth Savings</strong>
-          <span>WebP provides 25-35% size reduction over JPEG; AVIF achieves up to 50%</span>
-        </div>
-        <div class="spec-card">
-          <strong>Quality Parameter</strong>
-          <span>Floating-point scale from 0.0 (maximum compression) to 1.0 (lossless/best)</span>
-        </div>
+      <h3>Format Specifications &amp; Syntax Reference</h3>
+      <table>
+        <thead>
+          <tr><th>Specification Parameter</th><th>Standard Value / Parsing Behavior</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Format Matrix</strong></td><td>PNG (Lossless / Alpha), JPEG (Lossy DCT), WebP (VP8), AVIF (AV1 Intra)</td></tr>
+          <tr><td><strong>Client API</strong></td><td>HTMLCanvasElement.toBlob(callback, type, quality)</td></tr>
+          <tr><td><strong>Bandwidth Savings</strong></td><td>WebP provides 25-35% size reduction over JPEG; AVIF achieves up to 50%</td></tr>
+          <tr><td><strong>Quality Parameter</strong></td><td>Floating-point scale from 0.0 (maximum compression) to 1.0 (lossless/best)</td></tr>
+        </tbody>
+      </table>
+
+      <div class="edge-cases-box">
+        <h4>⚠️ Common Engineering Edge Cases &amp; Gotchas</h4>
+        <ul>
+        <li><strong>Why does converting transparent PNG images to JPEG produce a black background:</strong> The JPEG format specification has zero support for an alpha transparency channel. Any transparent pixels are written as raw zeroes, rendering as solid black. Always use WebP or PNG for graphics with transparent backgrounds.</li>
+        <li><strong>What is the difference between WebP lossy and WebP lossless compression:</strong> WebP lossy uses predictive macroblock coding similar to VP8 video frames. WebP lossless uses spatial transformations, color cache modeling, and entropy encoding, outperforming PNG by ~26% in file size.</li>
+        </ul>
       </div>
 
-      <h3>Implementation &amp; Code Examples</h3>
+      <h3>Production Implementation Examples</h3>
       <h4>Client-Side Canvas Image Transcoding</h4>
       <pre><code>function convertImageFormat(sourceImg, targetMime = 'image/webp', quality = 0.85) {
   return new Promise(resolve => {
@@ -198,27 +176,10 @@ def transcode_to_webp(input_path, output_path, quality=85):
             img = img.convert("RGB")
         img.save(output_path, "WEBP", quality=quality)</code></pre>
 
-      <h3>Memory Management &amp; Client-Side Buffer Handling</h3>
-      <p>Processing Image Format Transcoding directly in browser client memory demands proactive memory cleanup and resource limits:</p>
-      <ul>
-        <li><strong>Blob Lifecycle Cleanup:</strong> Always invoke <code>URL.revokeObjectURL()</code> once binary image blobs finish loading to release allocated texture memory and prevent browser tab memory exhaustion.</li>
-        <li><strong>Offscreen Canvas Workers:</strong> Offload CPU-heavy pixel matrix loops and color quantization algorithms to background Web Workers using <code>OffscreenCanvas</code> to keep user interactions smooth.</li>
-        <li><strong>Texture Dimension Clamping:</strong> Verify source image dimensions prior to canvas allocation to prevent mobile browser crashes caused by device-specific maximum canvas texture limits.</li>
-      </ul>
+      <h3>High-Throughput Processing &amp; Memory Safety Bounds</h3>
+      <p>Client-side parsing and data transformation operates against browser V8 memory limits. When manipulating large documents or high-volume datasets approaching the 2MB boundary, synchronous operations can block the main execution thread. Production web applications should delegate heavy serialization and formatting jobs to background Web Workers or leverage streaming parsers (such as the WHATWG <code>TransformStream</code> interface) to maintain interface responsiveness during heavy data ingestion. Ensure robust UTF-8 multi-byte sequence validation to prevent surrogate pair slicing and payload corruption. Incorporate automated benchmark assertions into build pipelines to intercept algorithmic complexity regressions before production release.</p>
 
-      <section class="faq-section">
-        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
-        <div class="faq-item">
-          <h3>Why does converting transparent PNG images to JPEG produce a black background?</h3>
-          <p>The JPEG format specification has zero support for an alpha transparency channel. Any transparent pixels are written as raw zeroes, rendering as solid black. Always use WebP or PNG for graphics with transparent backgrounds.</p>
-        </div>
-        <div class="faq-item">
-          <h3>What is the difference between WebP lossy and WebP lossless compression?</h3>
-          <p>WebP lossy uses predictive macroblock coding similar to VP8 video frames. WebP lossless uses spatial transformations, color cache modeling, and entropy encoding, outperforming PNG by ~26% in file size.</p>
-        </div>
-      </section>
-
-      <h3>Official Standards &amp; Technical References</h3>
+      <h3>Official Standards &amp; Format Specifications</h3>
       <ul>
         <li><a href="https://developers.google.com/speed/webp/docs/compression" target="_blank" rel="noopener noreferrer">Google WebP Compression Specification</a></li>
         <li><a href="https://aomediacodec.github.io/av1-avif/" target="_blank" rel="noopener noreferrer">Alliance for Open Media: AV1 Image File Format (AVIF)</a></li>

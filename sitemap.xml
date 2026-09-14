@@ -2,721 +2,721 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://quickdevbox.com/</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/about</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/privacy-policy</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/terms</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/json-formatter</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/base64-encoder-decoder</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/jwt-decoder</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/cron-expression-generator</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/subnet-calculator</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/css-glassmorphism-generator</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/sql-formatter</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/image-to-base64-converter</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/url-encoder-decoder</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/uuid-generator</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/timestamp-converter</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/regex-tester</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/diff-checker</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/css-minifier</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/px-to-rem-converter</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/rgb-to-hex-converter</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/curl-to-code-converter</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/bcrypt-hash-generator</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/hash-generator</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/hmac-generator</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/htpasswd-generator</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/json-to-csv-converter</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/yaml-to-json-converter</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/html-entity-encoder</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/xml-formatter</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/lorem-ipsum-generator</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/word-counter</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/text-deduplicator</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/base32-encoder-decoder</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/case-converter</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/aes-encryption-decryption</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/des-encryption-decryption</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/rsa-key-generator</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/sha384-sha512-hash-generator</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/sha3-hash-generator</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/md5-hash-generator</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/sha1-hash-generator</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/base85-encoder-decoder</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/caesar-cipher</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/password-strength-generator</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/html-unescape</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/unicode-escape</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/hex-ascii-converter</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/pbkdf2-hash-generator</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/crc32-checksum</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/html-formatter-beautifier</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/css-formatter-beautifier</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/javascript-formatter-beautifier</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/html-minifier</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/javascript-minifier</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/json-minifier</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/xml-to-json-converter</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/csv-to-json-converter</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/csv-to-sql-converter</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/json-to-yaml-converter</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/yaml-formatter</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/graphql-formatter</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/json-to-typescript-interface</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/json-to-go-struct-converter</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/json-to-rust-struct-converter</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/json-to-python-dataclass-converter</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/typescript-to-javascript-converter</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/toml-to-json-converter</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/url-query-string-to-json</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/string-escape-unescape-java</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/php-serialize-unserialize</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/bson-json-converter</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/babel-js-compiler</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/protobuf-to-json-converter</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/ipv6-subnet-calculator</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/user-agent-parser</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/http-status-code-checker</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/mac-address-lookup</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/dns-record-decoder</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/dockerfile-generator</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/nginx-config-builder</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/yaml-to-k8s-manifest</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/ssl-certificate-decoder</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/ssh-key-pair-generator</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/port-number-lookup</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/ping-latency-estimator</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/systemd-service-generator</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/crontab-to-systemd-timer</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/hsts-header-generator</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/css-box-shadow-generator</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/css-gradient-generator</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/flexbox-layout-generator</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/css-grid-generator</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/wcag-color-contrast-checker</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/css-clamp-calculator</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/css-border-radius-generator</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/svg-to-css-converter</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/px-to-viewport-converter</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/css-animation-generator</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/css-clip-path-generator</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/css-filter-generator</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/css-transform-3d-generator</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/css-scrollbar-customizer</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/css-triangle-generator</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/aspect-ratio-calculator</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/css-text-shadow-generator</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/svg-optimizer-svgo</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/font-converter-woff2</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/css-cubic-bezier-generator</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/color-palette-generator</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/markdown-to-html</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/base64-to-image-converter</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/fav-icon-generator</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/eyedropper-color-picker</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/image-cropper-resizer</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/png-jpeg-webp-converter</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/image-exif-metadata-stripper</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/color-blindness-simulator</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/svg-pattern-generator</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/image-color-palette-extractor</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://quickdevbox.com/css-cursor-previewer</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>

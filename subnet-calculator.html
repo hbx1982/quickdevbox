@@ -48,46 +48,6 @@
     }
 }
   </script>
-  <script type="application/ld+json">
-  {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "Why are 2 IP addresses subtracted from the total host count in a subnet?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "The first address is the Network Identifier and the last is the Broadcast address. Neither can be assigned to hosts."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Can you use a /31 subnet without wasting 2 addresses?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "RFC 3021 permits /31 subnets for point-to-point router links, assigning both addresses to interfaces without broadcast overhead."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "What are the standard RFC 1918 Private IP ranges for VPC subnets?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "RFC 1918 defines 10.0.0.0/8, 172.16.0.0/12, and 192.168.0.0/16 as private non-routable address ranges."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Why does AWS VPC reserve 5 IP addresses per subnet instead of 2?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "AWS VPC reserves 5 addresses per subnet: network, VPC router, Amazon DNS, future reserve, and broadcast."
-      }
-    }
-  ]
-}
-  </script>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
@@ -170,30 +130,32 @@
     </section>
 
 
-                        <article class="seo-article">
+                                            <article class="seo-article">
       <h2>IPv4 CIDR Subnet Architecture: VLSM Masking, Network Boundaries & Broadcast Math</h2>
       <p>Classless Inter-Domain Routing (CIDR, RFC 4632) allocates IP addresses using a variable-length prefix mask (/0 to /32). Subnet calculation computes network address, broadcast address, and host ranges by applying bitwise AND and NOT masks against 32-bit IPv4 integers.</p>
 
-      <div class="tech-specs">
-        <div class="spec-card">
-          <strong>Addressing Architecture</strong>
-          <span>32-bit IPv4 dotted-decimal (4 octets / 8 bits each)</span>
-        </div>
-        <div class="spec-card">
-          <strong>CIDR Standard</strong>
-          <span>IETF RFC 4632 / RFC 1918 Private Address Allocation</span>
-        </div>
-        <div class="spec-card">
-          <strong>Usable Host Formula</strong>
-          <span>2^(32 - prefix) - 2 (Reserved: Network ID & Broadcast)</span>
-        </div>
-        <div class="spec-card">
-          <strong>Special Masks</strong>
-          <span>/31 (RFC 3021 Point-to-Point: 2 hosts) | /32 (Single Host)</span>
-        </div>
-      </div>
+      <h3>Infrastructure Parameters &amp; Protocol Matrix</h3>
+      <table>
+        <thead>
+          <tr><th>Directive / Configuration Key</th><th>Production Bound &amp; Recommended Setting</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Addressing Architecture</strong></td><td>32-bit IPv4 dotted-decimal (4 octets / 8 bits each)</td></tr>
+          <tr><td><strong>CIDR Standard</strong></td><td>IETF RFC 4632 / RFC 1918 Private Address Allocation</td></tr>
+          <tr><td><strong>Usable Host Formula</strong></td><td>2^(32 - prefix) - 2 (Reserved: Network ID & Broadcast)</td></tr>
+          <tr><td><strong>Special Masks</strong></td><td>/31 (RFC 3021 Point-to-Point: 2 hosts) | /32 (Single Host)</td></tr>
+        </tbody>
+      </table>
 
-      <h3>Implementation &amp; Code Examples</h3>
+      <h3>Production Deployment &amp; Reliability Checklist</h3>
+      <ul>
+        <li><strong>Configuration Idempotency:</strong> Validate declarative manifests with dry-run flags (e.g. <code>--dry-run=client</code>) before applying changes to live cloud infrastructure.</li>
+        <li><strong>Boundary &amp; Subnet Isolation:</strong> Enforce strict CIDR subnet masking and port isolation to prevent unintended exposure of internal management ports.</li>
+        <li><strong>Graceful Shutdown &amp; Signal Trapping:</strong> Configure container runtimes with appropriate termination grace periods (SIGTERM traps) to allow active TCP connections to drain cleanly.</li>
+        <li><strong>Strict Schema &amp; Type Contracts:</strong> Establish automated serialization contract testing between producer and consumer services to prevent breaking structural changes during schema migrations.</li>
+      </ul>
+
+      <h3>Infrastructure Configuration &amp; Command Examples</h3>
       <h4>Python 3 (ipaddress module)</h4>
       <pre><code>import ipaddress
 
@@ -228,35 +190,10 @@ func main() {
 	fmt.Printf("IP: %s | Network: %s | Mask: %s\n", ip, ipnet.IP, net.IP(ipnet.Mask))
 }</code></pre>
 
-      <h3>Production Infrastructure Reliability &amp; Hardening</h3>
-      <p>Managing IPv4 CIDR Subnet Architecture configurations within automated cloud native clusters requires robust deployment practices:</p>
-      <ul>
-        <li><strong>Zero-Trust Ingress Enforcement:</strong> Protect service boundaries with strict ingress controller timeout policies, TLS termination standards, and mutual TLS (mTLS) authentication across inter-service meshes.</li>
-        <li><strong>Declarative Manifest Validation:</strong> Automate schema validation and syntax linting inside CI/CD pipelines before applying infrastructure configuration units to staging and production clusters.</li>
-        <li><strong>Liveness Probes &amp; Graceful Termination:</strong> Configure proper termination grace intervals (SIGTERM traps) and decouple health check probes from heavy backend dependencies to prevent cascading reboot loops.</li>
-      </ul>
+      <h3>Production Pipeline Automation &amp; Configuration Hygiene</h3>
+      <p>Managing modern infrastructure manifests requires automated linting, schema validation, and strict environment parity across development, staging, and production clusters. Integrate declarative validation utilities (such as <code>yamllint</code>, <code>kubeconform</code>, or <code>shellcheck</code>) directly into CI/CD pipelines to intercept syntax regressions before provisioning cloud resources. Never commit static authentication credentials into repository manifests; leverage dynamic secret injection, scoped service accounts, and GitOps synchronization controllers to guarantee immutable delivery. Establish automated canary deployments with metric-based auto-rollback triggers to prevent faulty infrastructure rollouts.</p>
 
-      <section class="faq-section">
-        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
-        <div class="faq-item">
-          <h3>Why are 2 IP addresses subtracted from the total host count in a subnet?</h3>
-          <p>In standard IPv4 subnets, the all-zero host bits represent the Network Identifier, and the all-one host bits represent the Subnet Directed Broadcast address. Neither can be assigned to a host network interface card (NIC).</p>
-        </div>
-        <div class="faq-item">
-          <h3>Can you use a /31 subnet without wasting 2 addresses?</h3>
-          <p>Yes, in point-to-point links. RFC 3021 defines /31 subnets (2 total addresses, host bits 0 and 1) specifically for router-to-router connections, eliminating network and broadcast reservation overhead.</p>
-        </div>
-        <div class="faq-item">
-          <h3>What are the standard RFC 1918 Private IP ranges for VPC subnets?</h3>
-          <p>RFC 1918 reserves three non-routable blocks: <code>10.0.0.0/8</code> (10.0.0.0 - 10.255.255.255), <code>172.16.0.0/12</code> (172.16.0.0 - 172.31.255.255), and <code>192.168.0.0/16</code> (192.168.0.0 - 192.168.255.255).</p>
-        </div>
-        <div class="faq-item">
-          <h3>Why does AWS VPC reserve 5 IP addresses per subnet instead of 2?</h3>
-          <p>AWS reserves the first 4 IP addresses and the last IP address in each subnet: .0 (Network), .1 (VPC router), .2 (DNS resolver), .3 (Future use), and .255 (Broadcast). A /24 in AWS has 251 usable IPs, not 254.</p>
-        </div>
-      </section>
-
-      <h3>Official Standards &amp; Technical References</h3>
+      <h3>Official IETF RFCs &amp; Systems Standards</h3>
       <ul>
         <li><a href="https://datatracker.ietf.org/doc/html/rfc4632" target="_blank" rel="noopener noreferrer">IETF RFC 4632: Classless Inter-domain Routing (CIDR) Protocol</a></li>
         <li><a href="https://datatracker.ietf.org/doc/html/rfc1918" target="_blank" rel="noopener noreferrer">IETF RFC 1918: Address Allocation for Private Internets</a></li>

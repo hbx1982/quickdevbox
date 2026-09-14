@@ -48,30 +48,6 @@
     }
 }
   </script>
-  <script type="application/ld+json">
-  {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "What is Catastrophic Backtracking (ReDoS) and how does it freeze servers?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Nested quantifiers on non-matching text trigger exponential permutation loops (ReDoS), freezing server CPUs."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "What is the difference between greedy and lazy quantifiers?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Greedy quantifiers match maximum characters; lazy quantifiers match the smallest valid substring."
-      }
-    }
-  ]
-}
-  </script>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
@@ -146,30 +122,34 @@
     </section>
 
   
-                        <article class="seo-article">
+                                            <article class="seo-article">
       <h2>Regular Expressions: NFA Engine Mechanics, Backtracking & ReDoS Defense</h2>
       <p>Regular expression engines evaluate pattern strings against text streams using Non-Deterministic Finite Automata (NFA). Understanding character classes, greedy vs lazy quantifiers, lookaround assertions, and catastrophic backtracking prevents Regular Expression Denial of Service (ReDoS).</p>
 
-      <div class="tech-specs">
-        <div class="spec-card">
-          <strong>Engine Architecture</strong>
-          <span>Nondeterministic Finite Automata (NFA) with Backtracking</span>
-        </div>
-        <div class="spec-card">
-          <strong>Standard Specifications</strong>
-          <span>ECMAScript RegExp / PCRE (Perl Compatible Regular Expressions)</span>
-        </div>
-        <div class="spec-card">
-          <strong>Vulnerability Class</strong>
-          <span>CWE-1333: Ineffective Regular Expression Complexity (Catastrophic Backtracking)</span>
-        </div>
-        <div class="spec-card">
-          <strong>Flag Modifiers</strong>
-          <span>g (global), i (case-insensitive), m (multiline), s (dotAll), u (unicode), y (sticky)</span>
-        </div>
+      <div class="security-advisory">
+        <h4>🔒 Cryptographic Security &amp; Memory Defense Advisory</h4>
+        <p>Client-side cryptographic operations require defensive programming to protect sensitive keys and data from runtime introspection:</p>
+        <ul>
+          <li><strong>CSPRNG Nonce Generation:</strong> Always use <code>window.crypto.getRandomValues()</code> for IVs, salts, and nonces. Never use pseudo-random generators like <code>Math.random()</code> for key derivation or stream initialization.</li>
+          <li><strong>Timing Attack Mitigation:</strong> Evaluate authentication digests and HMAC tags using constant-time comparison (e.g. <code>crypto.timingSafeEqual</code>) to prevent microsecond side-channel timing leaks.</li>
+          <li><strong>Key Hygiene &amp; GC Deallocation:</strong> Overwrite sensitive plaintext buffers and key material in memory immediately after cipher execution to minimize memory dump exposure windows.</li>
+        </ul>
       </div>
 
-      <h3>Implementation &amp; Code Examples</h3>
+      <h3>Cryptographic Parameter Matrix &amp; Specifications</h3>
+      <table>
+        <thead>
+          <tr><th>Cryptographic Attribute</th><th>Standard Requirement / Security Bound</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Engine Architecture</strong></td><td>Nondeterministic Finite Automata (NFA) with Backtracking</td></tr>
+          <tr><td><strong>Standard Specifications</strong></td><td>ECMAScript RegExp / PCRE (Perl Compatible Regular Expressions)</td></tr>
+          <tr><td><strong>Vulnerability Class</strong></td><td>CWE-1333: Ineffective Regular Expression Complexity (Catastrophic Backtracking)</td></tr>
+          <tr><td><strong>Flag Modifiers</strong></td><td>g (global), i (case-insensitive), m (multiline), s (dotAll), u (unicode), y (sticky)</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Audited Cryptographic Implementation Code</h3>
       <h4>Safe Regex Token Extraction</h4>
       <pre><code>const logPattern = /^\[(?<timestamp>[^\]]+)\]\s+(?<level>[A-Z]+):\s+(?<message>.*)$/m;
 
@@ -185,27 +165,10 @@ if (match) {
 # Use atomic groups (?>...) or possessive quantifiers *+ to eliminate catastrophic backtracking
 safe_pattern = re.compile(r'^[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*$')</code></pre>
 
-      <h3>Cryptographic Architecture &amp; Production Security Considerations</h3>
-      <p>Deploying Regular Expressions across cloud backends demands strict adherence to industry-standard defense-in-depth security principles:</p>
-      <ul>
-        <li><strong>Side-Channel Timing Resistance:</strong> Always evaluate cryptographic hashes, HMAC signatures, and authentication tokens using constant-time comparison algorithms (like <code>crypto.timingSafeEqual</code>) to eliminate microsecond side-channel timing leaks.</li>
-        <li><strong>Entropy Sourcing &amp; Nonce Generation:</strong> Ensure all cryptographic nonces, initialization vectors, and salts are derived from cryptographically secure pseudo-random number generators (CSPRNG) like <code>window.crypto.getRandomValues</code> or <code>/dev/urandom</code>.</li>
-        <li><strong>Key Hygiene &amp; Memory Deallocation:</strong> Zero out sensitive key buffers and decrypted payloads in memory immediately following transformation routines to limit memory dump exposure risks.</li>
-      </ul>
+      <h3>Zero-Knowledge Architecture &amp; Key Lifecycle Governance</h3>
+      <p>All cryptographic operations execute exclusively within your client browser memory using the native Web Cryptography API (W3C WebCrypto). Unencrypted plaintext payloads, private key pairs, and secret parameters are never transmitted across the network, stored in cookies, or written to disk. When implementing cryptographic modules in backend environments, enforce strict secret isolation, rotate master encryption keys using hardware-backed KMS solutions, and zero out plaintext byte buffers immediately following block cipher operations. Adhere to FIPS 140-3 guidelines for validated cryptographic boundary controls and secure entropy source verification.</p>
 
-      <section class="faq-section">
-        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
-        <div class="faq-item">
-          <h3>What is Catastrophic Backtracking (ReDoS) and how does it freeze servers?</h3>
-          <p>When nested quantifiers (like <code>(a+)+$</code>) are evaluated against non-matching input (like <code>aaaaab</code>), the NFA engine tests every exponential permutation (2^N steps), locking 100% of CPU capacity for hours.</p>
-        </div>
-        <div class="faq-item">
-          <h3>What is the difference between greedy and lazy quantifiers?</h3>
-          <p>Greedy quantifiers (<code>*</code>, <code>+</code>) consume as many characters as possible before backtracking. Lazy quantifiers (<code>*?</code>, <code>+?</code>) consume the minimum necessary characters to satisfy the pattern.</p>
-        </div>
-      </section>
-
-      <h3>Official Standards &amp; Technical References</h3>
+      <h3>Official Security Standards &amp; RFC References</h3>
       <ul>
         <li><a href="https://tc39.es/ecma262/#sec-regexp-regular-expression-objects" target="_blank" rel="noopener noreferrer">ECMA-262 ECMAScript Specification § RegExp Objects</a></li>
         <li><a href="https://cwe.mitre.org/data/definitions/1333.html" target="_blank" rel="noopener noreferrer">CWE-1333: Ineffective Regular Expression Complexity</a></li>

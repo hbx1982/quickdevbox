@@ -48,30 +48,6 @@
     }
 }
   </script>
-  <script type="application/ld+json">
-  {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "Why must the ampersand (&) be encoded first before other characters?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Ampersands must be encoded first to prevent double-encoding previously transformed entities."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Does HTML entity encoding protect against XSS inside JavaScript execution contexts?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "HTML entity encoding protects HTML body nodes; script blocks require JavaScript string escaping."
-      }
-    }
-  ]
-}
-  </script>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
@@ -138,30 +114,32 @@
     </section>
 
   
-                        <article class="seo-article">
+                                            <article class="seo-article">
       <h2>HTML Entity Encoding: Named Entities, Unicode References & XSS Sanitization</h2>
       <p>HTML entity encoding converts reserved markup characters (&, <, >, ", ') into character references (&amp;, &lt;, &gt;, &quot;, &#39;). This guarantees browser rendering engines treat text content literally rather than parsing it as executable HTML or script tags.</p>
 
-      <div class="tech-specs">
-        <div class="spec-card">
-          <strong>Reserved Characters</strong>
-          <span>& (&amp;), < (&lt;), > (&gt;), " (&quot;), ' (&#39;)</span>
-        </div>
-        <div class="spec-card">
-          <strong>Entity Formats</strong>
-          <span>Named entities (&lt;) and Numeric character references (&#60; / &#x3C;)</span>
-        </div>
-        <div class="spec-card">
-          <strong>Defense Class</strong>
-          <span>Mitigates Reflected and Stored Cross-Site Scripting (OWASP Top 10 XSS)</span>
-        </div>
-        <div class="spec-card">
-          <strong>Standard</strong>
-          <span>W3C HTML5 Specification § Named Character References</span>
-        </div>
+      <h3>Format Specifications &amp; Syntax Reference</h3>
+      <table>
+        <thead>
+          <tr><th>Specification Parameter</th><th>Standard Value / Parsing Behavior</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Reserved Characters</strong></td><td>& (&amp;), < (&lt;), > (&gt;), " (&quot;), ' (&#39;)</td></tr>
+          <tr><td><strong>Entity Formats</strong></td><td>Named entities (&lt;) and Numeric character references (&#60; / &#x3C;)</td></tr>
+          <tr><td><strong>Defense Class</strong></td><td>Mitigates Reflected and Stored Cross-Site Scripting (OWASP Top 10 XSS)</td></tr>
+          <tr><td><strong>Standard</strong></td><td>W3C HTML5 Specification § Named Character References</td></tr>
+        </tbody>
+      </table>
+
+      <div class="edge-cases-box">
+        <h4>⚠️ Common Engineering Edge Cases &amp; Gotchas</h4>
+        <ul>
+        <li><strong>Why must the ampersand (&) be encoded first before other characters:</strong> If you encode <code>&lt;</code> to <code>&amp;lt;</code> first and then encode ampersands, the resulting text becomes double-encoded as <code>&amp;amp;lt;</code>. Always encode standalone ampersands first.</li>
+        <li><strong>Does HTML entity encoding protect against XSS inside JavaScript execution contexts:</strong> No. HTML entity encoding only protects text placed directly within HTML element text nodes. Inside <code>&lt;script&gt;</code> blocks or event handlers (like <code>onclick</code>), JavaScript string escaping (JSON.stringify) is required.</li>
+        </ul>
       </div>
 
-      <h3>Implementation &amp; Code Examples</h3>
+      <h3>Production Implementation Examples</h3>
       <h4>JavaScript HTML Entity Escape Function</h4>
       <pre><code>function escapeHtml(str) {
   const map = {
@@ -181,27 +159,10 @@ raw_text = '<div class="banner">Hello & Welcome</div>'
 safe_html = html.escape(raw_text, quote=True)
 print(safe_html)</code></pre>
 
-      <h3>Architectural Design &amp; High-Throughput Pipeline Optimization</h3>
-      <p>Integrating HTML Entity Encoding into continuous delivery pipelines requires balancing lexical analysis latency with memory consumption:</p>
-      <ul>
-        <li><strong>Stream-Based Tokenization:</strong> For large data buffers exceeding 1MB, avoid synchronous in-memory string parsing on the main event thread. Stream input tokens through chunked pipelines to prevent event-loop thread starvation.</li>
-        <li><strong>Defensive Parsing &amp; Exception Isolation:</strong> Always wrap syntax transformations inside structured exception handlers to isolate malformed inputs, truncated payloads, and illegal control characters from crashing downstream microservices.</li>
-        <li><strong>Character Encoding Verification:</strong> Enforce strict UTF-8 input normalization at API gateways to prevent byte-order mark (BOM) anomalies, truncated multi-byte sequences, and surrogate pair deserialization errors.</li>
-      </ul>
+      <h3>High-Throughput Processing &amp; Memory Safety Bounds</h3>
+      <p>Client-side parsing and data transformation operates against browser V8 memory limits. When manipulating large documents or high-volume datasets approaching the 2MB boundary, synchronous operations can block the main execution thread. Production web applications should delegate heavy serialization and formatting jobs to background Web Workers or leverage streaming parsers (such as the WHATWG <code>TransformStream</code> interface) to maintain interface responsiveness during heavy data ingestion. Ensure robust UTF-8 multi-byte sequence validation to prevent surrogate pair slicing and payload corruption. Incorporate automated benchmark assertions into build pipelines to intercept algorithmic complexity regressions before production release.</p>
 
-      <section class="faq-section">
-        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
-        <div class="faq-item">
-          <h3>Why must the ampersand (&) be encoded first before other characters?</h3>
-          <p>If you encode <code>&lt;</code> to <code>&amp;lt;</code> first and then encode ampersands, the resulting text becomes double-encoded as <code>&amp;amp;lt;</code>. Always encode standalone ampersands first.</p>
-        </div>
-        <div class="faq-item">
-          <h3>Does HTML entity encoding protect against XSS inside JavaScript execution contexts?</h3>
-          <p>No. HTML entity encoding only protects text placed directly within HTML element text nodes. Inside <code>&lt;script&gt;</code> blocks or event handlers (like <code>onclick</code>), JavaScript string escaping (JSON.stringify) is required.</p>
-        </div>
-      </section>
-
-      <h3>Official Standards &amp; Technical References</h3>
+      <h3>Official Standards &amp; Format Specifications</h3>
       <ul>
         <li><a href="https://html.spec.whatwg.org/multipage/named-characters.html#named-character-references" target="_blank" rel="noopener noreferrer">W3C HTML5 Named Character Reference Table</a></li>
         <li><a href="https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html" target="_blank" rel="noopener noreferrer">OWASP Cross Site Scripting (XSS) Prevention Cheat Sheet</a></li>

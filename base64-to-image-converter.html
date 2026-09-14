@@ -47,30 +47,6 @@
     }
 }
   </script>
-  <script type="application/ld+json">
-  {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "Why is URL.createObjectURL() preferred over raw Data URIs for DOM image sources?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "createObjectURL avoids DOM string bloating and points lightweight pointer URLs directly to binary heap memory."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "What causes 'DOMException: The string to be decoded is not correctly encoded'?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Malformed characters or invalid padding trigger decoding exceptions; clean whitespace before decoding."
-      }
-    }
-  ]
-}
-  </script>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
@@ -144,30 +120,32 @@
       <div id="statusMessage" class="status-box" style="display: none;"></div>
     </div>
 
-                    <article class="seo-article">
+                                        <article class="seo-article">
       <h2>Base64 to Image Decoding: Binary Blob Assembly & HTML5 Canvas Draw</h2>
       <p>Decoding Base64 Data URIs reconstructs raw binary graphic buffers in browser memory. By slicing base64 strings into Uint8Array byte buffers and instantiating Blob objects, images can be rendered in HTML5 Image elements and downloaded locally.</p>
 
-      <div class="tech-specs">
-        <div class="spec-card">
-          <strong>Decoding Pipeline</strong>
-          <span>atob() -> Uint8Array byte buffer -> Blob(bytes, {type: mime}) -> ObjectURL</span>
-        </div>
-        <div class="spec-card">
-          <strong>Memory Efficiency</strong>
-          <span>Direct Blob instantiation avoids heavy intermediate string duplication</span>
-        </div>
-        <div class="spec-card">
-          <strong>Download Primitive</strong>
-          <span>HTML5 anchor download attribute triggering client-side filesystem save</span>
-        </div>
-        <div class="spec-card">
-          <strong>Format Inspection</strong>
-          <span>Sniffs magic bytes (PNG: 89 50 4E 47, JPEG: FF D8 FF) for mime validation</span>
-        </div>
+      <h3>Format Specifications &amp; Syntax Reference</h3>
+      <table>
+        <thead>
+          <tr><th>Specification Parameter</th><th>Standard Value / Parsing Behavior</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Decoding Pipeline</strong></td><td>atob() -> Uint8Array byte buffer -> Blob(bytes, {type: mime}) -> ObjectURL</td></tr>
+          <tr><td><strong>Memory Efficiency</strong></td><td>Direct Blob instantiation avoids heavy intermediate string duplication</td></tr>
+          <tr><td><strong>Download Primitive</strong></td><td>HTML5 anchor download attribute triggering client-side filesystem save</td></tr>
+          <tr><td><strong>Format Inspection</strong></td><td>Sniffs magic bytes (PNG: 89 50 4E 47, JPEG: FF D8 FF) for mime validation</td></tr>
+        </tbody>
+      </table>
+
+      <div class="edge-cases-box">
+        <h4>⚠️ Common Engineering Edge Cases &amp; Gotchas</h4>
+        <ul>
+        <li><strong>Why is URL.createObjectURL() preferred over raw Data URIs for DOM image sources:</strong> Passing massive Base64 Data URIs to <code>&lt;img src="..."&gt;</code> bloats the DOM tree and keeps megabytes of strings in V8 heap memory. <code>URL.createObjectURL()</code> maps a lightweight memory reference directly to the binary Blob.</li>
+        <li><strong>What causes 'DOMException: The string to be decoded is not correctly encoded':</strong> The Base64 string contains invalid non-alphabet characters, illegal trailing whitespace, or missing required <code>=</code> padding characters. Stripping whitespace and restoring padding fixes the exception.</li>
+        </ul>
       </div>
 
-      <h3>Implementation &amp; Code Examples</h3>
+      <h3>Production Implementation Examples</h3>
       <h4>JavaScript Base64 Data URI to File Blob</h4>
       <pre><code>function dataUriToBlob(dataUri) {
   const [header, base64Data] = dataUri.split(',');
@@ -191,27 +169,10 @@
   URL.revokeObjectURL(url);
 }</code></pre>
 
-      <h3>Memory Management &amp; Client-Side Buffer Handling</h3>
-      <p>Processing Base64 to Image Decoding directly in browser client memory demands proactive memory cleanup and resource limits:</p>
-      <ul>
-        <li><strong>Blob Lifecycle Cleanup:</strong> Always invoke <code>URL.revokeObjectURL()</code> once binary image blobs finish loading to release allocated texture memory and prevent browser tab memory exhaustion.</li>
-        <li><strong>Offscreen Canvas Workers:</strong> Offload CPU-heavy pixel matrix loops and color quantization algorithms to background Web Workers using <code>OffscreenCanvas</code> to keep user interactions smooth.</li>
-        <li><strong>Texture Dimension Clamping:</strong> Verify source image dimensions prior to canvas allocation to prevent mobile browser crashes caused by device-specific maximum canvas texture limits.</li>
-      </ul>
+      <h3>High-Throughput Processing &amp; Memory Safety Bounds</h3>
+      <p>Client-side parsing and data transformation operates against browser V8 memory limits. When manipulating large documents or high-volume datasets approaching the 2MB boundary, synchronous operations can block the main execution thread. Production web applications should delegate heavy serialization and formatting jobs to background Web Workers or leverage streaming parsers (such as the WHATWG <code>TransformStream</code> interface) to maintain interface responsiveness during heavy data ingestion. Ensure robust UTF-8 multi-byte sequence validation to prevent surrogate pair slicing and payload corruption. Incorporate automated benchmark assertions into build pipelines to intercept algorithmic complexity regressions before production release.</p>
 
-      <section class="faq-section">
-        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
-        <div class="faq-item">
-          <h3>Why is URL.createObjectURL() preferred over raw Data URIs for DOM image sources?</h3>
-          <p>Passing massive Base64 Data URIs to <code>&lt;img src="..."&gt;</code> bloats the DOM tree and keeps megabytes of strings in V8 heap memory. <code>URL.createObjectURL()</code> maps a lightweight memory reference directly to the binary Blob.</p>
-        </div>
-        <div class="faq-item">
-          <h3>What causes 'DOMException: The string to be decoded is not correctly encoded'?</h3>
-          <p>The Base64 string contains invalid non-alphabet characters, illegal trailing whitespace, or missing required <code>=</code> padding characters. Stripping whitespace and restoring padding fixes the exception.</p>
-        </div>
-      </section>
-
-      <h3>Official Standards &amp; Technical References</h3>
+      <h3>Official Standards &amp; Format Specifications</h3>
       <ul>
         <li><a href="https://www.w3.org/TR/FileAPI/#dfn-Blob" target="_blank" rel="noopener noreferrer">W3C File API: The Blob Interface</a></li>
         <li><a href="https://html.spec.whatwg.org/multipage/webappapis.html#object-urls" target="_blank" rel="noopener noreferrer">WHATWG HTML Specification: Object URLs</a></li>

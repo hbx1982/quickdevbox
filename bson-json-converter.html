@@ -48,30 +48,6 @@
     }
 }
   </script>
-  <script type="application/ld+json">
-  {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "What is the difference between MongoDB Canonical and Relaxed Extended JSON?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Canonical format wraps all types losslessly; Relaxed format outputs clean standard JSON numbers and strings."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Why does standard JSON.stringify corrupt MongoDB 64-bit integers ($numberLong)?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Standard JSON parsers truncate 64-bit integers exceeding 2^53-1; BSON $numberLong wrappers preserve exact precision."
-      }
-    }
-  ]
-}
-  </script>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
@@ -147,30 +123,32 @@
 
     <!-- SEO Technical Article Section -->
             <!-- Related Tools Grid Section -->
-                    <article class="seo-article">
+                                        <article class="seo-article">
       <h2>BSON to Extended JSON: Canonical vs Relaxed Modes & MongoDB Type Wrappers</h2>
       <p>Binary JSON (BSON) extends standard JSON with additional data types (ObjectId, 64-bit int64, ISODate, Regex, Binary). Converting BSON to MongoDB Extended JSON v2 bridges MongoDB binary dumps with standard web JSON clients.</p>
 
-      <div class="tech-specs">
-        <div class="spec-card">
-          <strong>BSON Specification</strong>
-          <span>BSON (Binary JSON) Serialization Specification Version 1.1</span>
-        </div>
-        <div class="spec-card">
-          <strong>MongoDB Extended JSON</strong>
-          <span>Extended JSON v2 Specification (Canonical and Relaxed formats)</span>
-        </div>
-        <div class="spec-card">
-          <strong>Type Wrappers</strong>
-          <span>{"$oid": "..."}, {"$date": {"$numberLong": "..."}}, {"$numberLong": "..."}</span>
-        </div>
-        <div class="spec-card">
-          <strong>Precision Preservation</strong>
-          <span>Prevents 64-bit integer overflow under JavaScript IEEE 754 numbers</span>
-        </div>
+      <h3>Format Specifications &amp; Syntax Reference</h3>
+      <table>
+        <thead>
+          <tr><th>Specification Parameter</th><th>Standard Value / Parsing Behavior</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>BSON Specification</strong></td><td>BSON (Binary JSON) Serialization Specification Version 1.1</td></tr>
+          <tr><td><strong>MongoDB Extended JSON</strong></td><td>Extended JSON v2 Specification (Canonical and Relaxed formats)</td></tr>
+          <tr><td><strong>Type Wrappers</strong></td><td>{"$oid": "..."}, {"$date": {"$numberLong": "..."}}, {"$numberLong": "..."}</td></tr>
+          <tr><td><strong>Precision Preservation</strong></td><td>Prevents 64-bit integer overflow under JavaScript IEEE 754 numbers</td></tr>
+        </tbody>
+      </table>
+
+      <div class="edge-cases-box">
+        <h4>⚠️ Common Engineering Edge Cases &amp; Gotchas</h4>
+        <ul>
+        <li><strong>What is the difference between MongoDB Canonical and Relaxed Extended JSON:</strong> Canonical format represents all numbers and dates with explicit type wrappers (e.g. <code>{"$numberInt": "42"}</code>) to preserve lossless roundtripping. Relaxed format converts numbers and dates to standard JSON primitives for human readability.</li>
+        <li><strong>Why does standard JSON.stringify corrupt MongoDB 64-bit integers ($numberLong):</strong> JavaScript numbers are IEEE 754 64-bit floating-point values with a maximum safe integer limit of <code>2^53 - 1</code>. BSON 64-bit integers exceeding this limit lose precision unless serialized as strings with <code>$numberLong</code>.</li>
+        </ul>
       </div>
 
-      <h3>Implementation &amp; Code Examples</h3>
+      <h3>Production Implementation Examples</h3>
       <h4>Node.js (bson library)</h4>
       <pre><code>import { EJSON } from 'bson';
 
@@ -185,27 +163,10 @@ doc = {"_id": ObjectId("65e492b4f1234567890abcde"), "counter": 9007199254740995}
 json_str = json.dumps(doc, default=json_util.default)
 print(json_str)</code></pre>
 
-      <h3>Architectural Design &amp; High-Throughput Pipeline Optimization</h3>
-      <p>Integrating BSON to Extended JSON into continuous delivery pipelines requires balancing lexical analysis latency with memory consumption:</p>
-      <ul>
-        <li><strong>Stream-Based Tokenization:</strong> For large data buffers exceeding 1MB, avoid synchronous in-memory string parsing on the main event thread. Stream input tokens through chunked pipelines to prevent event-loop thread starvation.</li>
-        <li><strong>Defensive Parsing &amp; Exception Isolation:</strong> Always wrap syntax transformations inside structured exception handlers to isolate malformed inputs, truncated payloads, and illegal control characters from crashing downstream microservices.</li>
-        <li><strong>Character Encoding Verification:</strong> Enforce strict UTF-8 input normalization at API gateways to prevent byte-order mark (BOM) anomalies, truncated multi-byte sequences, and surrogate pair deserialization errors.</li>
-      </ul>
+      <h3>High-Throughput Processing &amp; Memory Safety Bounds</h3>
+      <p>Client-side parsing and data transformation operates against browser V8 memory limits. When manipulating large documents or high-volume datasets approaching the 2MB boundary, synchronous operations can block the main execution thread. Production web applications should delegate heavy serialization and formatting jobs to background Web Workers or leverage streaming parsers (such as the WHATWG <code>TransformStream</code> interface) to maintain interface responsiveness during heavy data ingestion. Ensure robust UTF-8 multi-byte sequence validation to prevent surrogate pair slicing and payload corruption. Incorporate automated benchmark assertions into build pipelines to intercept algorithmic complexity regressions before production release.</p>
 
-      <section class="faq-section">
-        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
-        <div class="faq-item">
-          <h3>What is the difference between MongoDB Canonical and Relaxed Extended JSON?</h3>
-          <p>Canonical format represents all numbers and dates with explicit type wrappers (e.g. <code>{"$numberInt": "42"}</code>) to preserve lossless roundtripping. Relaxed format converts numbers and dates to standard JSON primitives for human readability.</p>
-        </div>
-        <div class="faq-item">
-          <h3>Why does standard JSON.stringify corrupt MongoDB 64-bit integers ($numberLong)?</h3>
-          <p>JavaScript numbers are IEEE 754 64-bit floating-point values with a maximum safe integer limit of <code>2^53 - 1</code>. BSON 64-bit integers exceeding this limit lose precision unless serialized as strings with <code>$numberLong</code>.</p>
-        </div>
-      </section>
-
-      <h3>Official Standards &amp; Technical References</h3>
+      <h3>Official Standards &amp; Format Specifications</h3>
       <ul>
         <li><a href="https://bsonspec.org/spec.html" target="_blank" rel="noopener noreferrer">BSON (Binary JSON) Specification v1.1</a></li>
         <li><a href="https://www.mongodb.com/docs/manual/reference/mongodb-extended-json/" target="_blank" rel="noopener noreferrer">MongoDB Extended JSON v2 Specification</a></li>

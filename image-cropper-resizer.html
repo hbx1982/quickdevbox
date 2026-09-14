@@ -47,30 +47,6 @@
     }
 }
   </script>
-  <script type="application/ld+json">
-  {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "Why do large image downsamplings look blurry or pixelated when done in a single step?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Single-step large downscaling triggers aliasing. Step-down resizing by 50% increments preserves crisp details."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "What is the maximum canvas size limit on mobile iOS Safari?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "iOS Safari crashes if canvas dimensions exceed ~16.7 megapixels. Clamp upload dimensions on mobile."
-      }
-    }
-  ]
-}
-  </script>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
@@ -149,30 +125,32 @@
       <div id="statusMessage" class="status-box" style="display: none;"></div>
     </div>
 
-                    <article class="seo-article">
+                                        <article class="seo-article">
       <h2>Canvas Image Cropping & Resizing: Aspect Ratio Math & Bilinear Interpolation</h2>
       <p>Client-side image cropping and resizing utilizes HTML5 Canvas drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight) to extract sub-rectangles and downsample dimensions using high-quality bicubic interpolation filters.</p>
 
-      <div class="tech-specs">
-        <div class="spec-card">
-          <strong>Canvas Draw Method</strong>
-          <span>CanvasRenderingContext2D.drawImage() 9-parameter coordinate mapping</span>
-        </div>
-        <div class="spec-card">
-          <strong>Interpolation Quality</strong>
-          <span>context.imageSmoothingQuality = 'high' (Bicubic / Lanczos resampling)</span>
-        </div>
-        <div class="spec-card">
-          <strong>Aspect Ratio Constraint</strong>
-          <span>Maintains fixed proportion box coordinates (1:1, 16:9, 4:3)</span>
-        </div>
-        <div class="spec-card">
-          <strong>Memory Safety</strong>
-          <span>Downsamples large multi-megapixel camera photos before canvas export</span>
-        </div>
+      <h3>Format Specifications &amp; Syntax Reference</h3>
+      <table>
+        <thead>
+          <tr><th>Specification Parameter</th><th>Standard Value / Parsing Behavior</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Canvas Draw Method</strong></td><td>CanvasRenderingContext2D.drawImage() 9-parameter coordinate mapping</td></tr>
+          <tr><td><strong>Interpolation Quality</strong></td><td>context.imageSmoothingQuality = 'high' (Bicubic / Lanczos resampling)</td></tr>
+          <tr><td><strong>Aspect Ratio Constraint</strong></td><td>Maintains fixed proportion box coordinates (1:1, 16:9, 4:3)</td></tr>
+          <tr><td><strong>Memory Safety</strong></td><td>Downsamples large multi-megapixel camera photos before canvas export</td></tr>
+        </tbody>
+      </table>
+
+      <div class="edge-cases-box">
+        <h4>⚠️ Common Engineering Edge Cases &amp; Gotchas</h4>
+        <ul>
+        <li><strong>Why do large image downsamplings look blurry or pixelated when done in a single step:</strong> Downscaling an image by more than 50% in a single <code>drawImage()</code> step causes aliasing artifacts in standard bilinear filters. Professional apps use 'step-down scaling' (halving dimensions iteratively until the target size is reached).</li>
+        <li><strong>What is the maximum canvas size limit on mobile iOS Safari:</strong> iOS Safari imposes a hard memory limit of ~16.7 megapixels (4096 x 4096 px) on individual canvas elements. Exceeding this crashes the WebKit process and renders a blank canvas. Always clamp target dimensions.</li>
+        </ul>
       </div>
 
-      <h3>Implementation &amp; Code Examples</h3>
+      <h3>Production Implementation Examples</h3>
       <h4>High-Quality Canvas Image Resize</h4>
       <pre><code>function resizeImage(imgElement, targetWidth, targetHeight) {
   const canvas = document.createElement('canvas');
@@ -194,27 +172,10 @@
   return canvas;
 }</code></pre>
 
-      <h3>Memory Management &amp; Client-Side Buffer Handling</h3>
-      <p>Processing Canvas Image Cropping & Resizing directly in browser client memory demands proactive memory cleanup and resource limits:</p>
-      <ul>
-        <li><strong>Blob Lifecycle Cleanup:</strong> Always invoke <code>URL.revokeObjectURL()</code> once binary image blobs finish loading to release allocated texture memory and prevent browser tab memory exhaustion.</li>
-        <li><strong>Offscreen Canvas Workers:</strong> Offload CPU-heavy pixel matrix loops and color quantization algorithms to background Web Workers using <code>OffscreenCanvas</code> to keep user interactions smooth.</li>
-        <li><strong>Texture Dimension Clamping:</strong> Verify source image dimensions prior to canvas allocation to prevent mobile browser crashes caused by device-specific maximum canvas texture limits.</li>
-      </ul>
+      <h3>High-Throughput Processing &amp; Memory Safety Bounds</h3>
+      <p>Client-side parsing and data transformation operates against browser V8 memory limits. When manipulating large documents or high-volume datasets approaching the 2MB boundary, synchronous operations can block the main execution thread. Production web applications should delegate heavy serialization and formatting jobs to background Web Workers or leverage streaming parsers (such as the WHATWG <code>TransformStream</code> interface) to maintain interface responsiveness during heavy data ingestion. Ensure robust UTF-8 multi-byte sequence validation to prevent surrogate pair slicing and payload corruption. Incorporate automated benchmark assertions into build pipelines to intercept algorithmic complexity regressions before production release.</p>
 
-      <section class="faq-section">
-        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
-        <div class="faq-item">
-          <h3>Why do large image downsamplings look blurry or pixelated when done in a single step?</h3>
-          <p>Downscaling an image by more than 50% in a single <code>drawImage()</code> step causes aliasing artifacts in standard bilinear filters. Professional apps use 'step-down scaling' (halving dimensions iteratively until the target size is reached).</p>
-        </div>
-        <div class="faq-item">
-          <h3>What is the maximum canvas size limit on mobile iOS Safari?</h3>
-          <p>iOS Safari imposes a hard memory limit of ~16.7 megapixels (4096 x 4096 px) on individual canvas elements. Exceeding this crashes the WebKit process and renders a blank canvas. Always clamp target dimensions.</p>
-        </div>
-      </section>
-
-      <h3>Official Standards &amp; Technical References</h3>
+      <h3>Official Standards &amp; Format Specifications</h3>
       <ul>
         <li><a href="https://www.w3.org/TR/2dcontext/#drawing-images-to-the-canvas" target="_blank" rel="noopener noreferrer">W3C HTML5 Canvas 2D Context § Drawing images</a></li>
       </ul>

@@ -47,30 +47,6 @@
     }
 }
   </script>
-  <script type="application/ld+json">
-  {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "Why does Firefox ignore ::-webkit-scrollbar styles?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Firefox implements W3C scrollbar-width and scrollbar-color, ignoring WebKit pseudo-elements."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "How do you hide scrollbars completely while preserving mousewheel scrolling?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Set scrollbar-width: none and ::-webkit-scrollbar display: none to hide scrollbar rails while keeping scroll functionality."
-      }
-    }
-  ]
-}
-  </script>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
@@ -186,30 +162,40 @@
       </div>
     </div>
 
-                    <article class="seo-article">
+                                        <article class="seo-article">
       <h2>CSS Custom Scrollbars: W3C Standard Properties vs WebKit Pseudo-Elements</h2>
       <p>Custom scrollbar styling balances modern W3C standards (scrollbar-width and scrollbar-color) with legacy vendor pseudo-elements (::-webkit-scrollbar) to ensure consistent scrollbar aesthetics across Firefox, Safari, and Chromium. It customizes the track background, thumb border radius, hover interactions, and corner joins without disrupting accessible keyboard and touch navigation.</p>
 
-      <div class="tech-specs">
-        <div class="spec-card">
-          <strong>W3C Standard Properties</strong>
-          <span>scrollbar-width (auto, thin, none) & scrollbar-color (thumb-color track-color)</span>
+      <h3>CSS Properties &amp; Syntax Reference</h3>
+      <table>
+        <thead>
+          <tr><th>CSS Rule / Parameter</th><th>Syntax Specification &amp; Compositor Behavior</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>W3C Standard Properties</strong></td><td>scrollbar-width (auto, thin, none) & scrollbar-color (thumb-color track-color)</td></tr>
+          <tr><td><strong>WebKit Pseudo-Elements</strong></td><td>::-webkit-scrollbar, ::-webkit-scrollbar-thumb, ::-webkit-scrollbar-track</td></tr>
+          <tr><td><strong>Cross-Browser Strategy</strong></td><td>Declare W3C standard properties first, followed by WebKit pseudo-elements</td></tr>
+          <tr><td><strong>Standard</strong></td><td>W3C CSS Scrollbars Styling Module Level 1</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Cross-Browser Rendering &amp; Compositor Engine Support</h3>
+      <div class="browser-support-matrix">
+        <div class="engine-card">
+          <strong>Chromium / Blink (Chrome, Edge)</strong>
+          <span>Full hardware-accelerated GPU compositing. Zero layout shifts when dimensions are clamped.</span>
         </div>
-        <div class="spec-card">
-          <strong>WebKit Pseudo-Elements</strong>
-          <span>::-webkit-scrollbar, ::-webkit-scrollbar-thumb, ::-webkit-scrollbar-track</span>
+        <div class="engine-card">
+          <strong>WebKit (Safari, iOS)</strong>
+          <span>Requires vendor prefixes (<code>-webkit-</code>) for backdrop filters, clip paths, and text smoothing.</span>
         </div>
-        <div class="spec-card">
-          <strong>Cross-Browser Strategy</strong>
-          <span>Declare W3C standard properties first, followed by WebKit pseudo-elements</span>
-        </div>
-        <div class="spec-card">
-          <strong>Standard</strong>
-          <span>W3C CSS Scrollbars Styling Module Level 1</span>
+        <div class="engine-card">
+          <strong>Gecko (Mozilla Firefox)</strong>
+          <span>Standard W3C compliance. Supports native hardware layer caching and subpixel rendering.</span>
         </div>
       </div>
 
-      <h3>Implementation &amp; Code Examples</h3>
+      <h3>Production CSS Recipes &amp; Snippets</h3>
       <h4>Cross-Browser Dark Scrollbar Styles</h4>
       <pre><code>/* 1. Modern W3C Standard (Firefox 64+ & modern browsers) */
 * {
@@ -233,27 +219,10 @@
   background: #6b7280;
 }</code></pre>
 
-      <h3>Browser Rendering Performance &amp; Hardware Compositing</h3>
-      <p>Executing CSS Custom Scrollbars in modern web applications requires optimizing layout rendering across the browser rendering pipeline:</p>
-      <ul>
-        <li><strong>GPU Compositor Promotion:</strong> Restrict high-frequency dynamic transitions to compositor-only CSS properties (<code>transform</code> and <code>opacity</code>) to avoid triggering costly CPU layout reflows and repaints.</li>
-        <li><strong>Layout Thrashing Prevention:</strong> Decouple DOM geometry measurements from subsequent style write operations to eliminate forced synchronous reflow cycles and preserve 60 FPS scrolling.</li>
-        <li><strong>Subpixel Antialiasing:</strong> Design visual components with hardware-accelerated vector units and clamp scaling boundaries to eliminate visual pixel rounding jitter on high-DPI displays.</li>
-      </ul>
+      <h3>GPU Compositing &amp; Layout Performance Tuning</h3>
+      <p>Modern browser rendering engines divide graphical updates into Style, Layout, Paint, and Composite stages. High-performance interfaces optimize execution by isolating dynamic animations to compositor-only CSS properties—specifically <code>transform</code> and <code>opacity</code>. Altering geometry properties like <code>width</code>, <code>margin</code>, or <code>top</code> forces full layout reflows and repaints, increasing CPU utilization and causing frame drops on lower-power mobile devices. Leverage hardware layer promotion strategically to preserve 60 FPS visual smoothness, and explicitly reserve component aspect ratios to ensure Cumulative Layout Shift (CLS) scores remain at zero. Profile paint timings under 4x CPU throttling in Chrome DevTools to eliminate paint invalidation bottlenecks.</p>
 
-      <section class="faq-section">
-        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
-        <div class="faq-item">
-          <h3>Why does Firefox ignore ::-webkit-scrollbar styles?</h3>
-          <p>Firefox adheres strictly to official W3C specifications and intentionally refuses to implement WebKit vendor-prefixed pseudo-elements. For Firefox support, declare <code>scrollbar-width</code> and <code>scrollbar-color</code>.</p>
-        </div>
-        <div class="faq-item">
-          <h3>How do you hide scrollbars completely while preserving mousewheel scrolling?</h3>
-          <p>Combine <code>scrollbar-width: none</code> (for Firefox) with <code>::-webkit-scrollbar { display: none; }</code> (for Chrome/Safari) and <code>-ms-overflow-style: none</code> (for legacy Edge/IE).</p>
-        </div>
-      </section>
-
-      <h3>Official Standards &amp; Technical References</h3>
+      <h3>W3C Standards &amp; Browser Engine Specifications</h3>
       <ul>
         <li><a href="https://www.w3.org/TR/css-scrollbars-1/" target="_blank" rel="noopener noreferrer">W3C CSS Scrollbars Styling Module Level 1</a></li>
       </ul>

@@ -48,30 +48,6 @@
     }
 }
   </script>
-  <script type="application/ld+json">
-  {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "Why does simple whitespace splitting fail for Chinese, Japanese, and Korean (CJK) texts?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "CJK languages do not use spaces; accurate counters treat CJK glyphs as individual word tokens."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "What is the difference between string length and Unicode grapheme cluster length?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Compound emojis use multiple code units; use Intl.Segmenter to count true human-perceived visual glyphs."
-      }
-    }
-  ]
-}
-  </script>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
@@ -146,30 +122,32 @@
     </section>
 
   
-                        <article class="seo-article">
+                                            <article class="seo-article">
       <h2>Text Tokenization: Unicode Grapheme Clusters, Word Boundaries & WPM Reading Speeds</h2>
       <p>Word counting parses unstructured text streams into lexical tokens. Accurate text metrics require handling whitespace boundaries, Unicode grapheme clusters, character counts with/without spaces, and reading time estimation (200 words per minute baseline).</p>
 
-      <div class="tech-specs">
-        <div class="spec-card">
-          <strong>Tokenization Model</strong>
-          <span>Unicode Standard Annex #29: Unicode Text Segmentation (Word Boundaries)</span>
-        </div>
-        <div class="spec-card">
-          <strong>Metrics Tracked</strong>
-          <span>Words, Characters (with spaces), Characters (no spaces), Sentences, Paragraphs</span>
-        </div>
-        <div class="spec-card">
-          <strong>Reading Time Metric</strong>
-          <span>200 to 250 Words Per Minute (WPM) adult silent reading rate</span>
-        </div>
-        <div class="spec-card">
-          <strong>Speaking Time Metric</strong>
-          <span>130 to 150 Words Per Minute conversational speech rate</span>
-        </div>
+      <h3>Format Specifications &amp; Syntax Reference</h3>
+      <table>
+        <thead>
+          <tr><th>Specification Parameter</th><th>Standard Value / Parsing Behavior</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Tokenization Model</strong></td><td>Unicode Standard Annex #29: Unicode Text Segmentation (Word Boundaries)</td></tr>
+          <tr><td><strong>Metrics Tracked</strong></td><td>Words, Characters (with spaces), Characters (no spaces), Sentences, Paragraphs</td></tr>
+          <tr><td><strong>Reading Time Metric</strong></td><td>200 to 250 Words Per Minute (WPM) adult silent reading rate</td></tr>
+          <tr><td><strong>Speaking Time Metric</strong></td><td>130 to 150 Words Per Minute conversational speech rate</td></tr>
+        </tbody>
+      </table>
+
+      <div class="edge-cases-box">
+        <h4>⚠️ Common Engineering Edge Cases &amp; Gotchas</h4>
+        <ul>
+        <li><strong>Why does simple whitespace splitting fail for Chinese, Japanese, and Korean (CJK) texts:</strong> CJK languages do not use whitespace to delimit word boundaries. A string of 10 Chinese characters contains 0 spaces, reporting 1 word under naive parsers. Modern counters evaluate CJK ideographs as distinct character words.</li>
+        <li><strong>What is the difference between string length and Unicode grapheme cluster length:</strong> In JavaScript, compound emojis (like 👨‍👩‍👧‍👦) consist of multiple Unicode code points joined by Zero-Width Joiners (ZWJ), yielding a <code>.length</code> of 11. Using the <code>Intl.Segmenter</code> API measures the visual grapheme length as 1.</li>
+        </ul>
       </div>
 
-      <h3>Implementation &amp; Code Examples</h3>
+      <h3>Production Implementation Examples</h3>
       <h4>JavaScript Accurate Word & Character Counter</h4>
       <pre><code>function analyzeText(text) {
   const trimmed = text.trim();
@@ -189,27 +167,10 @@ def count_words(text: str) -> dict:
     words = re.findall(r'\b\w+\b', text, re.UNICODE)
     return {"word_count": len(words), "char_count": len(text)}</code></pre>
 
-      <h3>Data Integrity &amp; Computational Complexity Bounds</h3>
-      <p>Processing structured text streams with Text Tokenization requires predictable runtime complexity and boundary guarantees:</p>
-      <ul>
-        <li><strong>Linear Complexity Enforcement:</strong> Structure text processing and token lookup logic to operate in O(N) linear time using hash sets and sliding windows, avoiding quadratic loop bottlenecks.</li>
-        <li><strong>Unicode Segmentation Standards:</strong> Rely on standards-compliant segmentation APIs (such as <code>Intl.Segmenter</code>) rather than naive whitespace splitting to correctly handle multi-byte grapheme clusters.</li>
-        <li><strong>Payload Size Defenses:</strong> Impose strict maximum payload size boundaries on incoming text streams to prevent malicious or accidental denial of service via memory exhaustion.</li>
-      </ul>
+      <h3>High-Throughput Processing &amp; Memory Safety Bounds</h3>
+      <p>Client-side parsing and data transformation operates against browser V8 memory limits. When manipulating large documents or high-volume datasets approaching the 2MB boundary, synchronous operations can block the main execution thread. Production web applications should delegate heavy serialization and formatting jobs to background Web Workers or leverage streaming parsers (such as the WHATWG <code>TransformStream</code> interface) to maintain interface responsiveness during heavy data ingestion. Ensure robust UTF-8 multi-byte sequence validation to prevent surrogate pair slicing and payload corruption. Incorporate automated benchmark assertions into build pipelines to intercept algorithmic complexity regressions before production release.</p>
 
-      <section class="faq-section">
-        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
-        <div class="faq-item">
-          <h3>Why does simple whitespace splitting fail for Chinese, Japanese, and Korean (CJK) texts?</h3>
-          <p>CJK languages do not use whitespace to delimit word boundaries. A string of 10 Chinese characters contains 0 spaces, reporting 1 word under naive parsers. Modern counters evaluate CJK ideographs as distinct character words.</p>
-        </div>
-        <div class="faq-item">
-          <h3>What is the difference between string length and Unicode grapheme cluster length?</h3>
-          <p>In JavaScript, compound emojis (like 👨‍👩‍👧‍👦) consist of multiple Unicode code points joined by Zero-Width Joiners (ZWJ), yielding a <code>.length</code> of 11. Using the <code>Intl.Segmenter</code> API measures the visual grapheme length as 1.</p>
-        </div>
-      </section>
-
-      <h3>Official Standards &amp; Technical References</h3>
+      <h3>Official Standards &amp; Format Specifications</h3>
       <ul>
         <li><a href="https://www.unicode.org/reports/tr29/" target="_blank" rel="noopener noreferrer">Unicode Standard Annex #29: Unicode Text Segmentation</a></li>
         <li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Segmenter" target="_blank" rel="noopener noreferrer">MDN Web Docs: Intl.Segmenter API</a></li>

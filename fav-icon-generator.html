@@ -47,30 +47,6 @@
     }
 }
   </script>
-  <script type="application/ld+json">
-  {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "Why does Google Search ignore my site favicon in mobile search results?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Google Search requires favicons to be 48px multiples and publicly accessible to display in search result listings."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Why is a multi-resolution .ico file still necessary when modern browsers support PNG favicons?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Windows taskbar pinning and legacy desktop applications expect a multi-size .ico file at the root domain."
-      }
-    }
-  ]
-}
-  </script>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
@@ -144,30 +120,32 @@
       <div id="statusMessage" class="status-box" style="display: none;"></div>
     </div>
 
-                    <article class="seo-article">
+                                        <article class="seo-article">
       <h2>Favicon Architecture: Multi-Resolution ICO Formats & Apple Touch Icons</h2>
       <p>Favicon generation compiles master vector or high-resolution raster graphics into multi-size icon suites (16x16, 32x32, 180x180, 512x512) and generates standardized HTML link tags for modern browsers, Google Search SERPs, and mobile PWA manifests.</p>
 
-      <div class="tech-specs">
-        <div class="spec-card">
-          <strong>Standard Dimensions</strong>
-          <span>16x16 (Browser tab), 32x32 (Taskbar), 180x180 (Apple Touch), 512x512 (PWA)</span>
-        </div>
-        <div class="spec-card">
-          <strong>Container Formats</strong>
-          <span>Multi-layer Windows ICO file container & Modern PNG links</span>
-        </div>
-        <div class="spec-card">
-          <strong>HTML Directives</strong>
-          <span>rel='icon', rel='apple-touch-icon', manifest='site.webmanifest'</span>
-        </div>
-        <div class="spec-card">
-          <strong>SERP Standard</strong>
-          <span>Google requires minimum 48x48 pixel square icons for mobile search snippets</span>
-        </div>
+      <h3>Format Specifications &amp; Syntax Reference</h3>
+      <table>
+        <thead>
+          <tr><th>Specification Parameter</th><th>Standard Value / Parsing Behavior</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Standard Dimensions</strong></td><td>16x16 (Browser tab), 32x32 (Taskbar), 180x180 (Apple Touch), 512x512 (PWA)</td></tr>
+          <tr><td><strong>Container Formats</strong></td><td>Multi-layer Windows ICO file container & Modern PNG links</td></tr>
+          <tr><td><strong>HTML Directives</strong></td><td>rel='icon', rel='apple-touch-icon', manifest='site.webmanifest'</td></tr>
+          <tr><td><strong>SERP Standard</strong></td><td>Google requires minimum 48x48 pixel square icons for mobile search snippets</td></tr>
+        </tbody>
+      </table>
+
+      <div class="edge-cases-box">
+        <h4>⚠️ Common Engineering Edge Cases &amp; Gotchas</h4>
+        <ul>
+        <li><strong>Why does Google Search ignore my site favicon in mobile search results:</strong> Googlebot requires favicons to be multiples of 48px square (48x48, 96x96, 144x144, etc.), publicly crawlable without 403 blocks in robots.txt, and visually non-inappropriate.</li>
+        <li><strong>Why is a multi-resolution .ico file still necessary when modern browsers support PNG favicons:</strong> Legacy enterprise browsers and native desktop shortcuts (Windows taskbar pinning) specifically look for <code>/favicon.ico</code> containing both 16x16 and 32x32 mipmaps.</li>
+        </ul>
       </div>
 
-      <h3>Implementation &amp; Code Examples</h3>
+      <h3>Production Implementation Examples</h3>
       <h4>Production HTML Head Favicon Snippet</h4>
       <pre><code><!-- Standard Modern Browser Favicons -->
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -191,27 +169,10 @@
   "display": "standalone"
 }</code></pre>
 
-      <h3>Memory Management &amp; Client-Side Buffer Handling</h3>
-      <p>Processing Favicon Architecture directly in browser client memory demands proactive memory cleanup and resource limits:</p>
-      <ul>
-        <li><strong>Blob Lifecycle Cleanup:</strong> Always invoke <code>URL.revokeObjectURL()</code> once binary image blobs finish loading to release allocated texture memory and prevent browser tab memory exhaustion.</li>
-        <li><strong>Offscreen Canvas Workers:</strong> Offload CPU-heavy pixel matrix loops and color quantization algorithms to background Web Workers using <code>OffscreenCanvas</code> to keep user interactions smooth.</li>
-        <li><strong>Texture Dimension Clamping:</strong> Verify source image dimensions prior to canvas allocation to prevent mobile browser crashes caused by device-specific maximum canvas texture limits.</li>
-      </ul>
+      <h3>High-Throughput Processing &amp; Memory Safety Bounds</h3>
+      <p>Client-side parsing and data transformation operates against browser V8 memory limits. When manipulating large documents or high-volume datasets approaching the 2MB boundary, synchronous operations can block the main execution thread. Production web applications should delegate heavy serialization and formatting jobs to background Web Workers or leverage streaming parsers (such as the WHATWG <code>TransformStream</code> interface) to maintain interface responsiveness during heavy data ingestion. Ensure robust UTF-8 multi-byte sequence validation to prevent surrogate pair slicing and payload corruption. Incorporate automated benchmark assertions into build pipelines to intercept algorithmic complexity regressions before production release.</p>
 
-      <section class="faq-section">
-        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
-        <div class="faq-item">
-          <h3>Why does Google Search ignore my site favicon in mobile search results?</h3>
-          <p>Googlebot requires favicons to be multiples of 48px square (48x48, 96x96, 144x144, etc.), publicly crawlable without 403 blocks in robots.txt, and visually non-inappropriate.</p>
-        </div>
-        <div class="faq-item">
-          <h3>Why is a multi-resolution .ico file still necessary when modern browsers support PNG favicons?</h3>
-          <p>Legacy enterprise browsers and native desktop shortcuts (Windows taskbar pinning) specifically look for <code>/favicon.ico</code> containing both 16x16 and 32x32 mipmaps.</p>
-        </div>
-      </section>
-
-      <h3>Official Standards &amp; Technical References</h3>
+      <h3>Official Standards &amp; Format Specifications</h3>
       <ul>
         <li><a href="https://www.w3.org/TR/appmanifest/#icons-member" target="_blank" rel="noopener noreferrer">W3C Web App Manifest Specification: Image Resource</a></li>
         <li><a href="https://developers.google.com/search/docs/appearance/favicon-in-search" target="_blank" rel="noopener noreferrer">Google Search Central: Define a Favicon for Search Results</a></li>

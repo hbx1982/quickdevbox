@@ -47,30 +47,6 @@
     }
 }
   </script>
-  <script type="application/ld+json">
-  {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "Can you animate CSS clip-path shapes with CSS transitions?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Transitions between clip-path polygons require identical vertex counts across starting and ending states."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Does clip-path affect element layout flow and surrounding sibling elements?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "clip-path alters visual pixel painting without modifying document flow dimensions or margin boxes."
-      }
-    }
-  ]
-}
-  </script>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
@@ -188,30 +164,40 @@
       </div>
     </div>
 
-                    <article class="seo-article">
+                                        <article class="seo-article">
       <h2>CSS clip-path: Vector Polygons, Coordinate Math & Hardware Compositing</h2>
       <p>CSS clip-path clips an element's visible rendering region using vector geometric shapes (polygon, circle, ellipse, or SVG paths). Content outside the clipping path is unpainted and transparent to pointer events.</p>
 
-      <div class="tech-specs">
-        <div class="spec-card">
-          <strong>Shape Functions</strong>
-          <span>polygon(x1 y1, x2 y2, ...), circle(r at x y), ellipse(), path()</span>
+      <h3>CSS Properties &amp; Syntax Reference</h3>
+      <table>
+        <thead>
+          <tr><th>CSS Rule / Parameter</th><th>Syntax Specification &amp; Compositor Behavior</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Shape Functions</strong></td><td>polygon(x1 y1, x2 y2, ...), circle(r at x y), ellipse(), path()</td></tr>
+          <tr><td><strong>Coordinate Model</strong></td><td>Percentage-based coordinates scale responsively with element bounding box</td></tr>
+          <tr><td><strong>Compositor Acceleration</strong></td><td>Executed directly in GPU rasterization pipeline</td></tr>
+          <tr><td><strong>Standard</strong></td><td>W3C CSS Masking Module Level 1 § clip-path</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Cross-Browser Rendering &amp; Compositor Engine Support</h3>
+      <div class="browser-support-matrix">
+        <div class="engine-card">
+          <strong>Chromium / Blink (Chrome, Edge)</strong>
+          <span>Full hardware-accelerated GPU compositing. Zero layout shifts when dimensions are clamped.</span>
         </div>
-        <div class="spec-card">
-          <strong>Coordinate Model</strong>
-          <span>Percentage-based coordinates scale responsively with element bounding box</span>
+        <div class="engine-card">
+          <strong>WebKit (Safari, iOS)</strong>
+          <span>Requires vendor prefixes (<code>-webkit-</code>) for backdrop filters, clip paths, and text smoothing.</span>
         </div>
-        <div class="spec-card">
-          <strong>Compositor Acceleration</strong>
-          <span>Executed directly in GPU rasterization pipeline</span>
-        </div>
-        <div class="spec-card">
-          <strong>Standard</strong>
-          <span>W3C CSS Masking Module Level 1 § clip-path</span>
+        <div class="engine-card">
+          <strong>Gecko (Mozilla Firefox)</strong>
+          <span>Standard W3C compliance. Supports native hardware layer caching and subpixel rendering.</span>
         </div>
       </div>
 
-      <h3>Implementation &amp; Code Examples</h3>
+      <h3>Production CSS Recipes &amp; Snippets</h3>
       <h4>Angled Ribbon Header</h4>
       <pre><code>.hero-angled {
   /* Angled bottom banner using responsive percentages */
@@ -224,27 +210,10 @@
   clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
 }</code></pre>
 
-      <h3>Browser Rendering Performance &amp; Hardware Compositing</h3>
-      <p>Executing CSS clip-path in modern web applications requires optimizing layout rendering across the browser rendering pipeline:</p>
-      <ul>
-        <li><strong>GPU Compositor Promotion:</strong> Restrict high-frequency dynamic transitions to compositor-only CSS properties (<code>transform</code> and <code>opacity</code>) to avoid triggering costly CPU layout reflows and repaints.</li>
-        <li><strong>Layout Thrashing Prevention:</strong> Decouple DOM geometry measurements from subsequent style write operations to eliminate forced synchronous reflow cycles and preserve 60 FPS scrolling.</li>
-        <li><strong>Subpixel Antialiasing:</strong> Design visual components with hardware-accelerated vector units and clamp scaling boundaries to eliminate visual pixel rounding jitter on high-DPI displays.</li>
-      </ul>
+      <h3>GPU Compositing &amp; Layout Performance Tuning</h3>
+      <p>Modern browser rendering engines divide graphical updates into Style, Layout, Paint, and Composite stages. High-performance interfaces optimize execution by isolating dynamic animations to compositor-only CSS properties—specifically <code>transform</code> and <code>opacity</code>. Altering geometry properties like <code>width</code>, <code>margin</code>, or <code>top</code> forces full layout reflows and repaints, increasing CPU utilization and causing frame drops on lower-power mobile devices. Leverage hardware layer promotion strategically to preserve 60 FPS visual smoothness, and explicitly reserve component aspect ratios to ensure Cumulative Layout Shift (CLS) scores remain at zero. Profile paint timings under 4x CPU throttling in Chrome DevTools to eliminate paint invalidation bottlenecks.</p>
 
-      <section class="faq-section">
-        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
-        <div class="faq-item">
-          <h3>Can you animate CSS clip-path shapes with CSS transitions?</h3>
-          <p>Yes, provided both the starting and ending shapes have the exact same number of polygon vertices. If state A has 4 vertices and state B has 5 vertices, browser engines cannot interpolate coordinates and snap abruptly.</p>
-        </div>
-        <div class="faq-item">
-          <h3>Does clip-path affect element layout flow and surrounding sibling elements?</h3>
-          <p>No. The element's box model (width, height, margin) remains identical in document layout flow. Only the visual painted pixels are clipped; siblings will not collapse into clipped regions.</p>
-        </div>
-      </section>
-
-      <h3>Official Standards &amp; Technical References</h3>
+      <h3>W3C Standards &amp; Browser Engine Specifications</h3>
       <ul>
         <li><a href="https://www.w3.org/TR/css-masking-1/#the-clip-path" target="_blank" rel="noopener noreferrer">W3C CSS Masking Module Level 1 § The clip-path Property</a></li>
       </ul>

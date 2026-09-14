@@ -47,30 +47,6 @@
     }
 }
   </script>
-  <script type="application/ld+json">
-  {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "Why does text-shadow lack the spread-radius parameter found in box-shadow?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Vector glyph contour inflation is computationally heavy; text-shadow restricts parameters to x/y offsets and blur."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "How do you create a 3D isometric extruded text effect with text-shadow?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Stack 1px incremental shadow offsets with zero blur to create 3D isometric extruded typography."
-      }
-    }
-  ]
-}
-  </script>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
@@ -178,30 +154,40 @@
       </div>
     </div>
 
-                    <article class="seo-article">
+                                        <article class="seo-article">
       <h2>CSS Text Shadow: Multiple Shadow Offsets, Blur Radii & Neon Glow Effects</h2>
       <p>CSS text-shadow renders one or more shadow effects beneath text typography. By stacking multiple blurred text-shadow declarations, developers can simulate ambient neon glows, retro 3D extrusions, and accessible text contrast over busy background photography.</p>
 
-      <div class="tech-specs">
-        <div class="spec-card">
-          <strong>CSS Syntax</strong>
-          <span>text-shadow: <offset-x> <offset-y> <blur-radius> <color></span>
+      <h3>CSS Properties &amp; Syntax Reference</h3>
+      <table>
+        <thead>
+          <tr><th>CSS Rule / Parameter</th><th>Syntax Specification &amp; Compositor Behavior</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>CSS Syntax</strong></td><td>text-shadow: <offset-x> <offset-y> <blur-radius> <color></td></tr>
+          <tr><td><strong>Multiple Shadows</strong></td><td>Stack comma-separated shadows evaluated front-to-back</td></tr>
+          <tr><td><strong>No Spread Parameter</strong></td><td>Unlike box-shadow, text-shadow does not support a spread-radius parameter</td></tr>
+          <tr><td><strong>Standard</strong></td><td>W3C CSS Text Decoration Module Level 3 § text-shadow</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Cross-Browser Rendering &amp; Compositor Engine Support</h3>
+      <div class="browser-support-matrix">
+        <div class="engine-card">
+          <strong>Chromium / Blink (Chrome, Edge)</strong>
+          <span>Full hardware-accelerated GPU compositing. Zero layout shifts when dimensions are clamped.</span>
         </div>
-        <div class="spec-card">
-          <strong>Multiple Shadows</strong>
-          <span>Stack comma-separated shadows evaluated front-to-back</span>
+        <div class="engine-card">
+          <strong>WebKit (Safari, iOS)</strong>
+          <span>Requires vendor prefixes (<code>-webkit-</code>) for backdrop filters, clip paths, and text smoothing.</span>
         </div>
-        <div class="spec-card">
-          <strong>No Spread Parameter</strong>
-          <span>Unlike box-shadow, text-shadow does not support a spread-radius parameter</span>
-        </div>
-        <div class="spec-card">
-          <strong>Standard</strong>
-          <span>W3C CSS Text Decoration Module Level 3 § text-shadow</span>
+        <div class="engine-card">
+          <strong>Gecko (Mozilla Firefox)</strong>
+          <span>Standard W3C compliance. Supports native hardware layer caching and subpixel rendering.</span>
         </div>
       </div>
 
-      <h3>Implementation &amp; Code Examples</h3>
+      <h3>Production CSS Recipes &amp; Snippets</h3>
       <h4>Cyberpunk Neon Glow Effect</h4>
       <pre><code>.neon-text {
   color: #fff;
@@ -218,27 +204,10 @@
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.75);
 }</code></pre>
 
-      <h3>Browser Rendering Performance &amp; Hardware Compositing</h3>
-      <p>Executing CSS Text Shadow in modern web applications requires optimizing layout rendering across the browser rendering pipeline:</p>
-      <ul>
-        <li><strong>GPU Compositor Promotion:</strong> Restrict high-frequency dynamic transitions to compositor-only CSS properties (<code>transform</code> and <code>opacity</code>) to avoid triggering costly CPU layout reflows and repaints.</li>
-        <li><strong>Layout Thrashing Prevention:</strong> Decouple DOM geometry measurements from subsequent style write operations to eliminate forced synchronous reflow cycles and preserve 60 FPS scrolling.</li>
-        <li><strong>Subpixel Antialiasing:</strong> Design visual components with hardware-accelerated vector units and clamp scaling boundaries to eliminate visual pixel rounding jitter on high-DPI displays.</li>
-      </ul>
+      <h3>GPU Compositing &amp; Layout Performance Tuning</h3>
+      <p>Modern browser rendering engines divide graphical updates into Style, Layout, Paint, and Composite stages. High-performance interfaces optimize execution by isolating dynamic animations to compositor-only CSS properties—specifically <code>transform</code> and <code>opacity</code>. Altering geometry properties like <code>width</code>, <code>margin</code>, or <code>top</code> forces full layout reflows and repaints, increasing CPU utilization and causing frame drops on lower-power mobile devices. Leverage hardware layer promotion strategically to preserve 60 FPS visual smoothness, and explicitly reserve component aspect ratios to ensure Cumulative Layout Shift (CLS) scores remain at zero. Profile paint timings under 4x CPU throttling in Chrome DevTools to eliminate paint invalidation bottlenecks.</p>
 
-      <section class="faq-section">
-        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
-        <div class="faq-item">
-          <h3>Why does text-shadow lack the spread-radius parameter found in box-shadow?</h3>
-          <p>Expanding vector glyph outlines uniformly in all directions requires complex vector offsetting algorithms that are too computationally expensive to compute in real time across arbitrary font contours.</p>
-        </div>
-        <div class="faq-item">
-          <h3>How do you create a 3D isometric extruded text effect with text-shadow?</h3>
-          <p>Layer multiple text-shadows with 1px incremental offsets and zero blur radius: <code>text-shadow: 1px 1px 0 #94a3b8, 2px 2px 0 #64748b, 3px 3px 0 #475569;</code>.</p>
-        </div>
-      </section>
-
-      <h3>Official Standards &amp; Technical References</h3>
+      <h3>W3C Standards &amp; Browser Engine Specifications</h3>
       <ul>
         <li><a href="https://www.w3.org/TR/css-text-decor-3/#text-shadow-property" target="_blank" rel="noopener noreferrer">W3C CSS Text Decoration Module Level 3 § text-shadow</a></li>
       </ul>

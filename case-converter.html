@@ -48,30 +48,6 @@
     }
 }
   </script>
-  <script type="application/ld+json">
-  {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "How do robust case converters prevent splitting adjacent capital letters in acronyms?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Advanced regex differentiates acronym runs from single title-cased words to preserve abbreviations."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Why is case consistency critical in REST API JSON payloads?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Consistent case mapping prevents property undefined runtime errors between camelCase JS and snake_case backends."
-      }
-    }
-  ]
-}
-  </script>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
@@ -142,30 +118,32 @@
     </section>
 
   
-                            <article class="seo-article">
+                                                <article class="seo-article">
       <h2>String Case Normalization: camelCase, snake_case, kebab-case & PascalCase</h2>
       <p>String case conversion transforms programming identifiers across camelCase, snake_case, kebab-case, PascalCase, and CONSTANT_CASE. The engine splits words on uppercase transitions, hyphens, and underscores while preserving acronym integrity.</p>
 
-      <div class="tech-specs">
-        <div class="spec-card">
-          <strong>Supported Conventions</strong>
-          <span>camelCase (JS/Java), snake_case (Python/Rust), kebab-case (CSS/URLs), PascalCase (C#/Types)</span>
-        </div>
-        <div class="spec-card">
-          <strong>Word Tokenizer</strong>
-          <span>Splits on /([a-z])([A-Z])/, hyphens (-), and underscores (_)</span>
-        </div>
-        <div class="spec-card">
-          <strong>Acronym Boundary Handling</strong>
-          <span>Distinguishes 'XMLHttpRequest' into ['XML', 'Http', 'Request']</span>
-        </div>
-        <div class="spec-card">
-          <strong>Standard</strong>
-          <span>Language Style Guides (PEP 8, Google Java Style Guide, Clean Code Standards)</span>
-        </div>
+      <h3>Format Specifications &amp; Syntax Reference</h3>
+      <table>
+        <thead>
+          <tr><th>Specification Parameter</th><th>Standard Value / Parsing Behavior</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Supported Conventions</strong></td><td>camelCase (JS/Java), snake_case (Python/Rust), kebab-case (CSS/URLs), PascalCase (C#/Types)</td></tr>
+          <tr><td><strong>Word Tokenizer</strong></td><td>Splits on /([a-z])([A-Z])/, hyphens (-), and underscores (_)</td></tr>
+          <tr><td><strong>Acronym Boundary Handling</strong></td><td>Distinguishes 'XMLHttpRequest' into ['XML', 'Http', 'Request']</td></tr>
+          <tr><td><strong>Standard</strong></td><td>Language Style Guides (PEP 8, Google Java Style Guide, Clean Code Standards)</td></tr>
+        </tbody>
+      </table>
+
+      <div class="edge-cases-box">
+        <h4>⚠️ Common Engineering Edge Cases &amp; Gotchas</h4>
+        <ul>
+        <li><strong>How do robust case converters prevent splitting adjacent capital letters in acronyms:</strong> Naive regex splits on every capital letter, turning <code>JSONParser</code> into <code>j-s-o-n-parser</code>. Advanced tokenizers match uppercase runs followed by lowercase letters (<code>/([A-Z]+)([A-Z][a-z])/</code>) to isolate acronyms.</li>
+        <li><strong>Why is case consistency critical in REST API JSON payloads:</strong> JavaScript frontends idiomatic camelCase (e.g. <code>userId</code>), while Python backends use snake_case (<code>user_id</code>). Automated serialization mappers prevent subtle undefined property bugs.</li>
+        </ul>
       </div>
 
-      <h3>Implementation &amp; Code Examples</h3>
+      <h3>Production Implementation Examples</h3>
       <h4>JavaScript Universal Case Converter</h4>
       <pre><code>function toCamelCase(str) {
   return str
@@ -186,27 +164,10 @@ def to_kebab_case(text: str) -> str:
     s = re.sub(r'([a-z0-9])([A-Z])', r'\1-\2', text)
     return re.sub(r'[_\s]+', '-', s).lower()</code></pre>
 
-      <h3>Data Integrity &amp; Computational Complexity Bounds</h3>
-      <p>Processing structured text streams with String Case Normalization requires predictable runtime complexity and boundary guarantees:</p>
-      <ul>
-        <li><strong>Linear Complexity Enforcement:</strong> Structure text processing and token lookup logic to operate in O(N) linear time using hash sets and sliding windows, avoiding quadratic loop bottlenecks.</li>
-        <li><strong>Unicode Segmentation Standards:</strong> Rely on standards-compliant segmentation APIs (such as <code>Intl.Segmenter</code>) rather than naive whitespace splitting to correctly handle multi-byte grapheme clusters.</li>
-        <li><strong>Payload Size Defenses:</strong> Impose strict maximum payload size boundaries on incoming text streams to prevent malicious or accidental denial of service via memory exhaustion.</li>
-      </ul>
+      <h3>High-Throughput Processing &amp; Memory Safety Bounds</h3>
+      <p>Client-side parsing and data transformation operates against browser V8 memory limits. When manipulating large documents or high-volume datasets approaching the 2MB boundary, synchronous operations can block the main execution thread. Production web applications should delegate heavy serialization and formatting jobs to background Web Workers or leverage streaming parsers (such as the WHATWG <code>TransformStream</code> interface) to maintain interface responsiveness during heavy data ingestion. Ensure robust UTF-8 multi-byte sequence validation to prevent surrogate pair slicing and payload corruption. Incorporate automated benchmark assertions into build pipelines to intercept algorithmic complexity regressions before production release.</p>
 
-      <section class="faq-section">
-        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
-        <div class="faq-item">
-          <h3>How do robust case converters prevent splitting adjacent capital letters in acronyms?</h3>
-          <p>Naive regex splits on every capital letter, turning <code>JSONParser</code> into <code>j-s-o-n-parser</code>. Advanced tokenizers match uppercase runs followed by lowercase letters (<code>/([A-Z]+)([A-Z][a-z])/</code>) to isolate acronyms.</p>
-        </div>
-        <div class="faq-item">
-          <h3>Why is case consistency critical in REST API JSON payloads?</h3>
-          <p>JavaScript frontends idiomatic camelCase (e.g. <code>userId</code>), while Python backends use snake_case (<code>user_id</code>). Automated serialization mappers prevent subtle undefined property bugs.</p>
-        </div>
-      </section>
-
-      <h3>Official Standards &amp; Technical References</h3>
+      <h3>Official Standards &amp; Format Specifications</h3>
       <ul>
         <li><a href="https://google.github.io/styleguide/jsguide.html#naming" target="_blank" rel="noopener noreferrer">Google JavaScript Style Guide § Naming</a></li>
         <li><a href="https://peps.python.org/pep-0008/#naming-conventions" target="_blank" rel="noopener noreferrer">PEP 8: Style Guide for Python Code (Naming Conventions)</a></li>

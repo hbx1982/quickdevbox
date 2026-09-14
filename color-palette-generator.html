@@ -47,30 +47,6 @@
     }
 }
   </script>
-  <script type="application/ld+json">
-  {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "Why is standard HSL flawed for generating accessible UI color palettes?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Standard HSL ignores human eye sensitivity; OKLCH maintains consistent perceptual lightness across all hues."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "What is the 60-30-10 UI color balancing rule?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "The 60-30-10 rule balances 60% neutral background, 30% structural surfaces, and 10% high-contrast accent focal points."
-      }
-    }
-  ]
-}
-  </script>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
@@ -166,30 +142,40 @@
       </div>
     </div>
 
-                    <article class="seo-article">
+                                        <article class="seo-article">
       <h2>Color Palette Theory: OKLCH Color Space, Complementary Harmonies & Contrast</h2>
       <p>Color palette generation applies color theory geometry (monochromatic, complementary, triadic, analogous) to create harmonious UI design tokens. Utilizing perceptually uniform color spaces (OKLCH) ensures predictable lightness across all hues.</p>
 
-      <div class="tech-specs">
-        <div class="spec-card">
-          <strong>Color Models</strong>
-          <span>sRGB, HSL (Hue, Saturation, Lightness), OKLCH (Perceptually Uniform Gamut)</span>
+      <h3>CSS Properties &amp; Syntax Reference</h3>
+      <table>
+        <thead>
+          <tr><th>CSS Rule / Parameter</th><th>Syntax Specification &amp; Compositor Behavior</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Color Models</strong></td><td>sRGB, HSL (Hue, Saturation, Lightness), OKLCH (Perceptually Uniform Gamut)</td></tr>
+          <tr><td><strong>Harmonic Relations</strong></td><td>Complementary (180 deg), Triadic (120 deg), Analogous (30 deg)</td></tr>
+          <tr><td><strong>Design Token Scales</strong></td><td>50 to 950 tonal steps (Tailwind / Radix UI standard scales)</td></tr>
+          <tr><td><strong>Standard</strong></td><td>W3C CSS Color Module Level 4 & Level 5</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Cross-Browser Rendering &amp; Compositor Engine Support</h3>
+      <div class="browser-support-matrix">
+        <div class="engine-card">
+          <strong>Chromium / Blink (Chrome, Edge)</strong>
+          <span>Full hardware-accelerated GPU compositing. Zero layout shifts when dimensions are clamped.</span>
         </div>
-        <div class="spec-card">
-          <strong>Harmonic Relations</strong>
-          <span>Complementary (180 deg), Triadic (120 deg), Analogous (30 deg)</span>
+        <div class="engine-card">
+          <strong>WebKit (Safari, iOS)</strong>
+          <span>Requires vendor prefixes (<code>-webkit-</code>) for backdrop filters, clip paths, and text smoothing.</span>
         </div>
-        <div class="spec-card">
-          <strong>Design Token Scales</strong>
-          <span>50 to 950 tonal steps (Tailwind / Radix UI standard scales)</span>
-        </div>
-        <div class="spec-card">
-          <strong>Standard</strong>
-          <span>W3C CSS Color Module Level 4 & Level 5</span>
+        <div class="engine-card">
+          <strong>Gecko (Mozilla Firefox)</strong>
+          <span>Standard W3C compliance. Supports native hardware layer caching and subpixel rendering.</span>
         </div>
       </div>
 
-      <h3>Implementation &amp; Code Examples</h3>
+      <h3>Production CSS Recipes &amp; Snippets</h3>
       <h4>CSS Design Token Custom Properties</h4>
       <pre><code>:root {
   /* Primary brand palette generated with perceptually uniform lightness */
@@ -203,27 +189,10 @@
 }
 console.log("Complementary to 210deg:", getComplementary(210));</code></pre>
 
-      <h3>Browser Rendering Performance &amp; Hardware Compositing</h3>
-      <p>Executing Color Palette Theory in modern web applications requires optimizing layout rendering across the browser rendering pipeline:</p>
-      <ul>
-        <li><strong>GPU Compositor Promotion:</strong> Restrict high-frequency dynamic transitions to compositor-only CSS properties (<code>transform</code> and <code>opacity</code>) to avoid triggering costly CPU layout reflows and repaints.</li>
-        <li><strong>Layout Thrashing Prevention:</strong> Decouple DOM geometry measurements from subsequent style write operations to eliminate forced synchronous reflow cycles and preserve 60 FPS scrolling.</li>
-        <li><strong>Subpixel Antialiasing:</strong> Design visual components with hardware-accelerated vector units and clamp scaling boundaries to eliminate visual pixel rounding jitter on high-DPI displays.</li>
-      </ul>
+      <h3>GPU Compositing &amp; Layout Performance Tuning</h3>
+      <p>Modern browser rendering engines divide graphical updates into Style, Layout, Paint, and Composite stages. High-performance interfaces optimize execution by isolating dynamic animations to compositor-only CSS properties—specifically <code>transform</code> and <code>opacity</code>. Altering geometry properties like <code>width</code>, <code>margin</code>, or <code>top</code> forces full layout reflows and repaints, increasing CPU utilization and causing frame drops on lower-power mobile devices. Leverage hardware layer promotion strategically to preserve 60 FPS visual smoothness, and explicitly reserve component aspect ratios to ensure Cumulative Layout Shift (CLS) scores remain at zero. Profile paint timings under 4x CPU throttling in Chrome DevTools to eliminate paint invalidation bottlenecks.</p>
 
-      <section class="faq-section">
-        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
-        <div class="faq-item">
-          <h3>Why is standard HSL flawed for generating accessible UI color palettes?</h3>
-          <p>In standard HSL, pure blue (hue 240) and pure yellow (hue 60) both have lightness 50%, yet human eyes perceive yellow as much brighter than blue. OKLCH fixes this with mathematically uniform perceptual lightness.</p>
-        </div>
-        <div class="faq-item">
-          <h3>What is the 60-30-10 UI color balancing rule?</h3>
-          <p>A foundational interior and graphic design principle: 60% of the interface consists of a dominant neutral color (backgrounds), 30% is a secondary structure color (cards, sidebars), and 10% is an accent color (buttons, badges).</p>
-        </div>
-      </section>
-
-      <h3>Official Standards &amp; Technical References</h3>
+      <h3>W3C Standards &amp; Browser Engine Specifications</h3>
       <ul>
         <li><a href="https://www.w3.org/TR/css-color-4/" target="_blank" rel="noopener noreferrer">W3C CSS Color Module Level 4</a></li>
         <li><a href="https://bottosson.github.io/posts/oklab/" target="_blank" rel="noopener noreferrer">Bjorn Ottosson: A Perceptual Color Space for Image Processing (Oklab/Oklch)</a></li>

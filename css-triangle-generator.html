@@ -47,30 +47,6 @@
     }
 }
   </script>
-  <script type="application/ld+json">
-  {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "Why do border-based triangles sometimes render with jagged pixelated edges on high-DPI screens?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Border miter rendering can create minor antialiasing artifacts; use clip-path or slight transform rotations for smooth edges."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "How do you create an equilateral triangle using CSS borders?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Calculate the altitude border height as 0.866 times the base width for true equilateral proportions."
-      }
-    }
-  ]
-}
-  </script>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
@@ -177,30 +153,40 @@
       </div>
     </div>
 
-                    <article class="seo-article">
+                                        <article class="seo-article">
       <h2>Pure CSS Border Triangles: Zero-Width Geometry & Transparent Edge Clipping</h2>
       <p>Generating pure CSS triangles leverages the geometry of adjoining border miter joins. Setting an element's width and height to 0px and applying transparent borders to three sides creates a crisp vector triangle without SVG or image files.</p>
 
-      <div class="tech-specs">
-        <div class="spec-card">
-          <strong>Geometry Mechanism</strong>
-          <span>Border miter joint intersection on zero-dimension bounding boxes</span>
+      <h3>CSS Properties &amp; Syntax Reference</h3>
+      <table>
+        <thead>
+          <tr><th>CSS Rule / Parameter</th><th>Syntax Specification &amp; Compositor Behavior</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Geometry Mechanism</strong></td><td>Border miter joint intersection on zero-dimension bounding boxes</td></tr>
+          <tr><td><strong>Rendering Efficiency</strong></td><td>Pure vector geometry rendered natively by browser graphics engines</td></tr>
+          <tr><td><strong>Direction Control</strong></td><td>Vary transparent vs colored borders across top, right, bottom, and left edges</td></tr>
+          <tr><td><strong>Standard</strong></td><td>W3C CSS Backgrounds and Borders Module Level 3 § Border Color</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Cross-Browser Rendering &amp; Compositor Engine Support</h3>
+      <div class="browser-support-matrix">
+        <div class="engine-card">
+          <strong>Chromium / Blink (Chrome, Edge)</strong>
+          <span>Full hardware-accelerated GPU compositing. Zero layout shifts when dimensions are clamped.</span>
         </div>
-        <div class="spec-card">
-          <strong>Rendering Efficiency</strong>
-          <span>Pure vector geometry rendered natively by browser graphics engines</span>
+        <div class="engine-card">
+          <strong>WebKit (Safari, iOS)</strong>
+          <span>Requires vendor prefixes (<code>-webkit-</code>) for backdrop filters, clip paths, and text smoothing.</span>
         </div>
-        <div class="spec-card">
-          <strong>Direction Control</strong>
-          <span>Vary transparent vs colored borders across top, right, bottom, and left edges</span>
-        </div>
-        <div class="spec-card">
-          <strong>Standard</strong>
-          <span>W3C CSS Backgrounds and Borders Module Level 3 § Border Color</span>
+        <div class="engine-card">
+          <strong>Gecko (Mozilla Firefox)</strong>
+          <span>Standard W3C compliance. Supports native hardware layer caching and subpixel rendering.</span>
         </div>
       </div>
 
-      <h3>Implementation &amp; Code Examples</h3>
+      <h3>Production CSS Recipes &amp; Snippets</h3>
       <h4>CSS Upward Triangle Tooltip Arrow</h4>
       <pre><code>.tooltip-arrow-up {
   width: 0;
@@ -217,27 +203,10 @@
   clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
 }</code></pre>
 
-      <h3>Browser Rendering Performance &amp; Hardware Compositing</h3>
-      <p>Executing Pure CSS Border Triangles in modern web applications requires optimizing layout rendering across the browser rendering pipeline:</p>
-      <ul>
-        <li><strong>GPU Compositor Promotion:</strong> Restrict high-frequency dynamic transitions to compositor-only CSS properties (<code>transform</code> and <code>opacity</code>) to avoid triggering costly CPU layout reflows and repaints.</li>
-        <li><strong>Layout Thrashing Prevention:</strong> Decouple DOM geometry measurements from subsequent style write operations to eliminate forced synchronous reflow cycles and preserve 60 FPS scrolling.</li>
-        <li><strong>Subpixel Antialiasing:</strong> Design visual components with hardware-accelerated vector units and clamp scaling boundaries to eliminate visual pixel rounding jitter on high-DPI displays.</li>
-      </ul>
+      <h3>GPU Compositing &amp; Layout Performance Tuning</h3>
+      <p>Modern browser rendering engines divide graphical updates into Style, Layout, Paint, and Composite stages. High-performance interfaces optimize execution by isolating dynamic animations to compositor-only CSS properties—specifically <code>transform</code> and <code>opacity</code>. Altering geometry properties like <code>width</code>, <code>margin</code>, or <code>top</code> forces full layout reflows and repaints, increasing CPU utilization and causing frame drops on lower-power mobile devices. Leverage hardware layer promotion strategically to preserve 60 FPS visual smoothness, and explicitly reserve component aspect ratios to ensure Cumulative Layout Shift (CLS) scores remain at zero. Profile paint timings under 4x CPU throttling in Chrome DevTools to eliminate paint invalidation bottlenecks.</p>
 
-      <section class="faq-section">
-        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
-        <div class="faq-item">
-          <h3>Why do border-based triangles sometimes render with jagged pixelated edges on high-DPI screens?</h3>
-          <p>Subpixel antialiasing differences across browser engines can cause transparent borders to bleed pixels. Adding <code>transform: rotate(0.05deg)</code> or switching to <code>clip-path: polygon()</code> forces hardware antialiasing.</p>
-        </div>
-        <div class="faq-item">
-          <h3>How do you create an equilateral triangle using CSS borders?</h3>
-          <p>For an equilateral triangle with base width B, set left and right borders to B/2 and the colored altitude border to <code>(B * sqrt(3) / 2)</code> (~0.866 of base width).</p>
-        </div>
-      </section>
-
-      <h3>Official Standards &amp; Technical References</h3>
+      <h3>W3C Standards &amp; Browser Engine Specifications</h3>
       <ul>
         <li><a href="https://www.w3.org/TR/css-backgrounds-3/#borders" target="_blank" rel="noopener noreferrer">W3C CSS Backgrounds and Borders Module Level 3 § Borders</a></li>
       </ul>

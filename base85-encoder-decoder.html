@@ -48,30 +48,6 @@
     }
 }
   </script>
-  <script type="application/ld+json">
-  {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "Why does Base85 achieve higher space efficiency than Base64?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Base85 encodes 4 bytes into 5 characters, reducing expansion overhead to 25% compared to Base64's 33%."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "What is the RFC 1924 Base85 alphabet used in IPv6 addresses?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "RFC 1924 maps 128-bit IPv6 addresses into exactly 20 Base85 characters for compact configuration storage."
-      }
-    }
-  ]
-}
-  </script>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
@@ -142,30 +118,34 @@
 
       <!-- SEO Technical Article Section -->
       <!-- Related Tools Section -->
-                              <article class="seo-article">
+                                                  <article class="seo-article">
       <h2>Base85 & Ascii85 Encoding: RFC 1924, PDF Compression & Git Binary Diffs</h2>
       <p>Base85 (Ascii85) encodes 4-byte binary words into 5 ASCII characters (85^5 > 2^32), producing a low overhead of only 25% (compared to Base64's 33.3%). It is widely deployed across Adobe PostScript/PDF streams and Git binary diff patches.</p>
 
-      <div class="tech-specs">
-        <div class="spec-card">
-          <strong>Payload Overhead</strong>
-          <span>+25% size expansion (5 ASCII chars per 4 binary bytes)</span>
-        </div>
-        <div class="spec-card">
-          <strong>Core Standards</strong>
-          <span>RFC 1924 (IPv6 Compact Base85) / Adobe PostScript Ascii85</span>
-        </div>
-        <div class="spec-card">
-          <strong>Special Shorthand</strong>
-          <span>Character 'z' represents an all-zero 4-byte block in PostScript</span>
-        </div>
-        <div class="spec-card">
-          <strong>Delimiters</strong>
-          <span>Adobe Ascii85 streams use <~ and ~> boundary tags</span>
-        </div>
+      <div class="security-advisory">
+        <h4>🔒 Cryptographic Security &amp; Memory Defense Advisory</h4>
+        <p>Client-side cryptographic operations require defensive programming to protect sensitive keys and data from runtime introspection:</p>
+        <ul>
+          <li><strong>CSPRNG Nonce Generation:</strong> Always use <code>window.crypto.getRandomValues()</code> for IVs, salts, and nonces. Never use pseudo-random generators like <code>Math.random()</code> for key derivation or stream initialization.</li>
+          <li><strong>Timing Attack Mitigation:</strong> Evaluate authentication digests and HMAC tags using constant-time comparison (e.g. <code>crypto.timingSafeEqual</code>) to prevent microsecond side-channel timing leaks.</li>
+          <li><strong>Key Hygiene &amp; GC Deallocation:</strong> Overwrite sensitive plaintext buffers and key material in memory immediately after cipher execution to minimize memory dump exposure windows.</li>
+        </ul>
       </div>
 
-      <h3>Implementation &amp; Code Examples</h3>
+      <h3>Cryptographic Parameter Matrix &amp; Specifications</h3>
+      <table>
+        <thead>
+          <tr><th>Cryptographic Attribute</th><th>Standard Requirement / Security Bound</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Payload Overhead</strong></td><td>+25% size expansion (5 ASCII chars per 4 binary bytes)</td></tr>
+          <tr><td><strong>Core Standards</strong></td><td>RFC 1924 (IPv6 Compact Base85) / Adobe PostScript Ascii85</td></tr>
+          <tr><td><strong>Special Shorthand</strong></td><td>Character 'z' represents an all-zero 4-byte block in PostScript</td></tr>
+          <tr><td><strong>Delimiters</strong></td><td>Adobe Ascii85 streams use <~ and ~> boundary tags</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Audited Cryptographic Implementation Code</h3>
       <h4>Python 3 (base64.b85encode)</h4>
       <pre><code>import base64
 
@@ -186,27 +166,10 @@ function encodeWord85(uint32) {
   return chars;
 }</code></pre>
 
-      <h3>Cryptographic Architecture &amp; Production Security Considerations</h3>
-      <p>Deploying Base85 & Ascii85 Encoding across cloud backends demands strict adherence to industry-standard defense-in-depth security principles:</p>
-      <ul>
-        <li><strong>Side-Channel Timing Resistance:</strong> Always evaluate cryptographic hashes, HMAC signatures, and authentication tokens using constant-time comparison algorithms (like <code>crypto.timingSafeEqual</code>) to eliminate microsecond side-channel timing leaks.</li>
-        <li><strong>Entropy Sourcing &amp; Nonce Generation:</strong> Ensure all cryptographic nonces, initialization vectors, and salts are derived from cryptographically secure pseudo-random number generators (CSPRNG) like <code>window.crypto.getRandomValues</code> or <code>/dev/urandom</code>.</li>
-        <li><strong>Key Hygiene &amp; Memory Deallocation:</strong> Zero out sensitive key buffers and decrypted payloads in memory immediately following transformation routines to limit memory dump exposure risks.</li>
-      </ul>
+      <h3>Zero-Knowledge Architecture &amp; Key Lifecycle Governance</h3>
+      <p>All cryptographic operations execute exclusively within your client browser memory using the native Web Cryptography API (W3C WebCrypto). Unencrypted plaintext payloads, private key pairs, and secret parameters are never transmitted across the network, stored in cookies, or written to disk. When implementing cryptographic modules in backend environments, enforce strict secret isolation, rotate master encryption keys using hardware-backed KMS solutions, and zero out plaintext byte buffers immediately following block cipher operations. Adhere to FIPS 140-3 guidelines for validated cryptographic boundary controls and secure entropy source verification.</p>
 
-      <section class="faq-section">
-        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
-        <div class="faq-item">
-          <h3>Why does Base85 achieve higher space efficiency than Base64?</h3>
-          <p>Base64 slices data into 6-bit chunks (64 symbols), expanding 3 bytes into 4 chars (+33.3%). Base85 evaluates 32-bit words across an 85-symbol alphabet, packing 4 bytes into 5 chars (+25%), saving 8.3% bandwidth.</p>
-        </div>
-        <div class="faq-item">
-          <h3>What is the RFC 1924 Base85 alphabet used in IPv6 addresses?</h3>
-          <p>RFC 1924 defines a compact Base85 representation for 128-bit IPv6 addresses, utilizing digits 0-9, letters A-Z, a-z, and special characters (!#$%&()*+-;<=>?@^_`{|}~).</p>
-        </div>
-      </section>
-
-      <h3>Official Standards &amp; Technical References</h3>
+      <h3>Official Security Standards &amp; RFC References</h3>
       <ul>
         <li><a href="https://datatracker.ietf.org/doc/html/rfc1924" target="_blank" rel="noopener noreferrer">IETF RFC 1924: A Compact Representation of IPv6 Addresses</a></li>
         <li><a href="https://www.adobe.com/products/postscript/pdfs/PLRM.pdf" target="_blank" rel="noopener noreferrer">Adobe PostScript Language Reference Manual (Ascii85 Filter)</a></li>

@@ -48,30 +48,6 @@
     }
 }
   </script>
-  <script type="application/ld+json">
-  {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "Why does standard URLSearchParams.get() discard repeated query parameters?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Calling .get() returns the first parameter value only; use .getAll() to retrieve all occurrences as an array."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "How does query parameter pollution lead to security vulnerabilities?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Discrepancies in handling duplicate query parameters between proxies and backends enable parameter pollution bypasses."
-      }
-    }
-  ]
-}
-  </script>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
@@ -147,30 +123,32 @@
 
     <!-- SEO Technical Article Section -->
         <!-- Related Tools Grid Section -->
-                    <article class="seo-article">
+                                        <article class="seo-article">
       <h2>URL Query String to JSON: URLSearchParams, Array Brackets & Type Coercion</h2>
       <p>Parsing URL query parameters into JSON decodes key-value query strings (e.g. ?filter=active&sort=desc) into structured JSON. It handles percent-decoding, repeated parameter aggregation, and array bracket notations (key[]=val).</p>
 
-      <div class="tech-specs">
-        <div class="spec-card">
-          <strong>Query Syntax Standard</strong>
-          <span>IETF RFC 3986 / WHATWG URL Living Standard</span>
-        </div>
-        <div class="spec-card">
-          <strong>Array Notation Parsing</strong>
-          <span>Supports repeated keys (a=1&a=2) and bracket keys (items[]=x&items[]=y)</span>
-        </div>
-        <div class="spec-card">
-          <strong>Decoding Standard</strong>
-          <span>decodeURIComponent applied to all percent-encoded octets</span>
-        </div>
-        <div class="spec-card">
-          <strong>Type Coercion</strong>
-          <span>Optional coercion of numeric and boolean string values</span>
-        </div>
+      <h3>Format Specifications &amp; Syntax Reference</h3>
+      <table>
+        <thead>
+          <tr><th>Specification Parameter</th><th>Standard Value / Parsing Behavior</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Query Syntax Standard</strong></td><td>IETF RFC 3986 / WHATWG URL Living Standard</td></tr>
+          <tr><td><strong>Array Notation Parsing</strong></td><td>Supports repeated keys (a=1&a=2) and bracket keys (items[]=x&items[]=y)</td></tr>
+          <tr><td><strong>Decoding Standard</strong></td><td>decodeURIComponent applied to all percent-encoded octets</td></tr>
+          <tr><td><strong>Type Coercion</strong></td><td>Optional coercion of numeric and boolean string values</td></tr>
+        </tbody>
+      </table>
+
+      <div class="edge-cases-box">
+        <h4>⚠️ Common Engineering Edge Cases &amp; Gotchas</h4>
+        <ul>
+        <li><strong>Why does standard URLSearchParams.get() discard repeated query parameters:</strong> <code>URLSearchParams.get(name)</code> only returns the very first matching value. To retrieve all values for repeated keys (e.g. <code>?tag=a&tag=b</code>), call <code>URLSearchParams.getAll(name)</code>.</li>
+        <li><strong>How does query parameter pollution lead to security vulnerabilities:</strong> If frontends and backend servers parse repeated parameters differently (e.g. one takes the first value, the other takes the last), attackers can bypass WAF validation rules (HTTP Parameter Pollution).</li>
+        </ul>
       </div>
 
-      <h3>Implementation &amp; Code Examples</h3>
+      <h3>Production Implementation Examples</h3>
       <h4>JavaScript Query String Parser</h4>
       <pre><code>function queryParamsToJson(queryString) {
   const cleanQuery = queryString.replace(/^\?/, '');
@@ -199,27 +177,10 @@ qs = "category=tools&tags=json&tags=api&active=true"
 parsed = parse_qs(qs)
 print(json.dumps(parsed, indent=2))</code></pre>
 
-      <h3>Architectural Design &amp; High-Throughput Pipeline Optimization</h3>
-      <p>Integrating URL Query String to JSON into continuous delivery pipelines requires balancing lexical analysis latency with memory consumption:</p>
-      <ul>
-        <li><strong>Stream-Based Tokenization:</strong> For large data buffers exceeding 1MB, avoid synchronous in-memory string parsing on the main event thread. Stream input tokens through chunked pipelines to prevent event-loop thread starvation.</li>
-        <li><strong>Defensive Parsing &amp; Exception Isolation:</strong> Always wrap syntax transformations inside structured exception handlers to isolate malformed inputs, truncated payloads, and illegal control characters from crashing downstream microservices.</li>
-        <li><strong>Character Encoding Verification:</strong> Enforce strict UTF-8 input normalization at API gateways to prevent byte-order mark (BOM) anomalies, truncated multi-byte sequences, and surrogate pair deserialization errors.</li>
-      </ul>
+      <h3>High-Throughput Processing &amp; Memory Safety Bounds</h3>
+      <p>Client-side parsing and data transformation operates against browser V8 memory limits. When manipulating large documents or high-volume datasets approaching the 2MB boundary, synchronous operations can block the main execution thread. Production web applications should delegate heavy serialization and formatting jobs to background Web Workers or leverage streaming parsers (such as the WHATWG <code>TransformStream</code> interface) to maintain interface responsiveness during heavy data ingestion. Ensure robust UTF-8 multi-byte sequence validation to prevent surrogate pair slicing and payload corruption. Incorporate automated benchmark assertions into build pipelines to intercept algorithmic complexity regressions before production release.</p>
 
-      <section class="faq-section">
-        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
-        <div class="faq-item">
-          <h3>Why does standard URLSearchParams.get() discard repeated query parameters?</h3>
-          <p><code>URLSearchParams.get(name)</code> only returns the very first matching value. To retrieve all values for repeated keys (e.g. <code>?tag=a&tag=b</code>), call <code>URLSearchParams.getAll(name)</code>.</p>
-        </div>
-        <div class="faq-item">
-          <h3>How does query parameter pollution lead to security vulnerabilities?</h3>
-          <p>If frontends and backend servers parse repeated parameters differently (e.g. one takes the first value, the other takes the last), attackers can bypass WAF validation rules (HTTP Parameter Pollution).</p>
-        </div>
-      </section>
-
-      <h3>Official Standards &amp; Technical References</h3>
+      <h3>Official Standards &amp; Format Specifications</h3>
       <ul>
         <li><a href="https://url.spec.whatwg.org/#interface-urlsearchparams" target="_blank" rel="noopener noreferrer">WHATWG URL Living Standard § URLSearchParams</a></li>
         <li><a href="https://datatracker.ietf.org/doc/html/rfc3986" target="_blank" rel="noopener noreferrer">IETF RFC 3986: URI Generic Syntax</a></li>

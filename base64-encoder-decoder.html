@@ -48,47 +48,7 @@
     }
 }
   </script>
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "Why does btoa() fail with InvalidCharacterError on Unicode or Chinese characters?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "The browser btoa() method only accepts Latin1 (binary strings where each character is 1 byte, 0x00 to 0xFF). Multibyte UTF-8 characters exceed this range. The modern, zero-dependency fix in browsers and Node.js is to encode with TextEncoder, map bytes to a binary string, and pass that to btoa(), or use Buffer.from(str, 'utf-8').toString('base64')."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Why does Base64 break when passed inside a URL query parameter, and what is RFC 4648 §5?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Standard Base64 uses '+' and '/', which are reserved URI delimiters. Query parsers and HTTP servers decode '+' into a literal space ('%20'), corrupting the payload. RFC 4648 §5 defines URL-safe Base64, which swaps '+' for '-', '/' for '_', and strips trailing '=' padding."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "When should you strip or restore trailing '=' padding characters?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Padding ('=') is stripped in URL-safe contexts like JWTs and OAuth tokens to prevent query string delimiter collisions. When decoding a stripped Base64 string, decoders that strictly expect 4-character boundaries need padding restored using: while (str.length % 4) str += '='."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Is Base64 an encryption algorithm, and can it secure sensitive passwords?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "No. Base64 is an encoding format designed for transport across 7-bit ASCII systems, not encryption. Anyone can decode it instantly without a key. Never use Base64 to store passwords (use Bcrypt/Argon2) or protect secrets (use AES-256-GCM)."
-        }
-      }
-    ]
-  }
-  </script>
-<!-- Google tag (gtag.js) -->
+  <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -154,34 +114,34 @@
     </section>
 
   
-    <article class="seo-article">
+                            <article class="seo-article">
       <h2>Base64 Architecture: RFC 4648 Bit Splitting & URL-Safe Encoding</h2>
-      <p>Base64 bridges the gap between raw binary bytes and legacy 7-bit ASCII transmission channels (such as MIME email bodies and URL query strings). It converts groups of 24 input bits (3 bytes) into four 6-bit chunks, with each chunk indexing a character in a 64-symbol table.</p>
+      <p>Base64 bridges the gap between raw binary bytes and legacy 7-bit ASCII transmission channels. It converts groups of 24 input bits (3 bytes) into four 6-bit chunks, with each chunk indexing a character in a 64-symbol table.</p>
 
-      <div class="tech-specs">
-        <div class="spec-card">
-          <strong>Payload Overhead</strong>
-          <span>+33.3% size inflation (4 output chars per 3 input bytes)</span>
-        </div>
-        <div class="spec-card">
-          <strong>IETF Specification</strong>
-          <span>RFC 4648 §4 (Standard) & §5 (URL / Filename Safe)</span>
-        </div>
-        <div class="spec-card">
-          <strong>Standard Alphabet</strong>
-          <span><code>A-Z</code>, <code>a-z</code>, <code>0-9</code>, <code>+</code>, <code>/</code> (Padding: <code>=</code>)</span>
-        </div>
-        <div class="spec-card">
-          <strong>URL-Safe Alphabet</strong>
-          <span><code>A-Z</code>, <code>a-z</code>, <code>0-9</code>, <code>-</code>, <code>_</code> (No padding in JWTs)</span>
-        </div>
+      <h3>Format Specifications &amp; Syntax Reference</h3>
+      <table>
+        <thead>
+          <tr><th>Specification Parameter</th><th>Standard Value / Parsing Behavior</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Payload Overhead</strong></td><td>+33.3% size inflation (4 output chars per 3 input bytes)</td></tr>
+          <tr><td><strong>IETF Specification</strong></td><td>RFC 4648 §4 (Standard) & §5 (URL / Filename Safe)</td></tr>
+          <tr><td><strong>Standard Alphabet</strong></td><td>A-Z, a-z, 0-9, +, / (Padding: =)</td></tr>
+          <tr><td><strong>URL-Safe Alphabet</strong></td><td>A-Z, a-z, 0-9, -, _ (No padding in JWTs)</td></tr>
+        </tbody>
+      </table>
+
+      <div class="edge-cases-box">
+        <h4>⚠️ Common Engineering Edge Cases &amp; Gotchas</h4>
+        <ul>
+        <li><strong>Why does btoa() fail with InvalidCharacterError on Unicode or Chinese characters:</strong> Browser window.btoa() expects binary strings where character codes are strictly between 0 and 255 (Latin1). Multibyte UTF-8 characters exceed this range, throwing DOMException. Convert string to UTF-8 bytes using TextEncoder before passing to btoa().</li>
+        <li><strong>Why does Base64 data corrupt when passed inside URL query parameters:</strong> Standard Base64 contains '+' which HTTP query string parsers decode as a literal space ('%20'). Always use RFC 4648 §5 URL-Safe Base64 (swapping '+' for '-' and '/' for '_') to prevent delimiter corruption.</li>
+        </ul>
       </div>
 
-      <h3>Production Implementation Snippets</h3>
-      <p>Avoid custom bitwise loops in production. Use platform-audited standard libraries with explicit UTF-8 byte handling:</p>
-
+      <h3>Production Implementation Examples</h3>
       <h4>Node.js / Modern Browser (UTF-8 Safe)</h4>
-      <pre><code>// Browser & Node 18+: Native TextEncoder prevents Latin1 InvalidCharacterError
+      <pre><code>// Native TextEncoder prevents Latin1 InvalidCharacterError
 function toBase64(text) {
   const bytes = new TextEncoder().encode(text);
   const bin = Array.from(bytes, b => String.fromCharCode(b)).join('');
@@ -198,11 +158,9 @@ function fromBase64(b64) {
 function toBase64Url(text) {
   return toBase64(text).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }</code></pre>
-
       <h4>Python 3</h4>
       <pre><code>import base64
 
-# Standard Base64
 raw_bytes = "Hello UTF-8 🚀".encode("utf-8")
 std_b64 = base64.b64encode(raw_bytes).decode("ascii")
 
@@ -213,64 +171,15 @@ url_b64 = base64.urlsafe_b64encode(raw_bytes).rstrip(b"=").decode("ascii")
 padding_needed = (4 - len(url_b64) % 4) % 4
 decoded = base64.urlsafe_b64decode(url_b64 + "=" * padding_needed).decode("utf-8")</code></pre>
 
-      <h4>Go (Golang)</h4>
-      <pre><code>package main
+      <h3>High-Throughput Processing &amp; Memory Safety Bounds</h3>
+      <p>Client-side parsing and data transformation operates against browser V8 memory limits. When manipulating large documents or high-volume datasets approaching the 2MB boundary, synchronous operations can block the main execution thread. Production web applications should delegate heavy serialization and formatting jobs to background Web Workers or leverage streaming parsers (such as the WHATWG <code>TransformStream</code> interface) to maintain interface responsiveness during heavy data ingestion. Ensure robust UTF-8 multi-byte sequence validation to prevent surrogate pair slicing and payload corruption. Incorporate automated benchmark assertions into build pipelines to intercept algorithmic complexity regressions before production release.</p>
 
-import (
-	"encoding/base64"
-	"fmt"
-)
-
-func main() {
-	payload := []byte("Hello UTF-8 🚀")
-
-	// Standard RFC 4648 Base64
-	std := base64.StdEncoding.EncodeToString(payload)
-
-	// URL-Safe Base64 without '=' padding (standard format for JWT claims)
-	urlSafe := base64.RawURLEncoding.EncodeToString(payload)
-
-	fmt.Printf("Standard: %s\nURL-Safe: %s\n", std, urlSafe)
-}</code></pre>
-
-      <section class="faq-section">
-        <h3>Troubleshooting & Practical Engineering FAQ</h3>
-
-        <div class="faq-item">
-          <h4>Why does btoa() fail with "InvalidCharacterError: The string contains characters outside Latin1 range"?</h4>
-          <p>Browser <code>window.btoa()</code> expects binary strings where each character code is strictly between 0 and 255 (ISO-8859-1 / Latin1). When passed multibyte UTF-8 characters (like emoji 🚀 or CJK glyphs), the character code exceeds 255, throwing a DOMException.</p>
-          <p><strong>Fix:</strong> Convert the string to UTF-8 bytes with <code>new TextEncoder().encode(str)</code> before passing it to <code>btoa()</code>, or in Node.js environments use <code>Buffer.from(str, 'utf-8').toString('base64')</code>.</p>
-        </div>
-
-        <div class="faq-item">
-          <h4>Why does Base64 data corrupt when passed in URL query parameters?</h4>
-          <p>Standard Base64 contains <code>+</code> and <code>/</code>. In HTTP query strings, the plus sign <code>+</code> is reserved as an alias for a space character. When web servers (such as Nginx, Apache, or Express) parse <code>?token=abc+def</code>, they decode it as <code>abc def</code>, corrupting the Base64 bitstream.</p>
-          <p><strong>Fix:</strong> Always use <strong>RFC 4648 §5 URL-Safe Base64</strong> (swap <code>+</code> for <code>-</code>, <code>/</code> for <code>_</code>, and strip trailing <code>=</code>) when placing Base64 in query parameters or URL paths.</p>
-        </div>
-
-        <div class="faq-item">
-          <h4>When should you strip or restore trailing '=' padding characters?</h4>
-          <p>Padding characters (<code>=</code>) exist so decoders know the input byte stream ended on a 1-byte or 2-byte boundary. In URL paths and JWTs, padding is stripped because the equals sign conflicts with query string key-value delimiters. When decoding with strict libraries in Python or Java that throw <code>Incorrect padding</code>, restore the padding using modulo arithmetic:</p>
-          <pre><code>// Restore padding in JavaScript
-while (str.length % 4 !== 0) {
-  str += '=';
-}</code></pre>
-        </div>
-
-        <div class="faq-item">
-          <h4>Is Base64 an encryption algorithm? Can I use it to hide user passwords or secrets?</h4>
-          <p><strong>No. Base64 provides zero confidentiality.</strong> It is a transport encoding format, not encryption. Anyone who intercepts a Base64 string can decode it instantly without a key. Passwords must be hashed using adaptive, salted algorithms like <strong>Bcrypt</strong> or <strong>Argon2id</strong>. Confidential payloads must be encrypted using authenticated ciphers like <strong>AES-256-GCM</strong>.</p>
-        </div>
-      </section>
-
-      <h3>Standards & Authoritative References</h3>
+      <h3>Official Standards &amp; Format Specifications</h3>
       <ul>
-        <li><a href="https://datatracker.ietf.org/doc/html/rfc4648" target="_blank" rel="noopener noreferrer">IETF RFC 4648: The Base16, Base32, and Base64 Data Encodings</a></li>
-        <li><a href="https://html.spec.whatwg.org/multipage/webappapis.html#dom-btoa" target="_blank" rel="noopener noreferrer">WHATWG HTML Living Standard: Web Application APIs (atob & btoa specification)</a></li>
-        <li><a href="https://tools.ietf.org/html/rfc7515#section-2" target="_blank" rel="noopener noreferrer">IETF RFC 7515: JSON Web Signature (JWS) - Base64URL Encoding Definition</a></li>
+        <li><a href="https://datatracker.ietf.org/doc/html/rfc4648" target="_blank" rel="noopener noreferrer">RFC 4648: The Base16, Base32, and Base64 Data Encodings</a></li>
+        <li><a href="https://html.spec.whatwg.org/multipage/webappapis.html#atob" target="_blank" rel="noopener noreferrer">WHATWG HTML Living Standard: Base64 utility methods</a></li>
       </ul>
     </article>
-
 
     <section class="related-tools" style="margin-top:3rem; padding-top:2rem; border-top:1px solid var(--bg-card-border);">
       <h3 style="font-size:1.2rem; margin-bottom:1rem; color:var(--text-bright);">🔗 Related Developer Tools</h3>

@@ -48,30 +48,6 @@
     }
 }
   </script>
-  <script type="application/ld+json">
-  {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "What causes 'YAML Exception: mapping values are not allowed here'?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Missing spaces after colons or misaligned indentation levels trigger mapping values not allowed errors."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Why are duplicate keys dangerous in YAML configuration files?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Duplicate keys cause silent value overwrites or parsing failures across different language YAML libraries."
-      }
-    }
-  ]
-}
-  </script>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
@@ -148,30 +124,32 @@
 
     <!-- SEO Technical Article Section -->
         <!-- Related Tools Grid Section -->
-                    <article class="seo-article">
+                                        <article class="seo-article">
       <h2>YAML Formatter: 2-Space Indentation, Sequence Dash Alignment & Schema Linting</h2>
       <p>YAML Formatter normalizes whitespace hierarchy in YAML documents. It enforces consistent 2-space indentation, aligns list sequence dashes (-), wraps complex scalar strings, and lints syntax against YAML 1.2 specifications.</p>
 
-      <div class="tech-specs">
-        <div class="spec-card">
-          <strong>Indentation Standard</strong>
-          <span>Strict 2-space indentation per nesting depth level</span>
-        </div>
-        <div class="spec-card">
-          <strong>List Sequence Alignment</strong>
-          <span>Standardizes dash (-) spacing relative to parent mapping keys</span>
-        </div>
-        <div class="spec-card">
-          <strong>Linter Checks</strong>
-          <span>Detects duplicate mapping keys, illegal tab characters, and indentation mismatches</span>
-        </div>
-        <div class="spec-card">
-          <strong>Standard</strong>
-          <span>YAML Ain't Markup Language (YAML) Version 1.2.2</span>
-        </div>
+      <h3>Format Specifications &amp; Syntax Reference</h3>
+      <table>
+        <thead>
+          <tr><th>Specification Parameter</th><th>Standard Value / Parsing Behavior</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Indentation Standard</strong></td><td>Strict 2-space indentation per nesting depth level</td></tr>
+          <tr><td><strong>List Sequence Alignment</strong></td><td>Standardizes dash (-) spacing relative to parent mapping keys</td></tr>
+          <tr><td><strong>Linter Checks</strong></td><td>Detects duplicate mapping keys, illegal tab characters, and indentation mismatches</td></tr>
+          <tr><td><strong>Standard</strong></td><td>YAML Ain't Markup Language (YAML) Version 1.2.2</td></tr>
+        </tbody>
+      </table>
+
+      <div class="edge-cases-box">
+        <h4>⚠️ Common Engineering Edge Cases &amp; Gotchas</h4>
+        <ul>
+        <li><strong>What causes 'YAML Exception: mapping values are not allowed here':</strong> This syntax error occurs when colons (<code>:</code>) are followed immediately by text without a mandatory space (e.g. <code>http://example.com</code> or <code>key:value</code>), or when indentation levels mismatch.</li>
+        <li><strong>Why are duplicate keys dangerous in YAML configuration files:</strong> If a key appears twice under the same mapping parent, some parsers silently overwrite the first value with the second, while others throw fatal exceptions. Strict formatters flag duplicate keys as errors.</li>
+        </ul>
       </div>
 
-      <h3>Implementation &amp; Code Examples</h3>
+      <h3>Production Implementation Examples</h3>
       <h4>Formatted Kubernetes YAML Example</h4>
       <pre><code>apiVersion: v1
 kind: ConfigMap
@@ -186,27 +164,10 @@ data:
     - analytics
     - notifications</code></pre>
 
-      <h3>Architectural Design &amp; High-Throughput Pipeline Optimization</h3>
-      <p>Integrating YAML Formatter into continuous delivery pipelines requires balancing lexical analysis latency with memory consumption:</p>
-      <ul>
-        <li><strong>Stream-Based Tokenization:</strong> For large data buffers exceeding 1MB, avoid synchronous in-memory string parsing on the main event thread. Stream input tokens through chunked pipelines to prevent event-loop thread starvation.</li>
-        <li><strong>Defensive Parsing &amp; Exception Isolation:</strong> Always wrap syntax transformations inside structured exception handlers to isolate malformed inputs, truncated payloads, and illegal control characters from crashing downstream microservices.</li>
-        <li><strong>Character Encoding Verification:</strong> Enforce strict UTF-8 input normalization at API gateways to prevent byte-order mark (BOM) anomalies, truncated multi-byte sequences, and surrogate pair deserialization errors.</li>
-      </ul>
+      <h3>High-Throughput Processing &amp; Memory Safety Bounds</h3>
+      <p>Client-side parsing and data transformation operates against browser V8 memory limits. When manipulating large documents or high-volume datasets approaching the 2MB boundary, synchronous operations can block the main execution thread. Production web applications should delegate heavy serialization and formatting jobs to background Web Workers or leverage streaming parsers (such as the WHATWG <code>TransformStream</code> interface) to maintain interface responsiveness during heavy data ingestion. Ensure robust UTF-8 multi-byte sequence validation to prevent surrogate pair slicing and payload corruption. Incorporate automated benchmark assertions into build pipelines to intercept algorithmic complexity regressions before production release.</p>
 
-      <section class="faq-section">
-        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
-        <div class="faq-item">
-          <h3>What causes 'YAML Exception: mapping values are not allowed here'?</h3>
-          <p>This syntax error occurs when colons (<code>:</code>) are followed immediately by text without a mandatory space (e.g. <code>http://example.com</code> or <code>key:value</code>), or when indentation levels mismatch.</p>
-        </div>
-        <div class="faq-item">
-          <h3>Why are duplicate keys dangerous in YAML configuration files?</h3>
-          <p>If a key appears twice under the same mapping parent, some parsers silently overwrite the first value with the second, while others throw fatal exceptions. Strict formatters flag duplicate keys as errors.</p>
-        </div>
-      </section>
-
-      <h3>Official Standards &amp; Technical References</h3>
+      <h3>Official Standards &amp; Format Specifications</h3>
       <ul>
         <li><a href="https://yaml.org/spec/1.2.2/" target="_blank" rel="noopener noreferrer">YAML 1.2.2 Specification</a></li>
       </ul>

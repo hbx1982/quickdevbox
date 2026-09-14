@@ -47,30 +47,6 @@
     }
 }
   </script>
-  <script type="application/ld+json">
-  {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "Why must custom cursor: url() declarations always include a fallback keyword?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "CSS specifications mandate a system keyword fallback in custom cursor declarations to prevent silent failures."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "What is the maximum allowed dimension for custom cursor images?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Browsers enforce a 32x32 or 128x128 pixel maximum on custom cursor images to mitigate UI spoofing exploits."
-      }
-    }
-  ]
-}
-  </script>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
@@ -204,30 +180,40 @@
       </div>
     </div>
 
-                    <article class="seo-article">
+                                        <article class="seo-article">
       <h2>CSS Cursor Properties: Standard User Feedback Cursors & Custom SVG Hotspots</h2>
       <p>The CSS cursor property provides visual affordances signaling element interactivity. Supported cursors range from system controls (pointer, grab, not-allowed, text) to custom SVG vectors with defined pixel coordinate hotspots.</p>
 
-      <div class="tech-specs">
-        <div class="spec-card">
-          <strong>System Cursors</strong>
-          <span>default, pointer, text, move, grab, grabbing, not-allowed, wait</span>
+      <h3>CSS Properties &amp; Syntax Reference</h3>
+      <table>
+        <thead>
+          <tr><th>CSS Rule / Parameter</th><th>Syntax Specification &amp; Compositor Behavior</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>System Cursors</strong></td><td>default, pointer, text, move, grab, grabbing, not-allowed, wait</td></tr>
+          <tr><td><strong>Custom URL Syntax</strong></td><td>cursor: url('icon.svg') <x-hotspot> <y-hotspot>, auto</td></tr>
+          <tr><td><strong>Affordance Guideline</strong></td><td>pointer signals clickable links/buttons; not-allowed signals disabled state</td></tr>
+          <tr><td><strong>Standard</strong></td><td>W3C CSS Basic User Interface Module Level 4 § cursor</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Cross-Browser Rendering &amp; Compositor Engine Support</h3>
+      <div class="browser-support-matrix">
+        <div class="engine-card">
+          <strong>Chromium / Blink (Chrome, Edge)</strong>
+          <span>Full hardware-accelerated GPU compositing. Zero layout shifts when dimensions are clamped.</span>
         </div>
-        <div class="spec-card">
-          <strong>Custom URL Syntax</strong>
-          <span>cursor: url('icon.svg') <x-hotspot> <y-hotspot>, auto</span>
+        <div class="engine-card">
+          <strong>WebKit (Safari, iOS)</strong>
+          <span>Requires vendor prefixes (<code>-webkit-</code>) for backdrop filters, clip paths, and text smoothing.</span>
         </div>
-        <div class="spec-card">
-          <strong>Affordance Guideline</strong>
-          <span>pointer signals clickable links/buttons; not-allowed signals disabled state</span>
-        </div>
-        <div class="spec-card">
-          <strong>Standard</strong>
-          <span>W3C CSS Basic User Interface Module Level 4 § cursor</span>
+        <div class="engine-card">
+          <strong>Gecko (Mozilla Firefox)</strong>
+          <span>Standard W3C compliance. Supports native hardware layer caching and subpixel rendering.</span>
         </div>
       </div>
 
-      <h3>Implementation &amp; Code Examples</h3>
+      <h3>Production CSS Recipes &amp; Snippets</h3>
       <h4>Custom Vector Cursor with Defined Hotspot</h4>
       <pre><code>.custom-target {
   /* Coordinates (4, 4) define the precise active click point inside the 24x24 SVG */
@@ -239,27 +225,10 @@
   opacity: 0.6;
 }</code></pre>
 
-      <h3>Browser Rendering Performance &amp; Hardware Compositing</h3>
-      <p>Executing CSS Cursor Properties in modern web applications requires optimizing layout rendering across the browser rendering pipeline:</p>
-      <ul>
-        <li><strong>GPU Compositor Promotion:</strong> Restrict high-frequency dynamic transitions to compositor-only CSS properties (<code>transform</code> and <code>opacity</code>) to avoid triggering costly CPU layout reflows and repaints.</li>
-        <li><strong>Layout Thrashing Prevention:</strong> Decouple DOM geometry measurements from subsequent style write operations to eliminate forced synchronous reflow cycles and preserve 60 FPS scrolling.</li>
-        <li><strong>Subpixel Antialiasing:</strong> Design visual components with hardware-accelerated vector units and clamp scaling boundaries to eliminate visual pixel rounding jitter on high-DPI displays.</li>
-      </ul>
+      <h3>GPU Compositing &amp; Layout Performance Tuning</h3>
+      <p>Modern browser rendering engines divide graphical updates into Style, Layout, Paint, and Composite stages. High-performance interfaces optimize execution by isolating dynamic animations to compositor-only CSS properties—specifically <code>transform</code> and <code>opacity</code>. Altering geometry properties like <code>width</code>, <code>margin</code>, or <code>top</code> forces full layout reflows and repaints, increasing CPU utilization and causing frame drops on lower-power mobile devices. Leverage hardware layer promotion strategically to preserve 60 FPS visual smoothness, and explicitly reserve component aspect ratios to ensure Cumulative Layout Shift (CLS) scores remain at zero. Profile paint timings under 4x CPU throttling in Chrome DevTools to eliminate paint invalidation bottlenecks.</p>
 
-      <section class="faq-section">
-        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
-        <div class="faq-item">
-          <h3>Why must custom cursor: url() declarations always include a fallback keyword?</h3>
-          <p>If the custom image fails to load or the format is unsupported by the client OS, the browser drops the entire declaration unless a standard system fallback keyword (like <code>auto</code> or <code>pointer</code>) is supplied.</p>
-        </div>
-        <div class="faq-item">
-          <h3>What is the maximum allowed dimension for custom cursor images?</h3>
-          <p>Most modern desktop browsers cap custom cursor dimensions at 32x32 pixels or 128x128 pixels on HiDPI screens. Oversized images are silently ignored to prevent UI spoofing attacks.</p>
-        </div>
-      </section>
-
-      <h3>Official Standards &amp; Technical References</h3>
+      <h3>W3C Standards &amp; Browser Engine Specifications</h3>
       <ul>
         <li><a href="https://www.w3.org/TR/css-ui-4/#cursor" target="_blank" rel="noopener noreferrer">W3C CSS Basic User Interface Module Level 4 § The cursor Property</a></li>
       </ul>

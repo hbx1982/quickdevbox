@@ -48,30 +48,6 @@
     }
 }
   </script>
-  <script type="application/ld+json">
-  {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "Why is SHA-512 faster than SHA-256 on modern 64-bit server processors?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "SHA-512 leverages native 64-bit CPU registers and larger 128-byte blocks for increased instruction throughput."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "How does SHA-384 derive from SHA-512?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "SHA-384 shares the SHA-512 engine with distinct initial vectors and truncates output to 384 bits."
-      }
-    }
-  ]
-}
-  </script>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
@@ -141,30 +117,34 @@
 
       <!-- SEO Technical Article Section -->
       <!-- Related Tools Section -->
-                          <article class="seo-article">
+                                              <article class="seo-article">
       <h2>SHA-384 & SHA-512: 64-bit Word Architecture & High-Entropy Checksums</h2>
       <p>SHA-384 and SHA-512 belong to the SHA-2 family, engineered specifically for 64-bit CPU microarchitectures. Processing data through 80 rounds of bitwise operations across eight 64-bit state words, they deliver superior collision resistance.</p>
 
-      <div class="tech-specs">
-        <div class="spec-card">
-          <strong>Word Architecture</strong>
-          <span>Native 64-bit unsigned integer operations (uint64)</span>
-        </div>
-        <div class="spec-card">
-          <strong>Block Size</strong>
-          <span>1024 bits (128 bytes) per message chunk</span>
-        </div>
-        <div class="spec-card">
-          <strong>Rounds</strong>
-          <span>80 sequential transformation iterations per block</span>
-        </div>
-        <div class="spec-card">
-          <strong>Standard Reference</strong>
-          <span>NIST FIPS 180-4 Secure Hash Standard</span>
-        </div>
+      <div class="security-advisory">
+        <h4>🔒 Cryptographic Security &amp; Memory Defense Advisory</h4>
+        <p>Client-side cryptographic operations require defensive programming to protect sensitive keys and data from runtime introspection:</p>
+        <ul>
+          <li><strong>CSPRNG Nonce Generation:</strong> Always use <code>window.crypto.getRandomValues()</code> for IVs, salts, and nonces. Never use pseudo-random generators like <code>Math.random()</code> for key derivation or stream initialization.</li>
+          <li><strong>Timing Attack Mitigation:</strong> Evaluate authentication digests and HMAC tags using constant-time comparison (e.g. <code>crypto.timingSafeEqual</code>) to prevent microsecond side-channel timing leaks.</li>
+          <li><strong>Key Hygiene &amp; GC Deallocation:</strong> Overwrite sensitive plaintext buffers and key material in memory immediately after cipher execution to minimize memory dump exposure windows.</li>
+        </ul>
       </div>
 
-      <h3>Implementation &amp; Code Examples</h3>
+      <h3>Cryptographic Parameter Matrix &amp; Specifications</h3>
+      <table>
+        <thead>
+          <tr><th>Cryptographic Attribute</th><th>Standard Requirement / Security Bound</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Word Architecture</strong></td><td>Native 64-bit unsigned integer operations (uint64)</td></tr>
+          <tr><td><strong>Block Size</strong></td><td>1024 bits (128 bytes) per message chunk</td></tr>
+          <tr><td><strong>Rounds</strong></td><td>80 sequential transformation iterations per block</td></tr>
+          <tr><td><strong>Standard Reference</strong></td><td>NIST FIPS 180-4 Secure Hash Standard</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Audited Cryptographic Implementation Code</h3>
       <h4>Node.js (crypto)</h4>
       <pre><code>import crypto from 'crypto';
 
@@ -179,27 +159,10 @@ msg = b"Financial Ledger Entry"
 print("SHA-384:", hashlib.sha384(msg).hexdigest())
 print("SHA-512:", hashlib.sha512(msg).hexdigest())</code></pre>
 
-      <h3>Cryptographic Architecture &amp; Production Security Considerations</h3>
-      <p>Deploying SHA-384 & SHA-512 across cloud backends demands strict adherence to industry-standard defense-in-depth security principles:</p>
-      <ul>
-        <li><strong>Side-Channel Timing Resistance:</strong> Always evaluate cryptographic hashes, HMAC signatures, and authentication tokens using constant-time comparison algorithms (like <code>crypto.timingSafeEqual</code>) to eliminate microsecond side-channel timing leaks.</li>
-        <li><strong>Entropy Sourcing &amp; Nonce Generation:</strong> Ensure all cryptographic nonces, initialization vectors, and salts are derived from cryptographically secure pseudo-random number generators (CSPRNG) like <code>window.crypto.getRandomValues</code> or <code>/dev/urandom</code>.</li>
-        <li><strong>Key Hygiene &amp; Memory Deallocation:</strong> Zero out sensitive key buffers and decrypted payloads in memory immediately following transformation routines to limit memory dump exposure risks.</li>
-      </ul>
+      <h3>Zero-Knowledge Architecture &amp; Key Lifecycle Governance</h3>
+      <p>All cryptographic operations execute exclusively within your client browser memory using the native Web Cryptography API (W3C WebCrypto). Unencrypted plaintext payloads, private key pairs, and secret parameters are never transmitted across the network, stored in cookies, or written to disk. When implementing cryptographic modules in backend environments, enforce strict secret isolation, rotate master encryption keys using hardware-backed KMS solutions, and zero out plaintext byte buffers immediately following block cipher operations. Adhere to FIPS 140-3 guidelines for validated cryptographic boundary controls and secure entropy source verification.</p>
 
-      <section class="faq-section">
-        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
-        <div class="faq-item">
-          <h3>Why is SHA-512 faster than SHA-256 on modern 64-bit server processors?</h3>
-          <p>SHA-512 processes 64-bit integers and 128-byte message blocks in parallel CPU registers, whereas SHA-256 operates on 32-bit words and 64-byte blocks. On 64-bit x86-64 and ARM64 CPUs, SHA-512 often achieves higher throughput per clock cycle.</p>
-        </div>
-        <div class="faq-item">
-          <h3>How does SHA-384 derive from SHA-512?</h3>
-          <p>SHA-384 uses the identical compression algorithm as SHA-512 with two differences: it initializes with distinct 64-bit constants (the fractional parts of the square roots of the 9th through 16th primes) and truncates the final 512-bit output to 384 bits.</p>
-        </div>
-      </section>
-
-      <h3>Official Standards &amp; Technical References</h3>
+      <h3>Official Security Standards &amp; RFC References</h3>
       <ul>
         <li><a href="https://csrc.nist.gov/publications/detail/fips/180/4/final" target="_blank" rel="noopener noreferrer">NIST FIPS 180-4: Secure Hash Standard</a></li>
         <li><a href="https://datatracker.ietf.org/doc/html/rfc6234" target="_blank" rel="noopener noreferrer">IETF RFC 6234: SHA and SHA-based HMAC Protocols</a></li>

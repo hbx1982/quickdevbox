@@ -47,30 +47,6 @@
     }
 }
   </script>
-  <script type="application/ld+json">
-  {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "Why does the CSS parser reject cubic-bezier values with x-coordinates outside [0, 1]?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "The X-axis represents elapsed time and must remain within [0, 1] to prevent illegal backward time travel."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "How do you achieve realistic elastic overshoot using cubic-bezier?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Configuring y2 values greater than 1.0 creates a physics-based spring overshoot before settling."
-      }
-    }
-  ]
-}
-  </script>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
@@ -180,30 +156,40 @@
       </div>
     </div>
 
-                    <article class="seo-article">
+                                        <article class="seo-article">
       <h2>CSS Cubic Bezier Curves: Acceleration Curves, Splines & Spring Transitions</h2>
       <p>Cubic Bezier curves define smooth easing transitions in CSS using four control points: P0(0,0), P1(x1,y1), P2(x2,y2), and P3(1,1). Setting y-coordinates above 1.0 or below 0.0 simulates physical spring and bounce easing.</p>
 
-      <div class="tech-specs">
-        <div class="spec-card">
-          <strong>Mathematical Formula</strong>
-          <span>B(t) = (1-t)^3*P0 + 3(1-t)^2*t*P1 + 3(1-t)*t^2*P2 + t^3*P3, where 0 <= t <= 1</span>
+      <h3>CSS Properties &amp; Syntax Reference</h3>
+      <table>
+        <thead>
+          <tr><th>CSS Rule / Parameter</th><th>Syntax Specification &amp; Compositor Behavior</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Mathematical Formula</strong></td><td>B(t) = (1-t)^3*P0 + 3(1-t)^2*t*P1 + 3(1-t)*t^2*P2 + t^3*P3, where 0 <= t <= 1</td></tr>
+          <tr><td><strong>Coordinate Boundaries</strong></td><td>x1 and x2 MUST be within [0, 1]; y1 and y2 can exceed [0, 1] for bounce</td></tr>
+          <tr><td><strong>Standard Keyword Curves</strong></td><td>ease (0.25, 0.1, 0.25, 1), ease-in (0.42, 0, 1, 1), ease-out (0, 0, 0.58, 1)</td></tr>
+          <tr><td><strong>Standard</strong></td><td>W3C CSS Easing Functions Level 1</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Cross-Browser Rendering &amp; Compositor Engine Support</h3>
+      <div class="browser-support-matrix">
+        <div class="engine-card">
+          <strong>Chromium / Blink (Chrome, Edge)</strong>
+          <span>Full hardware-accelerated GPU compositing. Zero layout shifts when dimensions are clamped.</span>
         </div>
-        <div class="spec-card">
-          <strong>Coordinate Boundaries</strong>
-          <span>x1 and x2 MUST be within [0, 1]; y1 and y2 can exceed [0, 1] for bounce</span>
+        <div class="engine-card">
+          <strong>WebKit (Safari, iOS)</strong>
+          <span>Requires vendor prefixes (<code>-webkit-</code>) for backdrop filters, clip paths, and text smoothing.</span>
         </div>
-        <div class="spec-card">
-          <strong>Standard Keyword Curves</strong>
-          <span>ease (0.25, 0.1, 0.25, 1), ease-in (0.42, 0, 1, 1), ease-out (0, 0, 0.58, 1)</span>
-        </div>
-        <div class="spec-card">
-          <strong>Standard</strong>
-          <span>W3C CSS Easing Functions Level 1</span>
+        <div class="engine-card">
+          <strong>Gecko (Mozilla Firefox)</strong>
+          <span>Standard W3C compliance. Supports native hardware layer caching and subpixel rendering.</span>
         </div>
       </div>
 
-      <h3>Implementation &amp; Code Examples</h3>
+      <h3>Production CSS Recipes &amp; Snippets</h3>
       <h4>Elastic Spring Bounce Easing</h4>
       <pre><code>.modal-popup {
   /* y2 = 1.4 creates an overshoot bounce effect before settling at 1.0 */
@@ -218,27 +204,10 @@
   transition: transform 0.35s cubic-bezier(0.0, 0.0, 0.2, 1);
 }</code></pre>
 
-      <h3>Browser Rendering Performance &amp; Hardware Compositing</h3>
-      <p>Executing CSS Cubic Bezier Curves in modern web applications requires optimizing layout rendering across the browser rendering pipeline:</p>
-      <ul>
-        <li><strong>GPU Compositor Promotion:</strong> Restrict high-frequency dynamic transitions to compositor-only CSS properties (<code>transform</code> and <code>opacity</code>) to avoid triggering costly CPU layout reflows and repaints.</li>
-        <li><strong>Layout Thrashing Prevention:</strong> Decouple DOM geometry measurements from subsequent style write operations to eliminate forced synchronous reflow cycles and preserve 60 FPS scrolling.</li>
-        <li><strong>Subpixel Antialiasing:</strong> Design visual components with hardware-accelerated vector units and clamp scaling boundaries to eliminate visual pixel rounding jitter on high-DPI displays.</li>
-      </ul>
+      <h3>GPU Compositing &amp; Layout Performance Tuning</h3>
+      <p>Modern browser rendering engines divide graphical updates into Style, Layout, Paint, and Composite stages. High-performance interfaces optimize execution by isolating dynamic animations to compositor-only CSS properties—specifically <code>transform</code> and <code>opacity</code>. Altering geometry properties like <code>width</code>, <code>margin</code>, or <code>top</code> forces full layout reflows and repaints, increasing CPU utilization and causing frame drops on lower-power mobile devices. Leverage hardware layer promotion strategically to preserve 60 FPS visual smoothness, and explicitly reserve component aspect ratios to ensure Cumulative Layout Shift (CLS) scores remain at zero. Profile paint timings under 4x CPU throttling in Chrome DevTools to eliminate paint invalidation bottlenecks.</p>
 
-      <section class="faq-section">
-        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
-        <div class="faq-item">
-          <h3>Why does the CSS parser reject cubic-bezier values with x-coordinates outside [0, 1]?</h3>
-          <p>In animation timing functions, the X-axis represents progression in time. Time cannot flow backwards; therefore, x1 and x2 must remain strictly between 0 and 1 to prevent non-functional time loops.</p>
-        </div>
-        <div class="faq-item">
-          <h3>How do you achieve realistic elastic overshoot using cubic-bezier?</h3>
-          <p>Set y2 above 1.0 (e.g. <code>cubic-bezier(0.175, 0.885, 0.32, 1.275)</code>). The animation will accelerate past its target value and snap back, simulating spring physics.</p>
-        </div>
-      </section>
-
-      <h3>Official Standards &amp; Technical References</h3>
+      <h3>W3C Standards &amp; Browser Engine Specifications</h3>
       <ul>
         <li><a href="https://www.w3.org/TR/css-easing-1/#cubic-bezier-easing-functions" target="_blank" rel="noopener noreferrer">W3C CSS Easing Functions Level 1 § Cubic Bezier Easing Functions</a></li>
       </ul>

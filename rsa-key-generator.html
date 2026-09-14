@@ -48,30 +48,6 @@
     }
 }
   </script>
-  <script type="application/ld+json">
-  {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "Why is 65537 universally chosen as the public exponent (e) in RSA?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "65537 has only two set bits in binary, accelerating modular exponentiation while defending against Coppersmith attacks."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "What is the difference between PKCS #1 and PKCS #8 private key PEM headers?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "PKCS#1 is RSA-specific (BEGIN RSA PRIVATE KEY); PKCS#8 is a universal format (BEGIN PRIVATE KEY)."
-      }
-    }
-  ]
-}
-  </script>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
@@ -143,30 +119,34 @@
 
       <!-- SEO Technical Article Section -->
       <!-- Related Tools Section -->
-                          <article class="seo-article">
+                                              <article class="seo-article">
       <h2>RSA Key Generation: Large Prime Math (p & q), Euler's Totient & PKCS #8 Standards</h2>
       <p>The RSA cryptosystem relies on the computational hardness of factoring the product of two large prime numbers: n = p * q. Generating an RSA keypair computes Euler's totient phi(n) = (p-1)(q-1) and determines modular multiplicative inverses for public (e=65537) and private (d) exponents.</p>
 
-      <div class="tech-specs">
-        <div class="spec-card">
-          <strong>Cryptographic Foundation</strong>
-          <span>Integer Factorization Problem / Euler's Totient Theorem</span>
-        </div>
-        <div class="spec-card">
-          <strong>Recommended Key Size</strong>
-          <span>Minimum 2048 bits for general use; 4096 bits for root certificate authorities</span>
-        </div>
-        <div class="spec-card">
-          <strong>Public Exponent</strong>
-          <span>e = 65537 (0x10001, 4th Fermat prime)</span>
-        </div>
-        <div class="spec-card">
-          <strong>Serialization Standards</strong>
-          <span>PKCS #1 (RSAPrivateKey) & PKCS #8 (PrivateKeyInfo) in Base64 PEM format</span>
-        </div>
+      <div class="security-advisory">
+        <h4>🔒 Cryptographic Security &amp; Memory Defense Advisory</h4>
+        <p>Client-side cryptographic operations require defensive programming to protect sensitive keys and data from runtime introspection:</p>
+        <ul>
+          <li><strong>CSPRNG Nonce Generation:</strong> Always use <code>window.crypto.getRandomValues()</code> for IVs, salts, and nonces. Never use pseudo-random generators like <code>Math.random()</code> for key derivation or stream initialization.</li>
+          <li><strong>Timing Attack Mitigation:</strong> Evaluate authentication digests and HMAC tags using constant-time comparison (e.g. <code>crypto.timingSafeEqual</code>) to prevent microsecond side-channel timing leaks.</li>
+          <li><strong>Key Hygiene &amp; GC Deallocation:</strong> Overwrite sensitive plaintext buffers and key material in memory immediately after cipher execution to minimize memory dump exposure windows.</li>
+        </ul>
       </div>
 
-      <h3>Implementation &amp; Code Examples</h3>
+      <h3>Cryptographic Parameter Matrix &amp; Specifications</h3>
+      <table>
+        <thead>
+          <tr><th>Cryptographic Attribute</th><th>Standard Requirement / Security Bound</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Cryptographic Foundation</strong></td><td>Integer Factorization Problem / Euler's Totient Theorem</td></tr>
+          <tr><td><strong>Recommended Key Size</strong></td><td>Minimum 2048 bits for general use; 4096 bits for root certificate authorities</td></tr>
+          <tr><td><strong>Public Exponent</strong></td><td>e = 65537 (0x10001, 4th Fermat prime)</td></tr>
+          <tr><td><strong>Serialization Standards</strong></td><td>PKCS #1 (RSAPrivateKey) & PKCS #8 (PrivateKeyInfo) in Base64 PEM format</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Audited Cryptographic Implementation Code</h3>
       <h4>OpenSSL CLI Key Generation</h4>
       <pre><code># Generate 4096-bit RSA private key
 openssl genpkey -algorithm RSA -out private_key.pem -pkeyopt rsa_keygen_bits:4096
@@ -183,27 +163,10 @@ const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
 });
 console.log("Public Key Header:", publicKey.split('\n')[0]);</code></pre>
 
-      <h3>Cryptographic Architecture &amp; Production Security Considerations</h3>
-      <p>Deploying RSA Key Generation across cloud backends demands strict adherence to industry-standard defense-in-depth security principles:</p>
-      <ul>
-        <li><strong>Side-Channel Timing Resistance:</strong> Always evaluate cryptographic hashes, HMAC signatures, and authentication tokens using constant-time comparison algorithms (like <code>crypto.timingSafeEqual</code>) to eliminate microsecond side-channel timing leaks.</li>
-        <li><strong>Entropy Sourcing &amp; Nonce Generation:</strong> Ensure all cryptographic nonces, initialization vectors, and salts are derived from cryptographically secure pseudo-random number generators (CSPRNG) like <code>window.crypto.getRandomValues</code> or <code>/dev/urandom</code>.</li>
-        <li><strong>Key Hygiene &amp; Memory Deallocation:</strong> Zero out sensitive key buffers and decrypted payloads in memory immediately following transformation routines to limit memory dump exposure risks.</li>
-      </ul>
+      <h3>Zero-Knowledge Architecture &amp; Key Lifecycle Governance</h3>
+      <p>All cryptographic operations execute exclusively within your client browser memory using the native Web Cryptography API (W3C WebCrypto). Unencrypted plaintext payloads, private key pairs, and secret parameters are never transmitted across the network, stored in cookies, or written to disk. When implementing cryptographic modules in backend environments, enforce strict secret isolation, rotate master encryption keys using hardware-backed KMS solutions, and zero out plaintext byte buffers immediately following block cipher operations. Adhere to FIPS 140-3 guidelines for validated cryptographic boundary controls and secure entropy source verification.</p>
 
-      <section class="faq-section">
-        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
-        <div class="faq-item">
-          <h3>Why is 65537 universally chosen as the public exponent (e) in RSA?</h3>
-          <p>65537 is the 4th Fermat prime (2^16 + 1). In binary, it has only two set bits (10000000000000001), requiring only 17 squaring operations and 1 multiplication, maximizing public key verification speed while avoiding low-exponent attacks.</p>
-        </div>
-        <div class="faq-item">
-          <h3>What is the difference between PKCS #1 and PKCS #8 private key PEM headers?</h3>
-          <p>PKCS #1 begins with <code>BEGIN RSA PRIVATE KEY</code> and is specific only to RSA. PKCS #8 begins with <code>BEGIN PRIVATE KEY</code> and is an extensible ASN.1 standard supporting RSA, ECDSA, and Ed25519.</p>
-        </div>
-      </section>
-
-      <h3>Official Standards &amp; Technical References</h3>
+      <h3>Official Security Standards &amp; RFC References</h3>
       <ul>
         <li><a href="https://datatracker.ietf.org/doc/html/rfc8017" target="_blank" rel="noopener noreferrer">IETF RFC 8017: PKCS #1: RSA Cryptography Specifications Version 2.2</a></li>
         <li><a href="https://datatracker.ietf.org/doc/html/rfc5208" target="_blank" rel="noopener noreferrer">IETF RFC 5208: Public-Key Cryptography Standards (PKCS) #8</a></li>

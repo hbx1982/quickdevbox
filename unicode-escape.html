@@ -48,30 +48,6 @@
     }
 }
   </script>
-  <script type="application/ld+json">
-  {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "Why do emojis require two \\uXXXX escape sequences instead of one?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Emojis exceeding 16-bit limits require two UTF-16 surrogate pair escapes (\\uD83D\\uDE80 for rocket)."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "What is the advantage of ES6 \\u{XXXXX} syntax over surrogate pairs?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "ES6 curly-brace syntax (\\u{1F680}) specifies 21-bit Unicode code points directly without surrogate pair math."
-      }
-    }
-  ]
-}
-  </script>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
@@ -142,30 +118,32 @@
 
       <!-- SEO Technical Article Section -->
       <!-- Related Tools Section -->
-                          <article class="seo-article">
+                                              <article class="seo-article">
       <h2>Unicode Escape Sequences: \uXXXX UTF-16 Code Units & ES6 Surrogate Pairs</h2>
       <p>Unicode escaping converts non-ASCII characters into 6-character escape sequences (\uXXXX) or ES6 code point braces (\u{XXXXX}). This ensures strings traverse 7-bit ASCII transmission pipelines without encoding corruption.</p>
 
-      <div class="tech-specs">
-        <div class="spec-card">
-          <strong>Escape Syntax</strong>
-          <span>\uXXXX (16-bit BMP) and \u{XXXXX} (ES6 21-bit Extended Code Points)</span>
-        </div>
-        <div class="spec-card">
-          <strong>Surrogate Pair Range</strong>
-          <span>High surrogates (0xD800 to 0xDBFF) + Low surrogates (0xDC00 to 0xDFFF)</span>
-        </div>
-        <div class="spec-card">
-          <strong>Byte Encoding</strong>
-          <span>UTF-16 code unit representation of Unicode Consortium code points</span>
-        </div>
-        <div class="spec-card">
-          <strong>Standard</strong>
-          <span>The Unicode Standard Version 15.0 & ECMA-262 § Unicode Escape Sequences</span>
-        </div>
+      <h3>Format Specifications &amp; Syntax Reference</h3>
+      <table>
+        <thead>
+          <tr><th>Specification Parameter</th><th>Standard Value / Parsing Behavior</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Escape Syntax</strong></td><td>\uXXXX (16-bit BMP) and \u{XXXXX} (ES6 21-bit Extended Code Points)</td></tr>
+          <tr><td><strong>Surrogate Pair Range</strong></td><td>High surrogates (0xD800 to 0xDBFF) + Low surrogates (0xDC00 to 0xDFFF)</td></tr>
+          <tr><td><strong>Byte Encoding</strong></td><td>UTF-16 code unit representation of Unicode Consortium code points</td></tr>
+          <tr><td><strong>Standard</strong></td><td>The Unicode Standard Version 15.0 & ECMA-262 § Unicode Escape Sequences</td></tr>
+        </tbody>
+      </table>
+
+      <div class="edge-cases-box">
+        <h4>⚠️ Common Engineering Edge Cases &amp; Gotchas</h4>
+        <ul>
+        <li><strong>Why do emojis require two \uXXXX escape sequences instead of one:</strong> Characters with code points above <code>0xFFFF</code> (like emojis 🚀 U+1F680) exceed 16 bits and cannot fit in a single <code>\uXXXX</code> sequence. UTF-16 encodes them as a surrogate pair: <code>\uD83D\uDE80</code>.</li>
+        <li><strong>What is the advantage of ES6 \u{XXXXX} syntax over surrogate pairs:</strong> ES6 introduced curly-brace code point escapes (e.g. <code>\u{1F680}</code>), allowing any 21-bit Unicode code point to be expressed cleanly without manually calculating surrogate pairs.</li>
+        </ul>
       </div>
 
-      <h3>Implementation &amp; Code Examples</h3>
+      <h3>Production Implementation Examples</h3>
       <h4>JavaScript Unicode Escape / Unescape</h4>
       <pre><code>function unicodeEscape(str) {
   return str.split('').map(char => {
@@ -184,27 +162,10 @@ function unicodeUnescape(escapedStr) {
 escaped = text.encode('unicode-escape').decode('ascii')
 print("Escaped:", escaped)</code></pre>
 
-      <h3>Architectural Design &amp; High-Throughput Pipeline Optimization</h3>
-      <p>Integrating Unicode Escape Sequences into continuous delivery pipelines requires balancing lexical analysis latency with memory consumption:</p>
-      <ul>
-        <li><strong>Stream-Based Tokenization:</strong> For large data buffers exceeding 1MB, avoid synchronous in-memory string parsing on the main event thread. Stream input tokens through chunked pipelines to prevent event-loop thread starvation.</li>
-        <li><strong>Defensive Parsing &amp; Exception Isolation:</strong> Always wrap syntax transformations inside structured exception handlers to isolate malformed inputs, truncated payloads, and illegal control characters from crashing downstream microservices.</li>
-        <li><strong>Character Encoding Verification:</strong> Enforce strict UTF-8 input normalization at API gateways to prevent byte-order mark (BOM) anomalies, truncated multi-byte sequences, and surrogate pair deserialization errors.</li>
-      </ul>
+      <h3>High-Throughput Processing &amp; Memory Safety Bounds</h3>
+      <p>Client-side parsing and data transformation operates against browser V8 memory limits. When manipulating large documents or high-volume datasets approaching the 2MB boundary, synchronous operations can block the main execution thread. Production web applications should delegate heavy serialization and formatting jobs to background Web Workers or leverage streaming parsers (such as the WHATWG <code>TransformStream</code> interface) to maintain interface responsiveness during heavy data ingestion. Ensure robust UTF-8 multi-byte sequence validation to prevent surrogate pair slicing and payload corruption. Incorporate automated benchmark assertions into build pipelines to intercept algorithmic complexity regressions before production release.</p>
 
-      <section class="faq-section">
-        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
-        <div class="faq-item">
-          <h3>Why do emojis require two \uXXXX escape sequences instead of one?</h3>
-          <p>Characters with code points above <code>0xFFFF</code> (like emojis 🚀 U+1F680) exceed 16 bits and cannot fit in a single <code>\uXXXX</code> sequence. UTF-16 encodes them as a surrogate pair: <code>\uD83D\uDE80</code>.</p>
-        </div>
-        <div class="faq-item">
-          <h3>What is the advantage of ES6 \u{XXXXX} syntax over surrogate pairs?</h3>
-          <p>ES6 introduced curly-brace code point escapes (e.g. <code>\u{1F680}</code>), allowing any 21-bit Unicode code point to be expressed cleanly without manually calculating surrogate pairs.</p>
-        </div>
-      </section>
-
-      <h3>Official Standards &amp; Technical References</h3>
+      <h3>Official Standards &amp; Format Specifications</h3>
       <ul>
         <li><a href="https://home.unicode.org/" target="_blank" rel="noopener noreferrer">The Unicode Consortium: The Unicode Standard</a></li>
         <li><a href="https://tc39.es/ecma262/#sec-source-text" target="_blank" rel="noopener noreferrer">ECMA-262 ECMAScript Unicode Escape Sequences</a></li>

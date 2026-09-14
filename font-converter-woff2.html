@@ -47,30 +47,6 @@
     }
 }
   </script>
-  <script type="application/ld+json">
-  {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "What is the difference between FOIT and FOUT in web font loading?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "FOIT renders invisible text while loading; FOUT displays system fallbacks immediately using font-display: swap."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Why is WOFF2 superior to TrueType (TTF) and OpenType (OTF) on the web?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "WOFF2 uses Brotli table compression specifically tuned for web delivery, reducing bandwidth consumption by 30-50%."
-      }
-    }
-  ]
-}
-  </script>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
@@ -144,30 +120,40 @@
       <div id="statusMessage" class="status-box" style="display: none;"></div>
     </div>
 
-                    <article class="seo-article">
+                                        <article class="seo-article">
       <h2>Web Font Engineering: WOFF2 Brotli Compression & CSS font-display Policies</h2>
       <p>Web Open Font Format 2 (WOFF2) uses the Brotli entropy compression algorithm to reduce web font payload sizes by ~30% compared to legacy WOFF1. Combining WOFF2 with @font-face and font-display: swap prevents Flash of Invisible Text (FOIT).</p>
 
-      <div class="tech-specs">
-        <div class="spec-card">
-          <strong>Compression Algorithm</strong>
-          <span>Brotli Compression (RFC 7932) applied to OpenType / TrueType glyph tables</span>
+      <h3>CSS Properties &amp; Syntax Reference</h3>
+      <table>
+        <thead>
+          <tr><th>CSS Rule / Parameter</th><th>Syntax Specification &amp; Compositor Behavior</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Compression Algorithm</strong></td><td>Brotli Compression (RFC 7932) applied to OpenType / TrueType glyph tables</td></tr>
+          <tr><td><strong>W3C Recommendation</strong></td><td>WOFF File Format 2.0 (W3C Recommendation 01 March 2018)</td></tr>
+          <tr><td><strong>FOIT Defense</strong></td><td>font-display: swap (Immediately renders fallback font while downloading)</td></tr>
+          <tr><td><strong>Browser Support</strong></td><td>Supported across 97%+ of global web browsers</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Cross-Browser Rendering &amp; Compositor Engine Support</h3>
+      <div class="browser-support-matrix">
+        <div class="engine-card">
+          <strong>Chromium / Blink (Chrome, Edge)</strong>
+          <span>Full hardware-accelerated GPU compositing. Zero layout shifts when dimensions are clamped.</span>
         </div>
-        <div class="spec-card">
-          <strong>W3C Recommendation</strong>
-          <span>WOFF File Format 2.0 (W3C Recommendation 01 March 2018)</span>
+        <div class="engine-card">
+          <strong>WebKit (Safari, iOS)</strong>
+          <span>Requires vendor prefixes (<code>-webkit-</code>) for backdrop filters, clip paths, and text smoothing.</span>
         </div>
-        <div class="spec-card">
-          <strong>FOIT Defense</strong>
-          <span>font-display: swap (Immediately renders fallback font while downloading)</span>
-        </div>
-        <div class="spec-card">
-          <strong>Browser Support</strong>
-          <span>Supported across 97%+ of global web browsers</span>
+        <div class="engine-card">
+          <strong>Gecko (Mozilla Firefox)</strong>
+          <span>Standard W3C compliance. Supports native hardware layer caching and subpixel rendering.</span>
         </div>
       </div>
 
-      <h3>Implementation &amp; Code Examples</h3>
+      <h3>Production CSS Recipes &amp; Snippets</h3>
       <h4>Production @font-face CSS Declaration</h4>
       <pre><code>@font-face {
   font-family: 'Inter';
@@ -182,27 +168,10 @@
       <h4>HTML Font Preload Link</h4>
       <pre><code><link rel="preload" href="/fonts/inter-variable.woff2" as="font" type="font/woff2" crossorigin></code></pre>
 
-      <h3>Browser Rendering Performance &amp; Hardware Compositing</h3>
-      <p>Executing Web Font Engineering in modern web applications requires optimizing layout rendering across the browser rendering pipeline:</p>
-      <ul>
-        <li><strong>GPU Compositor Promotion:</strong> Restrict high-frequency dynamic transitions to compositor-only CSS properties (<code>transform</code> and <code>opacity</code>) to avoid triggering costly CPU layout reflows and repaints.</li>
-        <li><strong>Layout Thrashing Prevention:</strong> Decouple DOM geometry measurements from subsequent style write operations to eliminate forced synchronous reflow cycles and preserve 60 FPS scrolling.</li>
-        <li><strong>Subpixel Antialiasing:</strong> Design visual components with hardware-accelerated vector units and clamp scaling boundaries to eliminate visual pixel rounding jitter on high-DPI displays.</li>
-      </ul>
+      <h3>GPU Compositing &amp; Layout Performance Tuning</h3>
+      <p>Modern browser rendering engines divide graphical updates into Style, Layout, Paint, and Composite stages. High-performance interfaces optimize execution by isolating dynamic animations to compositor-only CSS properties—specifically <code>transform</code> and <code>opacity</code>. Altering geometry properties like <code>width</code>, <code>margin</code>, or <code>top</code> forces full layout reflows and repaints, increasing CPU utilization and causing frame drops on lower-power mobile devices. Leverage hardware layer promotion strategically to preserve 60 FPS visual smoothness, and explicitly reserve component aspect ratios to ensure Cumulative Layout Shift (CLS) scores remain at zero. Profile paint timings under 4x CPU throttling in Chrome DevTools to eliminate paint invalidation bottlenecks.</p>
 
-      <section class="faq-section">
-        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
-        <div class="faq-item">
-          <h3>What is the difference between FOIT and FOUT in web font loading?</h3>
-          <p>FOIT (Flash of Invisible Text) hides text completely for up to 3 seconds while fonts download, displaying a blank screen. FOUT (Flash of Unstyled Text) renders a system fallback font immediately and swaps once WOFF2 arrives.</p>
-        </div>
-        <div class="faq-item">
-          <h3>Why is WOFF2 superior to TrueType (TTF) and OpenType (OTF) on the web?</h3>
-          <p>TTF and OTF contain uncompressed font tables designed for local operating system installation. WOFF2 compresses glyph tables with Brotli and includes web metadata, cutting bandwidth usage in half.</p>
-        </div>
-      </section>
-
-      <h3>Official Standards &amp; Technical References</h3>
+      <h3>W3C Standards &amp; Browser Engine Specifications</h3>
       <ul>
         <li><a href="https://www.w3.org/TR/WOFF2/" target="_blank" rel="noopener noreferrer">W3C WOFF File Format 2.0 Recommendation</a></li>
         <li><a href="https://www.w3.org/TR/css-fonts-4/#font-display-desc" target="_blank" rel="noopener noreferrer">W3C CSS Fonts Module Level 4 § font-display</a></li>

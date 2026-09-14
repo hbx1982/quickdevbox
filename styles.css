@@ -793,3 +793,127 @@ footer a:hover {
   letter-spacing: 0.05em;
   margin-bottom: 0.3rem;
 }
+
+/* Differentiated Article Archetype Styles */
+.seo-article table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.2rem 0 1.5rem;
+  font-size: 0.88rem;
+}
+
+.seo-article th, .seo-article td {
+  padding: 0.7rem 0.95rem;
+  border: 1px solid var(--bg-card-border);
+  text-align: left;
+}
+
+.seo-article th {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-bright);
+  font-weight: 600;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.seo-article tr:hover td {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* Archetype B: Security Advisory Callout */
+.security-advisory {
+  background: rgba(239, 68, 68, 0.06);
+  border-left: 4px solid #ef4444;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  padding: 1.1rem 1.3rem;
+  margin: 1.4rem 0;
+  color: #fca5a5;
+}
+
+.security-advisory h4 {
+  color: #f87171;
+  font-size: 1rem;
+  margin-bottom: 0.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.security-advisory p, .security-advisory li {
+  color: #e2e8f0;
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+/* Archetype C: Browser Support Matrix */
+.browser-support-matrix {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.8rem;
+  margin: 1.2rem 0 1.5rem;
+}
+
+.engine-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--bg-card-border);
+  border-radius: var(--radius-sm);
+  padding: 0.85rem 1rem;
+}
+
+.engine-card strong {
+  display: block;
+  font-size: 0.88rem;
+  color: var(--text-bright);
+  margin-bottom: 0.25rem;
+}
+
+.engine-card span {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* Archetype D: DevOps CLI Recipes & Checklist */
+.cli-recipe {
+  background: #02050c;
+  border: 1px solid var(--bg-card-border);
+  border-radius: var(--radius-sm);
+  padding: 0.9rem 1.1rem;
+  margin: 0.8rem 0;
+}
+
+.cli-recipe .cli-title {
+  font-size: 0.8rem;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.35rem;
+  font-weight: 600;
+}
+
+.cli-recipe code {
+  color: #38bdf8;
+  font-size: 0.88rem;
+}
+
+/* Archetype A: Practical Edge Cases Box */
+.edge-cases-box {
+  background: rgba(245, 158, 11, 0.06);
+  border-left: 4px solid #f59e0b;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  padding: 1.1rem 1.3rem;
+  margin: 1.3rem 0;
+}
+
+.edge-cases-box h4 {
+  color: #fbbf24;
+  font-size: 0.98rem;
+  margin-bottom: 0.45rem;
+}
+
+.edge-cases-box p, .edge-cases-box li {
+  font-size: 0.88rem;
+  color: #e2e8f0;
+  line-height: 1.55;
+}
+

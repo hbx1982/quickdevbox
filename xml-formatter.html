@@ -48,30 +48,6 @@
     }
 }
   </script>
-  <script type="application/ld+json">
-  {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "Why does XML formatting sometimes corrupt whitespace inside CDATA sections?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Proper XML formatters isolate CDATA boundaries to avoid stripping significant whitespace from raw payloads."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "What causes 'XML Parsing Error: mismatched tag'?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Mismatched casing or missing self-closing slashes violate XML strict well-formedness rules."
-      }
-    }
-  ]
-}
-  </script>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0LZHPD7SL"></script>
 <script>
@@ -138,30 +114,32 @@
     </section>
 
   
-                        <article class="seo-article">
+                                            <article class="seo-article">
       <h2>XML Formatter: DOM Indentation, CDATA Protection & Entity Normalization</h2>
       <p>XML Formatter parses Extensible Markup Language documents into a validated Document Object Model (DOM) tree, applying hierarchical 2-space indentation while preserving CDATA blocks, namespaces, and attribute ordering.</p>
 
-      <div class="tech-specs">
-        <div class="spec-card">
-          <strong>W3C Specification</strong>
-          <span>Extensible Markup Language (XML) 1.0 (Fifth Edition)</span>
-        </div>
-        <div class="spec-card">
-          <strong>Indentation Strategy</strong>
-          <span>Hierarchical 2-space or 4-space tab element indentation</span>
-        </div>
-        <div class="spec-card">
-          <strong>CDATA Handling</strong>
-          <span>Preserves unparsed character data blocks (<![CDATA[...]]>)</span>
-        </div>
-        <div class="spec-card">
-          <strong>Validation Guard</strong>
-          <span>Detects unclosed tags, attribute mismatches, and entity syntax errors</span>
-        </div>
+      <h3>Format Specifications &amp; Syntax Reference</h3>
+      <table>
+        <thead>
+          <tr><th>Specification Parameter</th><th>Standard Value / Parsing Behavior</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>W3C Specification</strong></td><td>Extensible Markup Language (XML) 1.0 (Fifth Edition)</td></tr>
+          <tr><td><strong>Indentation Strategy</strong></td><td>Hierarchical 2-space or 4-space tab element indentation</td></tr>
+          <tr><td><strong>CDATA Handling</strong></td><td>Preserves unparsed character data blocks (<![CDATA[...]]>)</td></tr>
+          <tr><td><strong>Validation Guard</strong></td><td>Detects unclosed tags, attribute mismatches, and entity syntax errors</td></tr>
+        </tbody>
+      </table>
+
+      <div class="edge-cases-box">
+        <h4>⚠️ Common Engineering Edge Cases &amp; Gotchas</h4>
+        <ul>
+        <li><strong>Why does XML formatting sometimes corrupt whitespace inside CDATA sections:</strong> CDATA sections contain raw character data meant to be ignored by parsers. Naive regex re-formatters strip whitespace across the entire document. Proper DOM formatters isolate CDATA boundaries to preserve raw content.</li>
+        <li><strong>What causes 'XML Parsing Error: mismatched tag':</strong> XML is strictly case-sensitive and forbids unclosed tags. Opening with <code>&lt;Item&gt;</code> and closing with <code>&lt;/item&gt;</code> violates well-formedness rules and aborts parsing.</li>
+        </ul>
       </div>
 
-      <h3>Implementation &amp; Code Examples</h3>
+      <h3>Production Implementation Examples</h3>
       <h4>JavaScript DOMParser Prettifier</h4>
       <pre><code>function formatXml(xmlString) {
   const PADDING = '  ';
@@ -183,27 +161,10 @@ def prettify_xml(raw_xml: str) -> str:
     dom = xml.dom.minidom.parseString(raw_xml)
     return dom.toprettyxml(indent="  ")</code></pre>
 
-      <h3>Architectural Design &amp; High-Throughput Pipeline Optimization</h3>
-      <p>Integrating XML Formatter into continuous delivery pipelines requires balancing lexical analysis latency with memory consumption:</p>
-      <ul>
-        <li><strong>Stream-Based Tokenization:</strong> For large data buffers exceeding 1MB, avoid synchronous in-memory string parsing on the main event thread. Stream input tokens through chunked pipelines to prevent event-loop thread starvation.</li>
-        <li><strong>Defensive Parsing &amp; Exception Isolation:</strong> Always wrap syntax transformations inside structured exception handlers to isolate malformed inputs, truncated payloads, and illegal control characters from crashing downstream microservices.</li>
-        <li><strong>Character Encoding Verification:</strong> Enforce strict UTF-8 input normalization at API gateways to prevent byte-order mark (BOM) anomalies, truncated multi-byte sequences, and surrogate pair deserialization errors.</li>
-      </ul>
+      <h3>High-Throughput Processing &amp; Memory Safety Bounds</h3>
+      <p>Client-side parsing and data transformation operates against browser V8 memory limits. When manipulating large documents or high-volume datasets approaching the 2MB boundary, synchronous operations can block the main execution thread. Production web applications should delegate heavy serialization and formatting jobs to background Web Workers or leverage streaming parsers (such as the WHATWG <code>TransformStream</code> interface) to maintain interface responsiveness during heavy data ingestion. Ensure robust UTF-8 multi-byte sequence validation to prevent surrogate pair slicing and payload corruption. Incorporate automated benchmark assertions into build pipelines to intercept algorithmic complexity regressions before production release.</p>
 
-      <section class="faq-section">
-        <h2>Frequently Asked Questions &amp; Troubleshooting</h2>
-        <div class="faq-item">
-          <h3>Why does XML formatting sometimes corrupt whitespace inside CDATA sections?</h3>
-          <p>CDATA sections contain raw character data meant to be ignored by parsers. Naive regex re-formatters strip whitespace across the entire document. Proper DOM formatters isolate CDATA boundaries to preserve raw content.</p>
-        </div>
-        <div class="faq-item">
-          <h3>What causes 'XML Parsing Error: mismatched tag'?</h3>
-          <p>XML is strictly case-sensitive and forbids unclosed tags. Opening with <code>&lt;Item&gt;</code> and closing with <code>&lt;/item&gt;</code> violates well-formedness rules and aborts parsing.</p>
-        </div>
-      </section>
-
-      <h3>Official Standards &amp; Technical References</h3>
+      <h3>Official Standards &amp; Format Specifications</h3>
       <ul>
         <li><a href="https://www.w3.org/TR/xml/" target="_blank" rel="noopener noreferrer">W3C XML 1.0 (Fifth Edition) Recommendation</a></li>
         <li><a href="https://www.w3.org/TR/xml-names/" target="_blank" rel="noopener noreferrer">W3C Namespaces in XML 1.0</a></li>
